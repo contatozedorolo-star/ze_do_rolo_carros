@@ -14,16 +14,198 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      product_images: {
+        Row: {
+          created_at: string | null
+          display_order: number | null
+          id: string
+          image_type: string
+          image_url: string
+          is_video: boolean | null
+          product_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          image_type: string
+          image_url: string
+          is_video?: boolean | null
+          product_id: string
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          image_type?: string
+          image_url?: string
+          is_video?: boolean | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          accepts_trade: boolean | null
+          category: Database["public"]["Enums"]["product_category"]
+          created_at: string | null
+          declared_defects: string | null
+          description: string | null
+          id: string
+          is_certified: boolean | null
+          is_for_sale: boolean | null
+          location: string | null
+          min_price_accepted: number | null
+          price_estimate: number
+          rating_documents: number | null
+          rating_exterior: number | null
+          rating_function: number | null
+          rating_interior: number | null
+          rating_motor: number | null
+          title: string
+          updated_at: string | null
+          urgency_level: Database["public"]["Enums"]["urgency_level"] | null
+          user_id: string
+        }
+        Insert: {
+          accepts_trade?: boolean | null
+          category: Database["public"]["Enums"]["product_category"]
+          created_at?: string | null
+          declared_defects?: string | null
+          description?: string | null
+          id?: string
+          is_certified?: boolean | null
+          is_for_sale?: boolean | null
+          location?: string | null
+          min_price_accepted?: number | null
+          price_estimate: number
+          rating_documents?: number | null
+          rating_exterior?: number | null
+          rating_function?: number | null
+          rating_interior?: number | null
+          rating_motor?: number | null
+          title: string
+          updated_at?: string | null
+          urgency_level?: Database["public"]["Enums"]["urgency_level"] | null
+          user_id: string
+        }
+        Update: {
+          accepts_trade?: boolean | null
+          category?: Database["public"]["Enums"]["product_category"]
+          created_at?: string | null
+          declared_defects?: string | null
+          description?: string | null
+          id?: string
+          is_certified?: boolean | null
+          is_for_sale?: boolean | null
+          location?: string | null
+          min_price_accepted?: number | null
+          price_estimate?: number
+          rating_documents?: number | null
+          rating_exterior?: number | null
+          rating_function?: number | null
+          rating_interior?: number | null
+          rating_motor?: number | null
+          title?: string
+          updated_at?: string | null
+          urgency_level?: Database["public"]["Enums"]["urgency_level"] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          cpf: string
+          created_at: string | null
+          email: string
+          id: string
+          is_verified: boolean | null
+          name: string
+          phone_whatsapp: string
+          pix_key: string | null
+          updated_at: string | null
+          user_level: Database["public"]["Enums"]["user_level"] | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          cpf: string
+          created_at?: string | null
+          email: string
+          id: string
+          is_verified?: boolean | null
+          name: string
+          phone_whatsapp: string
+          pix_key?: string | null
+          updated_at?: string | null
+          user_level?: Database["public"]["Enums"]["user_level"] | null
+        }
+        Update: {
+          avatar_url?: string | null
+          cpf?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          is_verified?: boolean | null
+          name?: string
+          phone_whatsapp?: string
+          pix_key?: string | null
+          updated_at?: string | null
+          user_level?: Database["public"]["Enums"]["user_level"] | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      product_category:
+        | "veiculos"
+        | "eletronicos"
+        | "moveis"
+        | "eletrodomesticos"
+        | "moda"
+        | "esportes"
+        | "outros"
+      urgency_level: "baixa" | "media" | "alta" | "emergencial"
+      user_level: "bronze" | "prata" | "ouro" | "diamante"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +332,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      product_category: [
+        "veiculos",
+        "eletronicos",
+        "moveis",
+        "eletrodomesticos",
+        "moda",
+        "esportes",
+        "outros",
+      ],
+      urgency_level: ["baixa", "media", "alta", "emergencial"],
+      user_level: ["bronze", "prata", "ouro", "diamante"],
+    },
   },
 } as const

@@ -1,18 +1,26 @@
-import { Search, User, Menu, X } from "lucide-react";
+import { Search, User, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, signOut } = useAuth();
 
   const navLinks = [
     { href: "/", label: "Início" },
     { href: "/veiculos", label: "Veículos" },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -61,12 +69,27 @@ const Header = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="hidden md:flex">
-            <User className="h-5 w-5" />
-          </Button>
-          <Button variant="cta" size="sm" className="hidden sm:flex">
-            Cadastre-se Grátis
-          </Button>
+          {user ? (
+            <>
+              <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
+                <Link to="/profile">
+                  <User className="h-5 w-5" />
+                </Link>
+              </Button>
+              <Button variant="cta" size="sm" className="hidden sm:flex" asChild>
+                <Link to="/add-product">Anunciar</Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
+                <Link to="/auth">Entrar</Link>
+              </Button>
+              <Button variant="cta" size="sm" className="hidden sm:flex" asChild>
+                <Link to="/auth">Cadastre-se Grátis</Link>
+              </Button>
+            </>
+          )}
           
           {/* Mobile Menu Button */}
           <Button
@@ -111,11 +134,31 @@ const Header = () => {
                   {link.label}
                 </Link>
               ))}
+              {user && (
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+                >
+                  Meu Perfil
+                </Link>
+              )}
             </nav>
             
-            <Button variant="cta" className="w-full">
-              Cadastre-se Grátis
-            </Button>
+            {user ? (
+              <div className="flex gap-2">
+                <Button variant="cta" className="flex-1" asChild>
+                  <Link to="/add-product" onClick={() => setMobileMenuOpen(false)}>Anunciar</Link>
+                </Button>
+                <Button variant="outline" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button variant="cta" className="w-full" asChild>
+                <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>Cadastre-se Grátis</Link>
+              </Button>
+            )}
           </div>
         </div>
       )}

@@ -2,15 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ProposalDialog from "@/components/ProposalDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
 import { 
   MapPin, 
   CheckCircle, 
@@ -66,19 +62,12 @@ const levelColors: Record<string, string> = {
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
-  const { toast } = useToast();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [images, setImages] = useState<ProductImage[]>([]);
   const [seller, setSeller] = useState<SellerProfile | null>(null);
   const [currentImage, setCurrentImage] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [proposalOpen, setProposalOpen] = useState(false);
-  const [proposalData, setProposalData] = useState({
-    cashAmount: "",
-    message: "",
-  });
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -124,24 +113,6 @@ const ProductDetail = () => {
 
     fetchProduct();
   }, [id]);
-
-  const handleProposal = () => {
-    if (!user) {
-      toast({
-        title: "Login necessário",
-        description: "Faça login para enviar uma proposta",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // For now, just show a success message
-    toast({
-      title: "Proposta enviada!",
-      description: "O vendedor receberá sua proposta em breve.",
-    });
-    setProposalOpen(false);
-  };
 
   const renderRadarChart = () => {
     const ratings = [
@@ -341,63 +312,18 @@ const ProductDetail = () => {
 
             {/* CTA Buttons */}
             <div className="flex gap-3">
-              <Dialog open={proposalOpen} onOpenChange={setProposalOpen}>
-                <DialogTrigger asChild>
+              <ProposalDialog
+                productId={product.id}
+                productTitle={product.title}
+                productPrice={product.price_estimate}
+                sellerId={product.user_id}
+                acceptsTrade={product.accepts_trade}
+                trigger={
                   <Button variant="cta" size="lg" className="flex-1">
                     Fazer Proposta Agora
                   </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Fazer Proposta</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 pt-4">
-                    <div className="p-4 bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground">Produto:</p>
-                      <p className="font-semibold text-foreground">{product.title}</p>
-                      <p className="text-lg font-bold text-primary">
-                        R$ {product.price_estimate.toLocaleString("pt-BR")}
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="cashAmount">Quanto em dinheiro? (R$)</Label>
-                      <Input
-                        id="cashAmount"
-                        type="number"
-                        placeholder="0,00"
-                        value={proposalData.cashAmount}
-                        onChange={(e) => setProposalData(prev => ({ ...prev, cashAmount: e.target.value }))}
-                      />
-                    </div>
-
-                    {product.accepts_trade && (
-                      <div className="p-4 border border-border rounded-lg">
-                        <p className="text-sm font-medium text-foreground mb-2">
-                          Deseja incluir itens do seu lote na proposta?
-                        </p>
-                        <Button variant="outline" size="sm" asChild>
-                          <Link to="/profile">Ver Meu Lote</Link>
-                        </Button>
-                      </div>
-                    )}
-
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Mensagem (opcional)</Label>
-                      <Input
-                        id="message"
-                        placeholder="Escreva algo para o vendedor..."
-                        value={proposalData.message}
-                        onChange={(e) => setProposalData(prev => ({ ...prev, message: e.target.value }))}
-                      />
-                    </div>
-
-                    <Button variant="cta" className="w-full" onClick={handleProposal}>
-                      Enviar Proposta
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                }
+              />
 
               <Button variant="outline" size="lg">
                 <MessageCircle className="h-5 w-5" />

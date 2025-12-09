@@ -163,6 +163,56 @@ export type Database = {
         }
         Relationships: []
       }
+      proposals: {
+        Row: {
+          cash_amount: number
+          created_at: string
+          id: string
+          include_trade: boolean | null
+          message: string | null
+          product_id: string
+          proposer_id: string
+          seller_id: string
+          status: Database["public"]["Enums"]["proposal_status"]
+          trade_items: string | null
+          updated_at: string
+        }
+        Insert: {
+          cash_amount?: number
+          created_at?: string
+          id?: string
+          include_trade?: boolean | null
+          message?: string | null
+          product_id: string
+          proposer_id: string
+          seller_id: string
+          status?: Database["public"]["Enums"]["proposal_status"]
+          trade_items?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cash_amount?: number
+          created_at?: string
+          id?: string
+          include_trade?: boolean | null
+          message?: string | null
+          product_id?: string
+          proposer_id?: string
+          seller_id?: string
+          status?: Database["public"]["Enums"]["proposal_status"]
+          trade_items?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposals_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -204,6 +254,12 @@ export type Database = {
         | "moda"
         | "esportes"
         | "outros"
+      proposal_status:
+        | "pending"
+        | "accepted"
+        | "rejected"
+        | "counter"
+        | "cancelled"
       urgency_level: "baixa" | "media" | "alta" | "emergencial"
       user_level: "bronze" | "prata" | "ouro" | "diamante"
     }
@@ -342,6 +398,13 @@ export const Constants = {
         "moda",
         "esportes",
         "outros",
+      ],
+      proposal_status: [
+        "pending",
+        "accepted",
+        "rejected",
+        "counter",
+        "cancelled",
       ],
       urgency_level: ["baixa", "media", "alta", "emergencial"],
       user_level: ["bronze", "prata", "ouro", "diamante"],

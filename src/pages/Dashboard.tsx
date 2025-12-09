@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ProposalsList from "@/components/ProposalsList";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Package, 
   Plus, 
@@ -19,12 +21,38 @@ import {
 const Dashboard = () => {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
+  
+  const [stats, setStats] = useState({
+    products: 0,
+    receivedProposals: 0,
+    sentProposals: 0,
+  });
 
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
     }
   }, [user, loading, navigate]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user) return;
+
+      const [productsRes, receivedRes, sentRes] = await Promise.all([
+        supabase.from("products").select("id", { count: "exact" }).eq("user_id", user.id),
+        supabase.from("proposals").select("id", { count: "exact" }).eq("seller_id", user.id).eq("status", "pending"),
+        supabase.from("proposals").select("id", { count: "exact" }).eq("proposer_id", user.id),
+      ]);
+
+      setStats({
+        products: productsRes.count || 0,
+        receivedProposals: receivedRes.count || 0,
+        sentProposals: sentRes.count || 0,
+      });
+    };
+
+    fetchStats();
+  }, [user]);
 
   if (loading) {
     return (
@@ -73,10 +101,10 @@ const Dashboard = () => {
     },
   ];
 
-  const stats = [
-    { label: "Produtos Cadastrados", value: "0", icon: Package },
-    { label: "Propostas Recebidas", value: "0", icon: MessageSquare },
-    { label: "Visualizações", value: "0", icon: TrendingUp },
+  const statsCards = [
+    { label: "Produtos Cadastrados", value: stats.products.toString(), icon: Package },
+    { label: "Propostas Pendentes", value: stats.receivedProposals.toString(), icon: MessageSquare },
+    { label: "Propostas Enviadas", value: stats.sentProposals.toString(), icon: TrendingUp },
   ];
 
   return (
@@ -109,12 +137,25 @@ const Dashboard = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          {stats.map((stat, index) => (
+          {statsCards.map((stat, index) => (
             <Card key={index} className="bg-card border-border">
               <CardContent className="flex items-center gap-4 p-6">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                   <stat.icon className="h-6 w-6 text-primary" />
-                </div>
+        </div>
+
+        {/* Proposals Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-accent" />
+              Minhas Propostas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ProposalsList />
+          </CardContent>
+        </Card>
                 <div>
                   <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>

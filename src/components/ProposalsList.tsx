@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import MessageChat from "./MessageChat";
 import { 
   Check, 
   X, 
@@ -16,7 +18,8 @@ import {
   ArrowLeftRight, 
   MessageCircle,
   Package,
-  User
+  User,
+  ChevronDown
 } from "lucide-react";
 
 interface Proposal {
@@ -165,6 +168,9 @@ const ProposalsList = () => {
   const renderProposalCard = (proposal: Proposal, type: "received" | "sent") => {
     const status = statusConfig[proposal.status] || statusConfig.pending;
     const StatusIcon = status.icon;
+    
+    const otherUserId = type === "received" ? proposal.proposer_id : proposal.seller_id;
+    const otherUserName = type === "received" ? "Comprador" : "Vendedor";
 
     return (
       <Card key={proposal.id} className="bg-card border-border">
@@ -262,6 +268,26 @@ const ProposalsList = () => {
               )}
             </div>
           )}
+
+          {/* Chat Section */}
+          <Collapsible className="mt-3">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-full justify-between">
+                <span className="flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Abrir Chat
+                </span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <MessageChat
+                proposalId={proposal.id}
+                otherUserId={otherUserId}
+                otherUserName={otherUserName}
+              />
+            </CollapsibleContent>
+          </Collapsible>
         </CardContent>
       </Card>
     );

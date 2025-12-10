@@ -1,16 +1,38 @@
-import { Search, User, Menu, X, LogOut } from "lucide-react";
+import { Search, User, Menu, X, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, signOut } = useAuth();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      setIsAdmin(!!data);
+    };
+
+    checkAdmin();
+  }, [user]);
 
   const navLinks = [
     { href: "/", label: "Início" },
@@ -65,6 +87,20 @@ const Header = () => {
               {link.label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link
+              to="/admin/kyc"
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1",
+                location.pathname.startsWith("/admin")
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              )}
+            >
+              <Shield className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
         </nav>
 
         {/* Actions */}
@@ -141,6 +177,21 @@ const Header = () => {
                   className="px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
                 >
                   Meu Perfil
+                </Link>
+              )}
+              {isAdmin && (
+                <Link
+                  to="/admin/kyc"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    "px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
+                    location.pathname.startsWith("/admin")
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  )}
+                >
+                  <Shield className="h-4 w-4" />
+                  Painel Admin
                 </Link>
               )}
             </nav>

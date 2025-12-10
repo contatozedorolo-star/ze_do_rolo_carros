@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import KYCVerificationForm from "@/components/KYCVerificationForm";
 import { 
   User, 
   Package, 
@@ -336,29 +337,17 @@ const Profile = () => {
           </TabsContent>
 
           {/* Settings Tab */}
-          <TabsContent value="settings">
+          <TabsContent value="settings" className="space-y-6">
+            {/* KYC Verification Section */}
+            <KYCVerificationForm />
+
+            {/* Account Settings */}
             <Card>
               <CardHeader>
-                <CardTitle>Configurações</CardTitle>
-                <CardDescription>Gerencie sua conta e preferências</CardDescription>
+                <CardTitle>Configurações da Conta</CardTitle>
+                <CardDescription>Gerencie suas preferências</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                  <div>
-                    <h3 className="font-medium text-foreground">Verificação de Identidade</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {profile.is_verified 
-                        ? "Sua identidade foi verificada com sucesso" 
-                        : "Complete a verificação para aumentar seu nível de confiança"}
-                    </p>
-                  </div>
-                  {profile.is_verified ? (
-                    <CheckCircle className="h-6 w-6 text-accent" />
-                  ) : (
-                    <Button variant="outline" size="sm">Verificar Agora</Button>
-                  )}
-                </div>
-
                 <div className="border-t border-border pt-4">
                   <Button 
                     variant="destructive" 

@@ -269,6 +269,51 @@ export type Database = {
         }
         Relationships: []
       }
+      verification_requests: {
+        Row: {
+          created_at: string
+          document_back_url: string | null
+          document_front_url: string | null
+          document_type: string
+          id: string
+          reviewed_at: string | null
+          reviewer_notes: string | null
+          selfie_url: string | null
+          status: Database["public"]["Enums"]["verification_status"]
+          submitted_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_back_url?: string | null
+          document_front_url?: string | null
+          document_type: string
+          id?: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          selfie_url?: string | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          submitted_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_back_url?: string | null
+          document_front_url?: string | null
+          document_type?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          selfie_url?: string | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -300,6 +345,7 @@ export type Database = {
         | "cancelled"
       urgency_level: "baixa" | "media" | "alta" | "emergencial"
       user_level: "bronze" | "prata" | "ouro" | "diamante"
+      verification_status: "pending" | "submitted" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -446,6 +492,7 @@ export const Constants = {
       ],
       urgency_level: ["baixa", "media", "alta", "emergencial"],
       user_level: ["bronze", "prata", "ouro", "diamante"],
+      verification_status: ["pending", "submitted", "approved", "rejected"],
     },
   },
 } as const

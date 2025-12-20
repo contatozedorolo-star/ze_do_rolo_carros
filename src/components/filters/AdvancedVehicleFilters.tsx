@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, X, Star, CheckCircle, ArrowRightLeft, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,15 +18,25 @@ import { brands, years, plateEndings, brazilianStates } from "./FilterData";
 
 interface AdvancedVehicleFiltersProps {
   onFiltersChange?: (filters: any) => void;
+  initialCategory?: string;
 }
 
-const AdvancedVehicleFilters = ({ onFiltersChange }: AdvancedVehicleFiltersProps) => {
-  const [category, setCategory] = useState("carro");
+const AdvancedVehicleFilters = ({ onFiltersChange, initialCategory }: AdvancedVehicleFiltersProps) => {
+  const [category, setCategory] = useState(initialCategory || "carro");
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [priceRange, setPriceRange] = useState([0, 500000]);
   const [kmRange, setKmRange] = useState([0, 200000]);
   const [yearRange, setYearRange] = useState({ from: "", to: "" });
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Sync with initialCategory from parent
+  useEffect(() => {
+    if (initialCategory && initialCategory !== category) {
+      setCategory(initialCategory);
+      setFilters({});
+      onFiltersChange?.({ category: initialCategory, priceRange, kmRange, yearRange, searchTerm });
+    }
+  }, [initialCategory]);
 
   const handleFilterChange = (key: string, value: any) => {
     const newFilters = { ...filters, [key]: value };

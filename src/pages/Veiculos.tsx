@@ -1,13 +1,17 @@
-import { useState } from "react";
-import { SlidersHorizontal, Grid3X3, List, ChevronDown, MapPin } from "lucide-react";
+import { useState, useEffect } from "react";
+import { SlidersHorizontal, Grid3X3, List, ChevronDown, MapPin, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AdvancedVehicleFilters } from "@/components/filters";
 import VehicleCard from "@/components/VehicleCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { vehicles } from "@/data/mockProducts";
-import { sortOptions } from "@/components/filters/FilterData";
+import { sortOptions, brazilianStates } from "@/components/filters/FilterData";
+import { useAuth } from "@/hooks/useAuth";
+import heroBackground from "@/assets/vehicles-hero-bg.jpg";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,12 +19,43 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const vehicleTypes = [
+  { value: "carro", label: "Carro" },
+  { value: "moto", label: "Moto" },
+  { value: "caminhao", label: "Caminhão" },
+  { value: "van", label: "Van" },
+  { value: "camionete", label: "Camionete" },
+];
 
 const Veiculos = () => {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedSort, setSelectedSort] = useState("relevance");
   const [filters, setFilters] = useState<any>({});
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
+  
+  // Quick search state
+  const [quickSearch, setQuickSearch] = useState({
+    category: "",
+    searchTerm: "",
+    state: "",
+  });
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth");
+    }
+  }, [user, loading, navigate]);
 
   const handleFiltersChange = (newFilters: any) => {
     setFilters(newFilters);
@@ -36,12 +71,137 @@ const Veiculos = () => {
     setActiveFiltersCount(count);
   };
 
+  // Sync quick search with sidebar filters
+  const handleQuickSearch = () => {
+    const newFilters = { ...filters };
+    
+    if (quickSearch.category) {
+      newFilters.category = quickSearch.category;
+    }
+    if (quickSearch.state) {
+      newFilters.state = quickSearch.state;
+    }
+    
+    handleFiltersChange(newFilters);
+  };
+
+  // Update quick search when category changes and sync
+  const handleCategoryChange = (value: string) => {
+    setQuickSearch(prev => ({ ...prev, category: value }));
+    handleFiltersChange({ ...filters, category: value });
+  };
+
+  const handleStateChange = (value: string) => {
+    setQuickSearch(prev => ({ ...prev, state: value }));
+    handleFiltersChange({ ...filters, state: value });
+  };
+
   const selectedSortLabel = sortOptions.find(s => s.value === selectedSort)?.label || "Mais relevantes";
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
+      {/* Hero Section with Quick Search */}
+      <section className="relative overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${heroBackground})` }}
+        />
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/80 to-primary/95" />
+        
+        {/* Content */}
+        <div className="relative container py-12 md:py-16">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
+              O que você vai <span className="text-secondary">negociar</span> hoje?
+            </h1>
+            <p className="text-white/80 text-lg">
+              Encontre o veículo ideal para você ou anuncie o seu
+            </p>
+          </div>
+
+          {/* Quick Search Bar */}
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl p-2 shadow-2xl">
+              <div className="flex flex-col md:flex-row gap-2">
+                {/* Vehicle Type */}
+                <div className="flex-1">
+                  <Select 
+                    value={quickSearch.category} 
+                    onValueChange={handleCategoryChange}
+                  >
+                    <SelectTrigger className="h-12 border-0 bg-muted/50 focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Tipo de veículo" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-border z-50">
+                      {vehicleTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Search Term */}
+                <div className="flex-[2]">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="Marca ou modelo (ex: Honda Civic)"
+                      value={quickSearch.searchTerm}
+                      onChange={(e) => setQuickSearch(prev => ({ ...prev, searchTerm: e.target.value }))}
+                      className="h-12 pl-10 border-0 bg-muted/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                  </div>
+                </div>
+
+                {/* State/Location */}
+                <div className="flex-1">
+                  <Select 
+                    value={quickSearch.state} 
+                    onValueChange={handleStateChange}
+                  >
+                    <SelectTrigger className="h-12 border-0 bg-muted/50 focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Estado" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-border z-50 max-h-60">
+                      {brazilianStates.map((state) => (
+                        <SelectItem key={state} value={state}>
+                          {state}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Search Button */}
+                <Button 
+                  onClick={handleQuickSearch}
+                  className="h-12 px-8 bg-secondary hover:bg-secondary/90 text-white font-semibold shadow-cta"
+                >
+                  <Search className="h-5 w-5 mr-2" />
+                  Buscar
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <main className="container py-6">
         {/* Breadcrumb */}
         <nav className="text-sm text-muted-foreground mb-4">
@@ -58,9 +218,9 @@ const Veiculos = () => {
 
         {/* Page Title */}
         <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+          <h2 className="text-xl md:text-2xl font-bold text-foreground">
             Veículos em todo o Brasil
-          </h1>
+          </h2>
           <p className="text-muted-foreground mt-1 flex items-center gap-2">
             <span>{vehicles.length.toLocaleString("pt-BR")} anúncios encontrados</span>
             {filters.state && (
@@ -101,7 +261,10 @@ const Veiculos = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Filters - Desktop */}
           <div className="hidden lg:block">
-            <AdvancedVehicleFilters onFiltersChange={handleFiltersChange} />
+            <AdvancedVehicleFilters 
+              onFiltersChange={handleFiltersChange} 
+              initialCategory={quickSearch.category}
+            />
           </div>
 
           {/* Main Content */}
@@ -123,7 +286,10 @@ const Veiculos = () => {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-full sm:max-w-md p-0 overflow-y-auto">
                   <div className="p-4">
-                    <AdvancedVehicleFilters onFiltersChange={handleFiltersChange} />
+                    <AdvancedVehicleFilters 
+                      onFiltersChange={handleFiltersChange}
+                      initialCategory={quickSearch.category}
+                    />
                   </div>
                 </SheetContent>
               </Sheet>

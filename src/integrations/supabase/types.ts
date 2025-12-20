@@ -278,37 +278,68 @@ export type Database = {
       vehicles: {
         Row: {
           accepts_trade: boolean
+          auction_reason: string | null
+          body_type: string | null
+          brake_type: string | null
           brand: string
           city: string | null
           color: string
           created_at: string
+          cylinders: number | null
           description: string | null
           diagnostic_notes: string | null
           doors: number | null
           engine: string | null
           fuel: Database["public"]["Enums"]["fuel_type"]
+          fuel_system: string | null
+          has_service_history: boolean | null
           has_ze_seal: boolean
           id: string
+          ideal_trade_description: string | null
+          ipva_paid: boolean | null
           is_active: boolean
+          is_armored: boolean | null
+          is_auction: boolean | null
+          is_chassis_remarked: boolean | null
           is_featured: boolean
+          is_single_owner: boolean | null
           is_sold: boolean
           km: number
+          min_cash_return: number | null
           model: string
+          moto_optionals: string[] | null
+          moto_style: string | null
+          motor_type: string | null
+          need_type: string[] | null
           optionals: string[] | null
+          ownership_time: string | null
           plate: string | null
           plate_end: string | null
           price: number
+          rating_cambio: number | null
           rating_documentacao: number | null
+          rating_eletrica: number | null
+          rating_estetica: number | null
+          rating_freios: number | null
           rating_interior: number | null
           rating_lataria: number | null
+          rating_mecanica_geral: number | null
           rating_motor: number | null
           rating_pneus: number | null
+          rating_suspensao: number | null
+          start_type: string | null
           state: string | null
           title: string
           trade_description: string | null
+          trade_value_accepted: number | null
           transmission: Database["public"]["Enums"]["transmission_type"]
+          truck_body: string | null
+          truck_cabin: string | null
+          truck_traction: string | null
+          truck_type: string | null
           updated_at: string
           user_id: string
+          van_subcategory: string | null
           vehicle_type: Database["public"]["Enums"]["vehicle_type"]
           version: string | null
           year_manufacture: number
@@ -316,37 +347,68 @@ export type Database = {
         }
         Insert: {
           accepts_trade?: boolean
+          auction_reason?: string | null
+          body_type?: string | null
+          brake_type?: string | null
           brand: string
           city?: string | null
           color: string
           created_at?: string
+          cylinders?: number | null
           description?: string | null
           diagnostic_notes?: string | null
           doors?: number | null
           engine?: string | null
           fuel?: Database["public"]["Enums"]["fuel_type"]
+          fuel_system?: string | null
+          has_service_history?: boolean | null
           has_ze_seal?: boolean
           id?: string
+          ideal_trade_description?: string | null
+          ipva_paid?: boolean | null
           is_active?: boolean
+          is_armored?: boolean | null
+          is_auction?: boolean | null
+          is_chassis_remarked?: boolean | null
           is_featured?: boolean
+          is_single_owner?: boolean | null
           is_sold?: boolean
           km?: number
+          min_cash_return?: number | null
           model: string
+          moto_optionals?: string[] | null
+          moto_style?: string | null
+          motor_type?: string | null
+          need_type?: string[] | null
           optionals?: string[] | null
+          ownership_time?: string | null
           plate?: string | null
           plate_end?: string | null
           price: number
+          rating_cambio?: number | null
           rating_documentacao?: number | null
+          rating_eletrica?: number | null
+          rating_estetica?: number | null
+          rating_freios?: number | null
           rating_interior?: number | null
           rating_lataria?: number | null
+          rating_mecanica_geral?: number | null
           rating_motor?: number | null
           rating_pneus?: number | null
+          rating_suspensao?: number | null
+          start_type?: string | null
           state?: string | null
           title: string
           trade_description?: string | null
+          trade_value_accepted?: number | null
           transmission?: Database["public"]["Enums"]["transmission_type"]
+          truck_body?: string | null
+          truck_cabin?: string | null
+          truck_traction?: string | null
+          truck_type?: string | null
           updated_at?: string
           user_id: string
+          van_subcategory?: string | null
           vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
           version?: string | null
           year_manufacture: number
@@ -354,37 +416,68 @@ export type Database = {
         }
         Update: {
           accepts_trade?: boolean
+          auction_reason?: string | null
+          body_type?: string | null
+          brake_type?: string | null
           brand?: string
           city?: string | null
           color?: string
           created_at?: string
+          cylinders?: number | null
           description?: string | null
           diagnostic_notes?: string | null
           doors?: number | null
           engine?: string | null
           fuel?: Database["public"]["Enums"]["fuel_type"]
+          fuel_system?: string | null
+          has_service_history?: boolean | null
           has_ze_seal?: boolean
           id?: string
+          ideal_trade_description?: string | null
+          ipva_paid?: boolean | null
           is_active?: boolean
+          is_armored?: boolean | null
+          is_auction?: boolean | null
+          is_chassis_remarked?: boolean | null
           is_featured?: boolean
+          is_single_owner?: boolean | null
           is_sold?: boolean
           km?: number
+          min_cash_return?: number | null
           model?: string
+          moto_optionals?: string[] | null
+          moto_style?: string | null
+          motor_type?: string | null
+          need_type?: string[] | null
           optionals?: string[] | null
+          ownership_time?: string | null
           plate?: string | null
           plate_end?: string | null
           price?: number
+          rating_cambio?: number | null
           rating_documentacao?: number | null
+          rating_eletrica?: number | null
+          rating_estetica?: number | null
+          rating_freios?: number | null
           rating_interior?: number | null
           rating_lataria?: number | null
+          rating_mecanica_geral?: number | null
           rating_motor?: number | null
           rating_pneus?: number | null
+          rating_suspensao?: number | null
+          start_type?: string | null
           state?: string | null
           title?: string
           trade_description?: string | null
+          trade_value_accepted?: number | null
           transmission?: Database["public"]["Enums"]["transmission_type"]
+          truck_body?: string | null
+          truck_cabin?: string | null
+          truck_traction?: string | null
+          truck_type?: string | null
           updated_at?: string
           user_id?: string
+          van_subcategory?: string | null
           vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
           version?: string | null
           year_manufacture?: number
@@ -407,6 +500,15 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      body_type_enum:
+        | "suv"
+        | "sedan"
+        | "hatch"
+        | "pickup"
+        | "coupe"
+        | "conversivel"
+        | "wagon"
+        | "minivan"
       fuel_type:
         | "gasolina"
         | "etanol"
@@ -416,6 +518,15 @@ export type Database = {
         | "hibrido"
         | "gnv"
       kyc_status: "pending" | "approved" | "rejected" | "under_review"
+      moto_style_enum:
+        | "custom"
+        | "esportiva"
+        | "naked"
+        | "scooter"
+        | "trail"
+        | "touring"
+        | "street"
+        | "cross"
       proposal_status:
         | "pending"
         | "accepted"
@@ -423,6 +534,13 @@ export type Database = {
         | "counter"
         | "cancelled"
       transmission_type: "manual" | "automatico" | "cvt" | "semi-automatico"
+      truck_type_enum:
+        | "3_4"
+        | "toco"
+        | "truck"
+        | "bitruck"
+        | "cavalo_mecanico"
+        | "vuc"
       vehicle_type: "carro" | "caminhao" | "moto" | "camionete" | "van"
     }
     CompositeTypes: {
@@ -552,6 +670,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      body_type_enum: [
+        "suv",
+        "sedan",
+        "hatch",
+        "pickup",
+        "coupe",
+        "conversivel",
+        "wagon",
+        "minivan",
+      ],
       fuel_type: [
         "gasolina",
         "etanol",
@@ -562,6 +690,16 @@ export const Constants = {
         "gnv",
       ],
       kyc_status: ["pending", "approved", "rejected", "under_review"],
+      moto_style_enum: [
+        "custom",
+        "esportiva",
+        "naked",
+        "scooter",
+        "trail",
+        "touring",
+        "street",
+        "cross",
+      ],
       proposal_status: [
         "pending",
         "accepted",
@@ -570,6 +708,14 @@ export const Constants = {
         "cancelled",
       ],
       transmission_type: ["manual", "automatico", "cvt", "semi-automatico"],
+      truck_type_enum: [
+        "3_4",
+        "toco",
+        "truck",
+        "bitruck",
+        "cavalo_mecanico",
+        "vuc",
+      ],
       vehicle_type: ["carro", "caminhao", "moto", "camionete", "van"],
     },
   },

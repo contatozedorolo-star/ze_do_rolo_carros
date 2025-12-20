@@ -46,6 +46,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",
+    cpf: "",
   });
 
   useEffect(() => {
@@ -59,6 +60,7 @@ const Profile = () => {
       setFormData({
         full_name: profile.full_name || "",
         phone: profile.phone || "",
+        cpf: profile.cpf || "",
       });
     }
   }, [profile]);
@@ -99,6 +101,7 @@ const Profile = () => {
       .update({
         full_name: formData.full_name,
         phone: formData.phone,
+        cpf: formData.cpf.replace(/\D/g, ''),
       })
       .eq("id", user.id);
 
@@ -221,9 +224,25 @@ const Profile = () => {
 
                   <div className="space-y-2">
                     <Label>CPF</Label>
-                    <p className="text-foreground font-medium">
-                      {profile.cpf ? profile.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : 'Não informado'}
-                    </p>
+                    {editMode ? (
+                      <Input
+                        value={formData.cpf}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '').slice(0, 11);
+                          const formatted = value
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                          setFormData(prev => ({ ...prev, cpf: formatted }));
+                        }}
+                        placeholder="000.000.000-00"
+                        maxLength={14}
+                      />
+                    ) : (
+                      <p className="text-foreground font-medium">
+                        {profile.cpf ? profile.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : 'Não informado'}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-2">

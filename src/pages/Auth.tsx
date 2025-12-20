@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Shield, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car } from "lucide-react";
 import { z } from "zod";
 
 const signUpSchema = z.object({
-  name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
+  full_name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
   email: z.string().email("Email inválido"),
-  phone_whatsapp: z.string().min(10, "WhatsApp inválido"),
+  phone: z.string().min(10, "Telefone inválido"),
   cpf: z.string().min(11, "CPF inválido").max(14, "CPF inválido"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   confirmPassword: z.string()
@@ -25,35 +25,57 @@ const signInSchema = z.object({
   password: z.string().min(1, "Senha é obrigatória"),
 });
 
+const resetPasswordSchema = z.object({
+  email: z.string().email("Email inválido"),
+});
+
+const newPasswordSchema = z.object({
+  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Senhas não conferem",
+  path: ["confirmPassword"],
+});
+
+type AuthMode = 'signin' | 'signup' | 'forgot' | 'reset';
+
 const Auth = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [mode, setMode] = useState<AuthMode>('signin');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
   const [formData, setFormData] = useState({
-    name: "",
+    full_name: "",
     email: "",
-    phone_whatsapp: "",
+    phone: "",
     cpf: "",
     password: "",
     confirmPassword: "",
   });
 
-  const { user, signUp, signIn } = useAuth();
+  const { user, signUp, signIn, resetPassword, updatePassword } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
+    // Check if we're in password reset mode from URL
+    const urlMode = searchParams.get('mode');
+    if (urlMode === 'reset') {
+      setMode('reset');
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (user && mode !== 'reset') {
       navigate("/dashboard");
     }
-  }, [user, navigate]);
+  }, [user, navigate, mode]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -82,7 +104,7 @@ const Auth = () => {
     setErrors({});
 
     try {
-      if (isSignUp) {
+      if (mode === 'signup') {
         const result = signUpSchema.safeParse(formData);
         if (!result.success) {
           const fieldErrors: Record<string, string> = {};
@@ -97,8 +119,8 @@ const Auth = () => {
         }
 
         const { error } = await signUp(formData.email, formData.password, {
-          name: formData.name,
-          phone_whatsapp: formData.phone_whatsapp.replace(/\D/g, ''),
+          full_name: formData.full_name,
+          phone: formData.phone.replace(/\D/g, ''),
           cpf: formData.cpf.replace(/\D/g, ''),
         });
 
@@ -122,7 +144,7 @@ const Auth = () => {
             description: "Verifique seu email para confirmar a conta.",
           });
         }
-      } else {
+      } else if (mode === 'signin') {
         const result = signInSchema.safeParse(formData);
         if (!result.success) {
           const fieldErrors: Record<string, string> = {};
@@ -145,6 +167,12 @@ const Auth = () => {
               description: "Email ou senha incorretos.",
               variant: "destructive",
             });
+          } else if (error.message.includes("Email not confirmed")) {
+            toast({
+              title: "Email não confirmado",
+              description: "Por favor, confirme seu email antes de fazer login.",
+              variant: "destructive",
+            });
           } else {
             toast({
               title: "Erro no login",
@@ -152,6 +180,64 @@ const Auth = () => {
               variant: "destructive",
             });
           }
+        }
+      } else if (mode === 'forgot') {
+        const result = resetPasswordSchema.safeParse(formData);
+        if (!result.success) {
+          const fieldErrors: Record<string, string> = {};
+          result.error.errors.forEach((err) => {
+            if (err.path[0]) {
+              fieldErrors[err.path[0] as string] = err.message;
+            }
+          });
+          setErrors(fieldErrors);
+          setLoading(false);
+          return;
+        }
+
+        const { error } = await resetPassword(formData.email);
+
+        if (error) {
+          toast({
+            title: "Erro ao enviar email",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Email enviado!",
+            description: "Verifique sua caixa de entrada para redefinir sua senha.",
+          });
+          setMode('signin');
+        }
+      } else if (mode === 'reset') {
+        const result = newPasswordSchema.safeParse(formData);
+        if (!result.success) {
+          const fieldErrors: Record<string, string> = {};
+          result.error.errors.forEach((err) => {
+            if (err.path[0]) {
+              fieldErrors[err.path[0] as string] = err.message;
+            }
+          });
+          setErrors(fieldErrors);
+          setLoading(false);
+          return;
+        }
+
+        const { error } = await updatePassword(formData.password);
+
+        if (error) {
+          toast({
+            title: "Erro ao redefinir senha",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Senha redefinida!",
+            description: "Sua senha foi alterada com sucesso.",
+          });
+          navigate('/dashboard');
         }
       }
     } catch (err) {
@@ -162,6 +248,34 @@ const Auth = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getTitle = () => {
+    switch (mode) {
+      case 'signup': return "Crie sua conta";
+      case 'forgot': return "Esqueceu sua senha?";
+      case 'reset': return "Redefinir senha";
+      default: return "Bem-vindo de volta";
+    }
+  };
+
+  const getSubtitle = () => {
+    switch (mode) {
+      case 'signup': return "Cadastre-se e comece a negociar veículos com segurança";
+      case 'forgot': return "Digite seu email e enviaremos instruções para recuperar sua senha";
+      case 'reset': return "Digite sua nova senha";
+      default: return "Entre na sua conta para continuar";
+    }
+  };
+
+  const getButtonText = () => {
+    if (loading) return "Carregando...";
+    switch (mode) {
+      case 'signup': return "Criar Conta";
+      case 'forgot': return "Enviar Email";
+      case 'reset': return "Redefinir Senha";
+      default: return "Entrar";
     }
   };
 
@@ -177,18 +291,12 @@ const Auth = () => {
                 <span className="text-accent-foreground font-bold text-xl">Z</span>
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {isSignUp ? "Crie sua conta" : "Bem-vindo de volta"}
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              {isSignUp 
-                ? "Cadastre-se e comece a negociar com segurança" 
-                : "Entre na sua conta para continuar"}
-            </p>
+            <h1 className="text-2xl font-bold text-foreground">{getTitle()}</h1>
+            <p className="text-muted-foreground mt-2">{getSubtitle()}</p>
           </div>
 
           {/* Trust Badges */}
-          {isSignUp && (
+          {mode === 'signup' && (
             <div className="flex items-center justify-center gap-4 text-sm">
               <div className="flex items-center gap-1 text-accent">
                 <Shield className="h-4 w-4" />
@@ -203,19 +311,19 @@ const Auth = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {isSignUp && (
+            {mode === 'signup' && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nome Completo</Label>
+                  <Label htmlFor="full_name">Nome Completo</Label>
                   <Input
-                    id="name"
-                    name="name"
+                    id="full_name"
+                    name="full_name"
                     placeholder="Seu nome completo"
-                    value={formData.name}
+                    value={formData.full_name}
                     onChange={handleChange}
-                    className={errors.name ? "border-destructive" : ""}
+                    className={errors.full_name ? "border-destructive" : ""}
                   />
-                  {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+                  {errors.full_name && <p className="text-xs text-destructive">{errors.full_name}</p>}
                 </div>
 
                 <div className="space-y-2">
@@ -236,62 +344,66 @@ const Auth = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone_whatsapp">WhatsApp</Label>
+                  <Label htmlFor="phone">Telefone / WhatsApp</Label>
                   <Input
-                    id="phone_whatsapp"
-                    name="phone_whatsapp"
+                    id="phone"
+                    name="phone"
                     placeholder="(11) 99999-9999"
-                    value={formData.phone_whatsapp}
+                    value={formData.phone}
                     onChange={(e) => {
                       e.target.value = formatPhone(e.target.value);
                       handleChange(e);
                     }}
                     maxLength={15}
-                    className={errors.phone_whatsapp ? "border-destructive" : ""}
+                    className={errors.phone ? "border-destructive" : ""}
                   />
-                  {errors.phone_whatsapp && <p className="text-xs text-destructive">{errors.phone_whatsapp}</p>}
+                  {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
                 </div>
               </>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={formData.email}
-                onChange={handleChange}
-                className={errors.email ? "border-destructive" : ""}
-              />
-              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <div className="relative">
+            {mode !== 'reset' && (
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={formData.password}
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={formData.email}
                   onChange={handleChange}
-                  className={errors.password ? "border-destructive pr-10" : "pr-10"}
+                  className={errors.email ? "border-destructive" : ""}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+                {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
               </div>
-              {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
-            </div>
+            )}
 
-            {isSignUp && (
+            {(mode === 'signin' || mode === 'signup' || mode === 'reset') && (
+              <div className="space-y-2">
+                <Label htmlFor="password">{mode === 'reset' ? 'Nova Senha' : 'Senha'}</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={errors.password ? "border-destructive pr-10" : "pr-10"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
+              </div>
+            )}
+
+            {(mode === 'signup' || mode === 'reset') && (
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                 <Input
@@ -307,25 +419,50 @@ const Auth = () => {
               </div>
             )}
 
+            {mode === 'signin' && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setMode('forgot')}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Esqueceu sua senha?
+                </button>
+              </div>
+            )}
+
             <Button type="submit" variant="cta" size="lg" className="w-full" disabled={loading}>
-              {loading ? "Carregando..." : (isSignUp ? "Criar Conta" : "Entrar")}
+              {getButtonText()}
             </Button>
           </form>
 
-          {/* Toggle */}
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setErrors({});
-              }}
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              {isSignUp 
-                ? "Já tem uma conta? Entrar" 
-                : "Não tem conta? Cadastre-se"}
-            </button>
+          {/* Toggle / Back */}
+          <div className="text-center space-y-2">
+            {mode === 'forgot' && (
+              <button
+                type="button"
+                onClick={() => setMode('signin')}
+                className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mx-auto"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar para login
+              </button>
+            )}
+            
+            {(mode === 'signin' || mode === 'signup') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(mode === 'signin' ? 'signup' : 'signin');
+                  setErrors({});
+                }}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                {mode === 'signin' 
+                  ? "Não tem conta? Cadastre-se" 
+                  : "Já tem uma conta? Entrar"}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -333,11 +470,14 @@ const Auth = () => {
       {/* Right Side - Hero */}
       <div className="hidden lg:flex flex-1 gradient-hero items-center justify-center p-12">
         <div className="max-w-lg text-center text-primary-foreground">
+          <div className="flex justify-center mb-6">
+            <Car className="h-16 w-16 opacity-90" />
+          </div>
           <h2 className="text-3xl font-bold mb-4">
-            Negocie Tudo, Menos a Sua Segurança
+            Negocie Veículos com Segurança Total
           </h2>
           <p className="text-lg opacity-90 mb-8">
-            Somos seus corretores de negócios pessoais. Encontramos a troca ou venda perfeita, 
+            Somos seus corretores de veículos pessoais. Encontramos a troca ou venda perfeita, 
             com segurança anti-fraude do início ao fim.
           </p>
           <div className="flex flex-col gap-4">
@@ -347,11 +487,11 @@ const Auth = () => {
             </div>
             <div className="flex items-center gap-3 bg-primary-foreground/10 rounded-lg p-4">
               <Shield className="h-6 w-6 text-accent" />
-              <span>Diagnóstico completo de produtos</span>
+              <span>Diagnóstico completo de veículos</span>
             </div>
             <div className="flex items-center gap-3 bg-primary-foreground/10 rounded-lg p-4">
               <CheckCircle className="h-6 w-6 text-accent" />
-              <span>Sistema de níveis de confiança</span>
+              <span>Intermediação segura de negociações</span>
             </div>
           </div>
         </div>

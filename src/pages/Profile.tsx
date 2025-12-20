@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import KYCVerificationForm from "@/components/KYCVerificationForm";
 import { 
   User, 
-  Package, 
+  Car, 
   Settings, 
   Shield, 
   CheckCircle, 
@@ -25,40 +25,27 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-interface Product {
+interface Vehicle {
   id: string;
   title: string;
-  category: string;
-  price_estimate: number;
-  is_for_sale: boolean;
+  brand: string;
+  model: string;
+  price: number;
+  is_active: boolean;
   created_at: string;
 }
-
-const levelColors = {
-  bronze: "bg-amber-600",
-  prata: "bg-gray-400",
-  ouro: "bg-yellow-500",
-  diamante: "bg-cyan-400",
-};
-
-const levelLabels = {
-  bronze: "Bronze",
-  prata: "Prata",
-  ouro: "Ouro",
-  diamante: "Diamante",
-};
 
 const Profile = () => {
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loadingVehicles, setLoadingVehicles] = useState(true);
+  const [isVerified, setIsVerified] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    phone_whatsapp: "",
-    pix_key: "",
+    full_name: "",
+    phone: "",
   });
 
   useEffect(() => {
@@ -70,30 +57,38 @@ const Profile = () => {
   useEffect(() => {
     if (profile) {
       setFormData({
-        name: profile.name || "",
-        phone_whatsapp: profile.phone_whatsapp || "",
-        pix_key: profile.pix_key || "",
+        full_name: profile.full_name || "",
+        phone: profile.phone || "",
       });
     }
   }, [profile]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       if (!user) return;
       
-      const { data, error } = await supabase
-        .from("products")
-        .select("id, title, category, price_estimate, is_for_sale, created_at")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
+      const [vehiclesRes, kycRes] = await Promise.all([
+        supabase
+          .from("vehicles")
+          .select("id, title, brand, model, price, is_active, created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("kyc_verifications")
+          .select("status")
+          .eq("user_id", user.id)
+          .eq("status", "approved")
+          .maybeSingle()
+      ]);
 
-      if (!error && data) {
-        setProducts(data);
+      if (vehiclesRes.data) {
+        setVehicles(vehiclesRes.data);
       }
-      setLoadingProducts(false);
+      setIsVerified(!!kycRes.data);
+      setLoadingVehicles(false);
     };
 
-    fetchProducts();
+    fetchData();
   }, [user]);
 
   const handleUpdateProfile = async () => {
@@ -102,9 +97,8 @@ const Profile = () => {
     const { error } = await supabase
       .from("profiles")
       .update({
-        name: formData.name,
-        phone_whatsapp: formData.phone_whatsapp,
-        pix_key: formData.pix_key,
+        full_name: formData.full_name,
+        phone: formData.phone,
       })
       .eq("id", user.id);
 
@@ -149,17 +143,14 @@ const Profile = () => {
           <div className="flex items-center gap-4 mb-4">
             <div className="w-20 h-20 rounded-full gradient-hero flex items-center justify-center">
               <span className="text-3xl font-bold text-primary-foreground">
-                {profile.name?.charAt(0).toUpperCase()}
+                {profile.full_name?.charAt(0).toUpperCase() || 'U'}
               </span>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">{profile.name}</h1>
-              <p className="text-muted-foreground">{profile.email}</p>
+              <h1 className="text-2xl font-bold text-foreground">{profile.full_name || 'Usuário'}</h1>
+              <p className="text-muted-foreground">{user?.email}</p>
               <div className="flex items-center gap-2 mt-2">
-                <Badge className={`${levelColors[profile.user_level]} text-primary-foreground`}>
-                  {levelLabels[profile.user_level]}
-                </Badge>
-                {profile.is_verified ? (
+                {isVerified ? (
                   <Badge variant="outline" className="border-accent text-accent">
                     <CheckCircle className="h-3 w-3 mr-1" />
                     Verificado
@@ -182,9 +173,9 @@ const Profile = () => {
               <User className="h-4 w-4" />
               <span className="hidden sm:inline">Meu Perfil</span>
             </TabsTrigger>
-            <TabsTrigger value="products" className="gap-2">
-              <Package className="h-4 w-4" />
-              <span className="hidden sm:inline">Meu Lote</span>
+            <TabsTrigger value="vehicles" className="gap-2">
+              <Car className="h-4 w-4" />
+              <span className="hidden sm:inline">Meus Veículos</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="gap-2">
               <Settings className="h-4 w-4" />
@@ -215,57 +206,36 @@ const Profile = () => {
                     <Label>Nome Completo</Label>
                     {editMode ? (
                       <Input
-                        value={formData.name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        value={formData.full_name}
+                        onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
                       />
                     ) : (
-                      <p className="text-foreground font-medium">{profile.name}</p>
+                      <p className="text-foreground font-medium">{profile.full_name || 'Não informado'}</p>
                     )}
                   </div>
 
                   <div className="space-y-2">
                     <Label>Email</Label>
-                    <p className="text-foreground font-medium">{profile.email}</p>
+                    <p className="text-foreground font-medium">{user?.email}</p>
                   </div>
 
                   <div className="space-y-2">
                     <Label>CPF</Label>
                     <p className="text-foreground font-medium">
-                      {profile.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}
+                      {profile.cpf ? profile.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : 'Não informado'}
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>WhatsApp</Label>
+                    <Label>Telefone</Label>
                     {editMode ? (
                       <Input
-                        value={formData.phone_whatsapp}
-                        onChange={(e) => setFormData(prev => ({ ...prev, phone_whatsapp: e.target.value }))}
+                        value={formData.phone}
+                        onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                       />
                     ) : (
-                      <p className="text-foreground font-medium">{profile.phone_whatsapp}</p>
+                      <p className="text-foreground font-medium">{profile.phone || 'Não informado'}</p>
                     )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Chave PIX</Label>
-                    {editMode ? (
-                      <Input
-                        value={formData.pix_key}
-                        onChange={(e) => setFormData(prev => ({ ...prev, pix_key: e.target.value }))}
-                        placeholder="Sua chave PIX"
-                      />
-                    ) : (
-                      <p className="text-foreground font-medium">{profile.pix_key || "Não informada"}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Nível de Confiança</Label>
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-accent" />
-                      <span className="font-medium capitalize">{profile.user_level}</span>
-                    </div>
                   </div>
                 </div>
 
@@ -278,55 +248,55 @@ const Profile = () => {
             </Card>
           </TabsContent>
 
-          {/* Products Tab (Meu Lote) */}
-          <TabsContent value="products">
+          {/* Vehicles Tab */}
+          <TabsContent value="vehicles">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>Meu Lote</CardTitle>
-                  <CardDescription>Produtos cadastrados para troca ou venda</CardDescription>
+                  <CardTitle>Meus Veículos</CardTitle>
+                  <CardDescription>Veículos cadastrados para troca ou venda</CardDescription>
                 </div>
                 <Button variant="cta" size="sm" asChild>
                   <Link to="/add-product">
                     <Plus className="h-4 w-4 mr-2" />
-                    Novo Produto
+                    Novo Veículo
                   </Link>
                 </Button>
               </CardHeader>
               <CardContent>
-                {loadingProducts ? (
+                {loadingVehicles ? (
                   <div className="flex justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
-                ) : products.length === 0 ? (
+                ) : vehicles.length === 0 ? (
                   <div className="text-center py-12">
-                    <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-foreground mb-2">Nenhum produto cadastrado</h3>
+                    <Car className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2">Nenhum veículo cadastrado</h3>
                     <p className="text-muted-foreground mb-4">
-                      Comece a adicionar produtos ao seu lote para trocar ou vender.
+                      Comece a adicionar veículos para trocar ou vender.
                     </p>
                     <Button variant="cta" asChild>
                       <Link to="/add-product">
                         <Plus className="h-4 w-4 mr-2" />
-                        Cadastrar Primeiro Produto
+                        Cadastrar Primeiro Veículo
                       </Link>
                     </Button>
                   </div>
                 ) : (
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {products.map((product) => (
+                    {vehicles.map((vehicle) => (
                       <Link 
-                        key={product.id} 
-                        to={`/product/${product.id}`}
+                        key={vehicle.id} 
+                        to={`/veiculos/${vehicle.id}`}
                         className="border border-border rounded-lg p-4 hover:shadow-card transition-shadow"
                       >
-                        <h3 className="font-medium text-foreground mb-1">{product.title}</h3>
-                        <p className="text-sm text-muted-foreground capitalize mb-2">{product.category}</p>
+                        <h3 className="font-medium text-foreground mb-1">{vehicle.title}</h3>
+                        <p className="text-sm text-muted-foreground mb-2">{vehicle.brand} {vehicle.model}</p>
                         <p className="font-bold text-primary">
-                          R$ {product.price_estimate.toLocaleString("pt-BR")}
+                          R$ {vehicle.price.toLocaleString("pt-BR")}
                         </p>
-                        <Badge variant={product.is_for_sale ? "default" : "secondary"} className="mt-2">
-                          {product.is_for_sale ? "Disponível" : "Indisponível"}
+                        <Badge variant={vehicle.is_active ? "default" : "secondary"} className="mt-2">
+                          {vehicle.is_active ? "Disponível" : "Indisponível"}
                         </Badge>
                       </Link>
                     ))}
@@ -338,10 +308,8 @@ const Profile = () => {
 
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
-            {/* KYC Verification Section */}
             <KYCVerificationForm />
 
-            {/* Account Settings */}
             <Card>
               <CardHeader>
                 <CardTitle>Configurações da Conta</CardTitle>

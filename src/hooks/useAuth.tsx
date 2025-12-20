@@ -4,14 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface Profile {
   id: string;
-  name: string;
-  email: string;
-  phone_whatsapp: string;
-  cpf: string;
-  is_verified: boolean;
-  user_level: 'bronze' | 'prata' | 'ouro' | 'diamante';
-  pix_key: string | null;
+  full_name: string | null;
+  phone: string | null;
   avatar_url: string | null;
+  city: string | null;
+  state: string | null;
+  cpf: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 interface AuthContextType {
@@ -20,12 +20,14 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signUp: (email: string, password: string, metadata: {
-    name: string;
-    phone_whatsapp: string;
-    cpf: string;
+    full_name: string;
+    phone?: string;
+    cpf?: string;
   }) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: Error | null }>;
+  updatePassword: (newPassword: string) => Promise<{ error: Error | null }>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -42,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (!error && data) {
       setProfile(data as Profile);
@@ -85,9 +87,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, metadata: {
-    name: string;
-    phone_whatsapp: string;
-    cpf: string;
+    full_name: string;
+    phone?: string;
+    cpf?: string;
   }) => {
     const redirectUrl = `${window.location.origin}/`;
     
@@ -119,6 +121,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setProfile(null);
   };
 
+  const resetPassword = async (email: string) => {
+    const redirectUrl = `${window.location.origin}/auth?mode=reset`;
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl
+    });
+    
+    return { error };
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+    
+    return { error };
+  };
+
   const refreshProfile = async () => {
     if (user) {
       await fetchProfile(user.id);
@@ -134,6 +154,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       signUp,
       signIn,
       signOut,
+      resetPassword,
+      updatePassword,
       refreshProfile
     }}>
       {children}

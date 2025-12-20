@@ -15,6 +15,8 @@ import Dashboard from "./pages/Dashboard";
 import AdminKYC from "./pages/AdminKYC";
 import TabelaFipe from "./pages/TabelaFipe";
 import FAQ from "./pages/FAQ";
+import TermosDeUso from "./pages/TermosDeUso";
+import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ const App = () => (
             <Route path="/admin/kyc" element={<AdminKYC />} />
             <Route path="/tabela-fipe" element={<TabelaFipe />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/termos-de-uso" element={<TermosDeUso />} />
+            <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

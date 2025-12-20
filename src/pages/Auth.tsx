@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 
 const signUpSchema = z.object({
@@ -14,7 +16,10 @@ const signUpSchema = z.object({
   phone: z.string().min(10, "Telefone inválido"),
   cpf: z.string().min(11, "CPF inválido").max(14, "CPF inválido"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
-  confirmPassword: z.string()
+  confirmPassword: z.string(),
+  acceptedTerms: z.literal(true, {
+    errorMap: () => ({ message: "Você deve aceitar os termos para continuar" })
+  })
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Senhas não conferem",
   path: ["confirmPassword"],
@@ -53,6 +58,7 @@ const Auth = () => {
     cpf: "",
     password: "",
     confirmPassword: "",
+    acceptedTerms: false,
   });
 
   const { user, signUp, signIn, resetPassword, updatePassword } = useAuth();
@@ -416,6 +422,35 @@ const Auth = () => {
                   className={errors.confirmPassword ? "border-destructive" : ""}
                 />
                 {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword}</p>}
+              </div>
+            )}
+
+            {mode === 'signup' && (
+              <div className="space-y-2">
+                <div className="flex items-start space-x-3">
+                  <Checkbox
+                    id="acceptedTerms"
+                    checked={formData.acceptedTerms}
+                    onCheckedChange={(checked) => {
+                      setFormData(prev => ({ ...prev, acceptedTerms: checked === true }));
+                      if (errors.acceptedTerms) {
+                        setErrors(prev => ({ ...prev, acceptedTerms: "" }));
+                      }
+                    }}
+                    className={errors.acceptedTerms ? "border-destructive" : ""}
+                  />
+                  <Label htmlFor="acceptedTerms" className="text-sm leading-relaxed cursor-pointer">
+                    Li e concordo com os{" "}
+                    <Link to="/termos-de-uso" target="_blank" className="text-primary hover:underline font-medium">
+                      Termos de Uso
+                    </Link>{" "}
+                    e a{" "}
+                    <Link to="/politica-de-privacidade" target="_blank" className="text-primary hover:underline font-medium">
+                      Política de Privacidade
+                    </Link>
+                  </Label>
+                </div>
+                {errors.acceptedTerms && <p className="text-xs text-destructive">{errors.acceptedTerms}</p>}
               </div>
             )}
 

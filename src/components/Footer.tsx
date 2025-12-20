@@ -40,8 +40,8 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-semibold">Suporte</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link to="/" className="hover:text-secondary transition-colors">Central de Ajuda</Link></li>
-              <li><Link to="/" className="hover:text-secondary transition-colors">Segurança</Link></li>
+              <li><Link to="/faq" className="hover:text-secondary transition-colors">Perguntas Frequentes</Link></li>
+              <li><Link to="/how-it-works" className="hover:text-secondary transition-colors">Como Funciona</Link></li>
               <li><Link to="/" className="hover:text-secondary transition-colors">Termos de Uso</Link></li>
               <li><Link to="/" className="hover:text-secondary transition-colors">Política de Privacidade</Link></li>
             </ul>

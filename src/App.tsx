@@ -36,6 +36,7 @@ const App = () => (
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/como-funciona" element={<HowItWorks />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin/kyc" element={<AdminKYC />} />
             <Route path="/tabela-fipe" element={<TabelaFipe />} />

@@ -1,4 +1,4 @@
-import { Search, User, Menu, X, LogOut, Shield } from "lucide-react";
+import { Search, User, Menu, X, LogOut, Shield, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,10 +37,22 @@ const Header = () => {
 
   const navLinks = [
     { href: "/", label: "Início" },
-    { href: "/veiculos", label: "Veículos" },
+    { href: "/veiculos", label: "Veículos", protected: true },
     { href: "/tabela-fipe", label: "Tabela FIPE" },
-    { href: "/how-it-works", label: "Como Funciona" },
+    { href: "/como-funciona", label: "Como Funciona" },
   ];
+
+  const handleNavClick = (e: React.MouseEvent, link: { href: string; protected?: boolean }) => {
+    if (link.protected && !user) {
+      e.preventDefault();
+      navigate("/auth");
+    }
+  };
+
+  const getInitials = (name: string | null) => {
+    if (!name) return "U";
+    return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -79,6 +92,7 @@ const Header = () => {
             <Link
               key={link.href}
               to={link.href}
+              onClick={(e) => handleNavClick(e, link)}
               className={cn(
                 "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
                 location.pathname === link.href
@@ -109,11 +123,17 @@ const Header = () => {
         <div className="flex items-center gap-2">
           {user ? (
             <>
-              <Button variant="ghost" size="icon" className="hidden md:flex" asChild>
-                <Link to="/profile">
-                  <User className="h-5 w-5" />
-                </Link>
-              </Button>
+              <Link to="/profile" className="hidden md:flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <Avatar className="h-9 w-9 border-2 border-primary/20">
+                  <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "Perfil"} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+                    {getInitials(profile?.full_name)}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium text-foreground hidden lg:block">
+                  {profile?.full_name?.split(" ")[0] || "Meu Perfil"}
+                </span>
+              </Link>
               <Button variant="cta" size="sm" className="hidden sm:flex" asChild>
                 <Link to="/add-product">Anunciar</Link>
               </Button>
@@ -161,7 +181,13 @@ const Header = () => {
                 <Link
                   key={link.href}
                   to={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    if (link.protected && !user) {
+                      e.preventDefault();
+                      navigate("/auth");
+                    }
+                    setMobileMenuOpen(false);
+                  }}
                   className={cn(
                     "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
                     location.pathname === link.href

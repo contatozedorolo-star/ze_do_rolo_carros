@@ -4,25 +4,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, FileCheck, Clock, CheckCircle, XCircle, Camera, CreditCard, Loader2 } from "lucide-react";
 
-interface VerificationRequest {
+interface KYCVerification {
   id: string;
   document_type: string;
+  document_number: string;
   document_front_url: string | null;
   document_back_url: string | null;
   selfie_url: string | null;
-  status: 'pending' | 'submitted' | 'approved' | 'rejected';
-  submitted_at: string | null;
-  reviewer_notes: string | null;
+  status: 'pending' | 'approved' | 'rejected' | 'under_review';
+  rejection_reason: string | null;
+  created_at: string;
 }
 
 const documentTypes = [
-  { value: "rg", label: "RG (Registro Geral)" },
-  { value: "cnh", label: "CNH (Carteira de Motorista)" },
-  { value: "passport", label: "Passaporte" },
+  { value: "cpf", label: "CPF" },
+  { value: "cnpj", label: "CNPJ" },
 ];
 
 const statusInfo = {
@@ -32,7 +33,7 @@ const statusInfo = {
     color: "text-muted-foreground",
     bgColor: "bg-muted",
   },
-  submitted: {
+  under_review: {
     icon: Clock,
     label: "Em Análise",
     color: "text-secondary",
@@ -57,30 +58,30 @@ const KYCVerificationForm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [verificationRequest, setVerificationRequest] = useState<VerificationRequest | null>(null);
+  const [kycVerification, setKycVerification] = useState<KYCVerification | null>(null);
   const [documentType, setDocumentType] = useState("");
+  const [documentNumber, setDocumentNumber] = useState("");
   const [documentFront, setDocumentFront] = useState<File | null>(null);
   const [documentBack, setDocumentBack] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
 
   useEffect(() => {
-    fetchVerificationRequest();
+    fetchKYCVerification();
   }, [user]);
 
-  const fetchVerificationRequest = async () => {
+  const fetchKYCVerification = async () => {
     if (!user) return;
 
     const { data, error } = await supabase
-      .from("verification_requests")
+      .from("kyc_verifications")
       .select("*")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
       .maybeSingle();
 
     if (!error && data) {
-      setVerificationRequest(data as VerificationRequest);
+      setKycVerification(data);
       setDocumentType(data.document_type);
+      setDocumentNumber(data.document_number);
     }
     setLoading(false);
   };
@@ -99,10 +100,10 @@ const KYCVerificationForm = () => {
   };
 
   const handleSubmit = async () => {
-    if (!user || !documentType || !documentFront || !selfie) {
+    if (!user || !documentType || !documentNumber || !documentFront || !selfie) {
       toast({
         title: "Campos obrigatórios",
-        description: "Por favor, selecione o tipo de documento e faça upload dos arquivos necessários.",
+        description: "Por favor, preencha todos os campos e faça upload dos arquivos necessários.",
         variant: "destructive",
       });
       return;
@@ -122,32 +123,32 @@ const KYCVerificationForm = () => {
         throw new Error("Erro ao fazer upload dos arquivos");
       }
 
-      // Create or update verification request
-      if (verificationRequest && verificationRequest.status === 'pending') {
+      // Create or update KYC verification
+      if (kycVerification && kycVerification.status === 'pending') {
         const { error } = await supabase
-          .from("verification_requests")
+          .from("kyc_verifications")
           .update({
             document_type: documentType,
+            document_number: documentNumber,
             document_front_url: frontPath,
             document_back_url: backPath,
             selfie_url: selfiePath,
-            status: 'submitted',
-            submitted_at: new Date().toISOString(),
+            status: 'under_review',
           })
-          .eq("id", verificationRequest.id);
+          .eq("id", kycVerification.id);
 
         if (error) throw error;
-      } else {
+      } else if (!kycVerification) {
         const { error } = await supabase
-          .from("verification_requests")
+          .from("kyc_verifications")
           .insert({
             user_id: user.id,
             document_type: documentType,
+            document_number: documentNumber,
             document_front_url: frontPath,
             document_back_url: backPath,
             selfie_url: selfiePath,
-            status: 'submitted',
-            submitted_at: new Date().toISOString(),
+            status: 'under_review',
           });
 
         if (error) throw error;
@@ -159,7 +160,7 @@ const KYCVerificationForm = () => {
       });
 
       // Refresh data
-      await fetchVerificationRequest();
+      await fetchKYCVerification();
       refreshProfile();
       
       // Clear form
@@ -186,8 +187,8 @@ const KYCVerificationForm = () => {
   }
 
   // Show status card if request exists and is not pending
-  if (verificationRequest && verificationRequest.status !== 'pending') {
-    const status = statusInfo[verificationRequest.status];
+  if (kycVerification && kycVerification.status !== 'pending') {
+    const status = statusInfo[kycVerification.status];
     const StatusIcon = status.icon;
 
     return (
@@ -208,22 +209,22 @@ const KYCVerificationForm = () => {
               <div>
                 <p className={`font-semibold ${status.color}`}>{status.label}</p>
                 <p className="text-sm text-muted-foreground">
-                  {verificationRequest.status === 'submitted' && "Seus documentos estão sendo analisados. Isso pode levar até 24 horas."}
-                  {verificationRequest.status === 'approved' && "Sua identidade foi verificada com sucesso!"}
-                  {verificationRequest.status === 'rejected' && "Sua verificação foi rejeitada. Veja os motivos abaixo."}
+                  {kycVerification.status === 'under_review' && "Seus documentos estão sendo analisados. Isso pode levar até 24 horas."}
+                  {kycVerification.status === 'approved' && "Sua identidade foi verificada com sucesso!"}
+                  {kycVerification.status === 'rejected' && "Sua verificação foi rejeitada. Veja os motivos abaixo."}
                 </p>
               </div>
             </div>
           </div>
 
-          {verificationRequest.status === 'rejected' && verificationRequest.reviewer_notes && (
+          {kycVerification.status === 'rejected' && kycVerification.rejection_reason && (
             <div className="p-4 border border-destructive/20 rounded-lg bg-destructive/5">
               <p className="text-sm font-medium text-destructive mb-1">Motivo da rejeição:</p>
-              <p className="text-sm text-muted-foreground">{verificationRequest.reviewer_notes}</p>
+              <p className="text-sm text-muted-foreground">{kycVerification.rejection_reason}</p>
               <Button 
                 variant="outline" 
                 className="mt-4"
-                onClick={() => setVerificationRequest(null)}
+                onClick={() => setKycVerification(null)}
               >
                 Tentar Novamente
               </Button>
@@ -231,10 +232,9 @@ const KYCVerificationForm = () => {
           )}
 
           <div className="text-sm text-muted-foreground">
-            <p>Documento: {documentTypes.find(d => d.value === verificationRequest.document_type)?.label}</p>
-            {verificationRequest.submitted_at && (
-              <p>Enviado em: {new Date(verificationRequest.submitted_at).toLocaleDateString('pt-BR')}</p>
-            )}
+            <p>Documento: {documentTypes.find(d => d.value === kycVerification.document_type)?.label}</p>
+            <p>Número: {kycVerification.document_number}</p>
+            <p>Enviado em: {new Date(kycVerification.created_at).toLocaleDateString('pt-BR')}</p>
           </div>
         </CardContent>
       </Card>
@@ -268,6 +268,16 @@ const KYCVerificationForm = () => {
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        {/* Document Number */}
+        <div className="space-y-2">
+          <Label>Número do Documento *</Label>
+          <Input
+            placeholder={documentType === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'}
+            value={documentNumber}
+            onChange={(e) => setDocumentNumber(e.target.value)}
+          />
         </div>
 
         {/* Document Front */}
@@ -368,7 +378,7 @@ const KYCVerificationForm = () => {
           variant="cta" 
           className="w-full" 
           onClick={handleSubmit}
-          disabled={uploading || !documentType || !documentFront || !selfie}
+          disabled={uploading || !documentType || !documentNumber || !documentFront || !selfie}
         >
           {uploading ? (
             <>

@@ -18,18 +18,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftRight } from "lucide-react";
 
 interface ProposalDialogProps {
-  productId: string;
-  productTitle: string;
-  productPrice: number;
+  vehicleId: string;
+  vehicleTitle: string;
+  vehiclePrice: number;
   sellerId: string;
   acceptsTrade: boolean;
   trigger: React.ReactNode;
 }
 
 const ProposalDialog = ({
-  productId,
-  productTitle,
-  productPrice,
+  vehicleId,
+  vehicleTitle,
+  vehiclePrice,
   sellerId,
   acceptsTrade,
   trigger,
@@ -40,10 +40,10 @@ const ProposalDialog = ({
   
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [cashAmount, setCashAmount] = useState("");
+  const [offerAmount, setOfferAmount] = useState("");
   const [message, setMessage] = useState("");
   const [includeTrade, setIncludeTrade] = useState(false);
-  const [tradeItems, setTradeItems] = useState("");
+  const [tradePlusAmount, setTradePlusAmount] = useState("");
 
   const handleSubmit = async () => {
     if (!user) {
@@ -59,17 +59,17 @@ const ProposalDialog = ({
     if (user.id === sellerId) {
       toast({
         title: "Ação inválida",
-        description: "Você não pode fazer proposta no seu próprio produto",
+        description: "Você não pode fazer proposta no seu próprio veículo",
         variant: "destructive",
       });
       return;
     }
 
-    const amount = parseFloat(cashAmount) || 0;
+    const amount = parseFloat(offerAmount) || 0;
     if (amount <= 0 && !includeTrade) {
       toast({
         title: "Valor inválido",
-        description: "Informe um valor ou inclua itens para troca",
+        description: "Informe um valor ou inclua um veículo para troca",
         variant: "destructive",
       });
       return;
@@ -78,13 +78,12 @@ const ProposalDialog = ({
     setLoading(true);
 
     const { error } = await supabase.from("proposals").insert({
-      product_id: productId,
+      vehicle_id: vehicleId,
       proposer_id: user.id,
       seller_id: sellerId,
-      cash_amount: amount,
+      offer_amount: amount || null,
       message: message || null,
-      include_trade: includeTrade,
-      trade_items: includeTrade ? tradeItems : null,
+      trade_plus_amount: includeTrade ? (parseFloat(tradePlusAmount) || 0) : null,
     });
 
     setLoading(false);
@@ -104,10 +103,10 @@ const ProposalDialog = ({
     });
 
     setOpen(false);
-    setCashAmount("");
+    setOfferAmount("");
     setMessage("");
     setIncludeTrade(false);
-    setTradeItems("");
+    setTradePlusAmount("");
   };
 
   return (
@@ -119,24 +118,24 @@ const ProposalDialog = ({
         </DialogHeader>
         
         <div className="space-y-4 pt-4">
-          {/* Product Info */}
+          {/* Vehicle Info */}
           <div className="p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground">Produto:</p>
-            <p className="font-semibold text-foreground line-clamp-1">{productTitle}</p>
+            <p className="text-sm text-muted-foreground">Veículo:</p>
+            <p className="font-semibold text-foreground line-clamp-1">{vehicleTitle}</p>
             <p className="text-lg font-bold text-primary">
-              R$ {productPrice.toLocaleString("pt-BR")}
+              R$ {vehiclePrice.toLocaleString("pt-BR")}
             </p>
           </div>
 
-          {/* Cash Amount */}
+          {/* Offer Amount */}
           <div className="space-y-2">
-            <Label htmlFor="cashAmount">Valor em dinheiro (R$)</Label>
+            <Label htmlFor="offerAmount">Valor da proposta (R$)</Label>
             <Input
-              id="cashAmount"
+              id="offerAmount"
               type="number"
               placeholder="0,00"
-              value={cashAmount}
-              onChange={(e) => setCashAmount(e.target.value)}
+              value={offerAmount}
+              onChange={(e) => setOfferAmount(e.target.value)}
             />
           </div>
 
@@ -147,7 +146,7 @@ const ProposalDialog = ({
                 <div className="flex items-center gap-2">
                   <ArrowLeftRight className="h-4 w-4 text-secondary" />
                   <span className="text-sm font-medium text-foreground">
-                    Incluir itens para troca
+                    Incluir veículo para troca
                   </span>
                 </div>
                 <Switch checked={includeTrade} onCheckedChange={setIncludeTrade} />
@@ -155,16 +154,16 @@ const ProposalDialog = ({
 
               {includeTrade && (
                 <div className="space-y-2">
-                  <Label htmlFor="tradeItems">Descreva os itens que você oferece</Label>
-                  <Textarea
-                    id="tradeItems"
-                    placeholder="Ex: iPhone 13 Pro em perfeito estado, com caixa e carregador..."
-                    value={tradeItems}
-                    onChange={(e) => setTradeItems(e.target.value)}
-                    rows={3}
+                  <Label htmlFor="tradePlusAmount">Valor adicional em dinheiro (R$)</Label>
+                  <Input
+                    id="tradePlusAmount"
+                    type="number"
+                    placeholder="0,00"
+                    value={tradePlusAmount}
+                    onChange={(e) => setTradePlusAmount(e.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Dica: <Link to="/profile" className="text-primary hover:underline">Cadastre seus itens</Link> no seu Lote para facilitar futuras negociações.
+                    Dica: <Link to="/add-product" className="text-primary hover:underline">Cadastre seu veículo</Link> para facilitar futuras negociações.
                   </p>
                 </div>
               )}

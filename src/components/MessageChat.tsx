@@ -13,7 +13,6 @@ interface Message {
   id: string;
   proposal_id: string;
   sender_id: string;
-  receiver_id: string;
   content: string;
   is_read: boolean;
   created_at: string;
@@ -60,7 +59,7 @@ const MessageChat = ({ proposalId, otherUserId, otherUserName }: MessageChatProp
         .from("messages")
         .update({ is_read: true })
         .eq("proposal_id", proposalId)
-        .eq("receiver_id", user.id)
+        .neq("sender_id", user.id)
         .eq("is_read", false);
     };
     markAsRead();
@@ -80,8 +79,8 @@ const MessageChat = ({ proposalId, otherUserId, otherUserName }: MessageChatProp
           const newMsg = payload.new as Message;
           setMessages((prev) => [...prev, newMsg]);
           
-          // Mark as read if we're the receiver
-          if (newMsg.receiver_id === user.id) {
+          // Mark as read if we're not the sender
+          if (newMsg.sender_id !== user.id) {
             supabase
               .from("messages")
               .update({ is_read: true })
@@ -110,7 +109,6 @@ const MessageChat = ({ proposalId, otherUserId, otherUserName }: MessageChatProp
     const { error } = await supabase.from("messages").insert({
       proposal_id: proposalId,
       sender_id: user.id,
-      receiver_id: otherUserId,
       content: newMessage.trim(),
     });
 

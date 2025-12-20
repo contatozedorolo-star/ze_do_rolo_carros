@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { 
-  Package, 
+  Car, 
   Plus, 
   MessageSquare, 
   TrendingUp, 
@@ -23,10 +23,11 @@ const Dashboard = () => {
   const navigate = useNavigate();
   
   const [stats, setStats] = useState({
-    products: 0,
+    vehicles: 0,
     receivedProposals: 0,
     sentProposals: 0,
   });
+  const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -38,17 +39,20 @@ const Dashboard = () => {
     const fetchStats = async () => {
       if (!user) return;
 
-      const [productsRes, receivedRes, sentRes] = await Promise.all([
-        supabase.from("products").select("id", { count: "exact" }).eq("user_id", user.id),
+      const [vehiclesRes, receivedRes, sentRes, kycRes] = await Promise.all([
+        supabase.from("vehicles").select("id", { count: "exact" }).eq("user_id", user.id),
         supabase.from("proposals").select("id", { count: "exact" }).eq("seller_id", user.id).eq("status", "pending"),
         supabase.from("proposals").select("id", { count: "exact" }).eq("proposer_id", user.id),
+        supabase.from("kyc_verifications").select("status").eq("user_id", user.id).eq("status", "approved").maybeSingle(),
       ]);
 
       setStats({
-        products: productsRes.count || 0,
+        vehicles: vehiclesRes.count || 0,
         receivedProposals: receivedRes.count || 0,
         sentProposals: sentRes.count || 0,
       });
+      
+      setIsVerified(!!kycRes.data);
     };
 
     fetchStats();
@@ -69,16 +73,16 @@ const Dashboard = () => {
   const quickActions = [
     {
       icon: Plus,
-      title: "Anunciar Produto",
-      description: "Cadastre um novo item para venda ou troca",
+      title: "Anunciar Veículo",
+      description: "Cadastre um novo veículo para venda ou troca",
       href: "/add-product",
       color: "text-secondary",
       bgColor: "bg-secondary/10",
     },
     {
-      icon: Package,
-      title: "Meu Lote",
-      description: "Gerencie seus produtos cadastrados",
+      icon: Car,
+      title: "Meus Veículos",
+      description: "Gerencie seus veículos cadastrados",
       href: "/profile",
       color: "text-primary",
       bgColor: "bg-primary/10",
@@ -94,7 +98,7 @@ const Dashboard = () => {
     {
       icon: Eye,
       title: "Explorar",
-      description: "Descubra produtos disponíveis",
+      description: "Descubra veículos disponíveis",
       href: "/veiculos",
       color: "text-muted-foreground",
       bgColor: "bg-muted",
@@ -102,7 +106,7 @@ const Dashboard = () => {
   ];
 
   const statsCards = [
-    { label: "Produtos Cadastrados", value: stats.products.toString(), icon: Package },
+    { label: "Veículos Cadastrados", value: stats.vehicles.toString(), icon: Car },
     { label: "Propostas Pendentes", value: stats.receivedProposals.toString(), icon: MessageSquare },
     { label: "Propostas Enviadas", value: stats.sentProposals.toString(), icon: TrendingUp },
   ];
@@ -116,9 +120,9 @@ const Dashboard = () => {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-              Olá, {profile?.name?.split(' ')[0] || 'Usuário'}!
+              Olá, {profile?.full_name?.split(' ')[0] || 'Usuário'}!
             </h1>
-            {profile?.is_verified ? (
+            {isVerified ? (
               <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-accent/10 border border-accent/30">
                 <Shield className="h-3 w-3 text-accent" />
                 <span className="text-xs font-medium text-accent">Verificado</span>
@@ -131,7 +135,7 @@ const Dashboard = () => {
             )}
           </div>
           <p className="text-muted-foreground">
-            Bem-vindo ao seu painel. Gerencie seus produtos e negociações.
+            Bem-vindo ao seu painel. Gerencie seus veículos e negociações.
           </p>
         </div>
 
@@ -142,6 +146,14 @@ const Dashboard = () => {
               <CardContent className="flex items-center gap-4 p-6">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                   <stat.icon className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Proposals Section */}
@@ -156,14 +168,6 @@ const Dashboard = () => {
             <ProposalsList />
           </CardContent>
         </Card>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
 
         {/* Quick Actions */}
         <div className="mb-8">
@@ -186,7 +190,7 @@ const Dashboard = () => {
         </div>
 
         {/* Verification CTA */}
-        {!profile?.is_verified && (
+        {!isVerified && (
           <Card className="bg-gradient-to-r from-secondary/10 to-accent/10 border-secondary/30">
             <CardContent className="flex flex-col md:flex-row items-center justify-between gap-4 p-6">
               <div className="flex items-center gap-4">

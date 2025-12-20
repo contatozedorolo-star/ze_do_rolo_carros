@@ -1,22 +1,8 @@
-import { Shield, ArrowRight, CheckCircle, Search, Car } from "lucide-react";
+import { Shield, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/veiculos?q=${encodeURIComponent(searchQuery.trim())}`);
-    } else {
-      navigate("/veiculos");
-    }
-  };
-
   return (
     <section className="relative overflow-hidden gradient-hero">
       {/* Background Pattern */}
@@ -46,26 +32,6 @@ const HeroSection = () => {
             Intermediação ativa para carros e caminhões. Nós verificamos a procedência para você{" "}
             <strong className="text-accent">negociar sem medo</strong>.
           </p>
-
-          {/* Vehicle Search Bar */}
-          <form onSubmit={handleSearch} className="animate-fade-in" style={{ animationDelay: "0.25s" }}>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto bg-card/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-              <div className="relative flex-1">
-                <Car className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Marca, Modelo ou Ano..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-12 bg-card border-transparent text-foreground placeholder:text-muted-foreground focus:border-primary"
-                />
-              </div>
-              <Button type="submit" variant="cta" size="lg" className="h-12 px-8">
-                <Search className="h-5 w-5 mr-2" />
-                Buscar
-              </Button>
-            </div>
-          </form>
 
           {/* Trust Points */}
           <div className="flex flex-wrap justify-center gap-4 text-sm text-primary-foreground/70 animate-fade-in" style={{ animationDelay: "0.3s" }}>

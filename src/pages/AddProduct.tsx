@@ -12,45 +12,23 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  ChevronRight, 
-  ChevronLeft,
-  Camera,
-  Car,
-  Truck,
-  Bike,
-  Bus,
-  CarFront,
-  X,
-  Check
-} from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, Camera, Car, Truck, Bike, Bus, CarFront } from "lucide-react";
+import { brands, colorOptions, transmissionTypes, fuelTypes, carBodyTypes, motoStyles, truckTypes, vanSubcategories } from "@/components/filters/FilterData";
 
 const vehicleTypes = [
-  { value: "carro", label: "Carro", icon: <Car className="h-6 w-6" /> },
-  { value: "caminhao", label: "Caminhão", icon: <Truck className="h-6 w-6" /> },
-  { value: "moto", label: "Moto", icon: <Bike className="h-6 w-6" /> },
-  { value: "camionete", label: "Camionete", icon: <CarFront className="h-6 w-6" /> },
-  { value: "van", label: "Van", icon: <Bus className="h-6 w-6" /> },
+  { value: "carro", label: "Carro", icon: Car },
+  { value: "moto", label: "Moto", icon: Bike },
+  { value: "caminhao", label: "Caminhão", icon: Truck },
+  { value: "van", label: "Van", icon: Bus },
+  { value: "camionete", label: "Camionete", icon: CarFront },
 ];
 
-const transmissionTypes = [
-  { value: "manual", label: "Manual" },
-  { value: "automatico", label: "Automático" },
-  { value: "cvt", label: "CVT" },
-  { value: "semi-automatico", label: "Semi-Automático" },
+const steps = [
+  { id: 1, title: "Dados do Veículo" },
+  { id: 2, title: "Diagnóstico" },
+  { id: 3, title: "Negócio Ideal" },
+  { id: 4, title: "Fotos" },
 ];
-
-const fuelTypes = [
-  { value: "flex", label: "Flex" },
-  { value: "gasolina", label: "Gasolina" },
-  { value: "etanol", label: "Etanol" },
-  { value: "diesel", label: "Diesel" },
-  { value: "eletrico", label: "Elétrico" },
-  { value: "hibrido", label: "Híbrido" },
-  { value: "gnv", label: "GNV" },
-];
-
-const colorOptions = ["Branco", "Preto", "Prata", "Cinza", "Vermelho", "Azul", "Verde", "Amarelo", "Marrom", "Bege", "Outro"];
 
 const requiredPhotos = [
   { id: "frente", label: "Frente" },
@@ -58,7 +36,19 @@ const requiredPhotos = [
   { id: "lateral_esquerda", label: "Lateral Esquerda" },
   { id: "lateral_direita", label: "Lateral Direita" },
   { id: "interior", label: "Interior" },
-  { id: "painel", label: "Painel/Hodômetro" },
+  { id: "painel", label: "Painel" },
+];
+
+const diagnosticItems = [
+  { key: "rating_motor", label: "Motor" },
+  { key: "rating_cambio", label: "Câmbio" },
+  { key: "rating_freios", label: "Freios" },
+  { key: "rating_estetica", label: "Estética" },
+  { key: "rating_suspensao", label: "Suspensão" },
+  { key: "rating_pneus", label: "Pneus" },
+  { key: "rating_documentacao", label: "Documentação" },
+  { key: "rating_mecanica_geral", label: "Mecânica Geral" },
+  { key: "rating_eletrica", label: "Elétrica" },
 ];
 
 const AddProduct = () => {
@@ -70,481 +60,228 @@ const AddProduct = () => {
   const [images, setImages] = useState<{ [key: string]: File | null }>({});
   const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({});
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Record<string, any>>({
     vehicle_type: "carro",
-    title: "",
-    description: "",
-    brand: "",
-    model: "",
-    version: "",
-    year_manufacture: "",
-    year_model: "",
-    plate: "",
-    km: "",
-    color: "",
-    transmission: "manual",
-    fuel: "flex",
-    doors: "",
-    engine: "",
-    optionals: "",
-    price: "",
-    accepts_trade: true,
-    trade_description: "",
-    city: "",
-    state: "",
-    rating_motor: 3,
-    rating_lataria: 3,
-    rating_pneus: 3,
-    rating_interior: 3,
-    rating_documentacao: 3,
-    diagnostic_notes: "",
+    brand: "", model: "", version: "", year_manufacture: "", year_model: "",
+    plate: "", km: "", color: "", transmission: "manual", fuel: "flex",
+    doors: "", engine: "", price: "", city: "", state: "",
+    accepts_trade: true, trade_description: "", description: "",
+    // Diagnósticos (0-10)
+    rating_motor: 5, rating_cambio: 5, rating_freios: 5, rating_estetica: 5,
+    rating_suspensao: 5, rating_pneus: 5, rating_documentacao: 5,
+    rating_mecanica_geral: 5, rating_eletrica: 5, diagnostic_notes: "",
+    // Negócio ideal
+    ideal_trade_description: "", trade_value_accepted: "", min_cash_return: "", ownership_time: "",
+    // Procedência
+    is_auction: false, is_single_owner: false, ipva_paid: false, has_service_history: false,
+    // Específicos
+    body_type: "", moto_style: "", truck_type: "", van_subcategory: "", cylinders: "",
   });
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
+    if (!loading && !user) navigate("/auth");
   }, [user, loading, navigate]);
 
   const handleImageUpload = (photoId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setImages(prev => ({ ...prev, [photoId]: file }));
-    
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreviews(prev => ({ ...prev, [photoId]: reader.result as string }));
-    };
+    reader.onloadend = () => setImagePreviews(prev => ({ ...prev, [photoId]: reader.result as string }));
     reader.readAsDataURL(file);
   };
 
   const handleSubmit = async () => {
     if (!user) return;
-
     const missingPhotos = requiredPhotos.filter(p => !images[p.id]);
     if (missingPhotos.length > 0) {
-      toast({
-        title: "Fotos obrigatórias",
-        description: `Adicione as fotos: ${missingPhotos.map(p => p.label).join(", ")}`,
-        variant: "destructive",
-      });
+      toast({ title: "Fotos obrigatórias", description: `Adicione: ${missingPhotos.map(p => p.label).join(", ")}`, variant: "destructive" });
       return;
     }
-
     if (!formData.brand || !formData.model || !formData.year_manufacture || !formData.price) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Preencha marca, modelo, ano e preço",
-        variant: "destructive",
-      });
+      toast({ title: "Campos obrigatórios", description: "Preencha marca, modelo, ano e preço", variant: "destructive" });
       return;
     }
 
     setSubmitting(true);
-
     try {
       const vehicleData = {
         user_id: user.id,
-        vehicle_type: formData.vehicle_type as "carro" | "caminhao" | "moto" | "camionete" | "van",
-        title: formData.title || `${formData.brand} ${formData.model} ${formData.year_model || formData.year_manufacture}`,
-        description: formData.description || null,
-        brand: formData.brand,
-        model: formData.model,
-        version: formData.version || null,
+        vehicle_type: formData.vehicle_type,
+        title: `${formData.brand} ${formData.model} ${formData.year_model || formData.year_manufacture}`,
+        brand: formData.brand, model: formData.model, version: formData.version || null,
         year_manufacture: parseInt(formData.year_manufacture),
         year_model: parseInt(formData.year_model || formData.year_manufacture),
-        plate: formData.plate || null,
-        plate_end: formData.plate ? formData.plate.slice(-1) : null,
-        km: parseInt(formData.km) || 0,
-        color: formData.color,
-        transmission: formData.transmission as "manual" | "automatico" | "cvt" | "semi-automatico",
-        fuel: formData.fuel as "gasolina" | "etanol" | "flex" | "diesel" | "eletrico" | "hibrido" | "gnv",
+        plate: formData.plate || null, plate_end: formData.plate?.slice(-1) || null,
+        km: parseInt(formData.km) || 0, color: formData.color,
+        transmission: formData.transmission, fuel: formData.fuel,
         doors: formData.doors ? parseInt(formData.doors) : null,
-        engine: formData.engine || null,
-        price: parseFloat(formData.price),
-        accepts_trade: formData.accepts_trade,
-        trade_description: formData.trade_description || null,
-        city: formData.city || null,
-        state: formData.state || null,
-        rating_motor: formData.rating_motor,
-        rating_lataria: formData.rating_lataria,
-        rating_pneus: formData.rating_pneus,
-        rating_interior: formData.rating_interior,
-        rating_documentacao: formData.rating_documentacao,
-        diagnostic_notes: formData.diagnostic_notes || null,
-        optionals: formData.optionals ? formData.optionals.split(',').map(o => o.trim()) : null,
+        price: parseFloat(formData.price), accepts_trade: formData.accepts_trade,
+        city: formData.city || null, state: formData.state || null,
+        description: formData.description || null, diagnostic_notes: formData.diagnostic_notes || null,
+        // Diagnósticos
+        rating_motor: formData.rating_motor, rating_cambio: formData.rating_cambio,
+        rating_freios: formData.rating_freios, rating_estetica: formData.rating_estetica,
+        rating_suspensao: formData.rating_suspensao, rating_pneus: formData.rating_pneus,
+        rating_documentacao: formData.rating_documentacao, rating_mecanica_geral: formData.rating_mecanica_geral,
+        rating_eletrica: formData.rating_eletrica,
+        // Negócio
+        ideal_trade_description: formData.ideal_trade_description || null,
+        trade_value_accepted: formData.trade_value_accepted ? parseFloat(formData.trade_value_accepted) : null,
+        min_cash_return: formData.min_cash_return ? parseFloat(formData.min_cash_return) : null,
+        ownership_time: formData.ownership_time || null,
+        // Procedência
+        is_auction: formData.is_auction, is_single_owner: formData.is_single_owner,
+        ipva_paid: formData.ipva_paid, has_service_history: formData.has_service_history,
+        // Específicos
+        body_type: formData.body_type || null, moto_style: formData.moto_style || null,
+        truck_type: formData.truck_type || null, van_subcategory: formData.van_subcategory || null,
+        cylinders: formData.cylinders ? parseInt(formData.cylinders) : null,
       };
 
-      const { data: vehicle, error: vehicleError } = await supabase
-        .from("vehicles")
-        .insert(vehicleData)
-        .select()
-        .single();
-
+      const { data: vehicle, error: vehicleError } = await supabase.from("vehicles").insert(vehicleData).select().single();
       if (vehicleError) throw vehicleError;
 
-      // Upload images (note: storage bucket needs to be created)
       for (const photo of requiredPhotos) {
         const file = images[photo.id];
         if (!file) continue;
-
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${user.id}/${vehicle.id}/${photo.id}.${fileExt}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("vehicle-images")
-          .upload(fileName, file);
-
+        const fileName = `${user.id}/${vehicle.id}/${photo.id}.${file.name.split('.').pop()}`;
+        const { error: uploadError } = await supabase.storage.from("vehicle-images").upload(fileName, file);
         if (!uploadError) {
-          const { data: { publicUrl } } = supabase.storage
-            .from("vehicle-images")
-            .getPublicUrl(fileName);
-
-          await supabase.from("vehicle_images").insert({
-            vehicle_id: vehicle.id,
-            image_url: publicUrl,
-            image_type: photo.id,
-            is_primary: photo.id === "frente",
-          });
+          const { data: { publicUrl } } = supabase.storage.from("vehicle-images").getPublicUrl(fileName);
+          await supabase.from("vehicle_images").insert({ vehicle_id: vehicle.id, image_url: publicUrl, image_type: photo.id, is_primary: photo.id === "frente" });
         }
       }
 
-      toast({
-        title: "Veículo cadastrado!",
-        description: "Seu veículo foi adicionado com sucesso.",
-      });
-
+      toast({ title: "Veículo cadastrado!", description: "Seu veículo foi adicionado com sucesso." });
       navigate("/dashboard");
     } catch (error: any) {
-      console.error("Error:", error);
-      toast({
-        title: "Erro ao cadastrar",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
     } finally {
       setSubmitting(false);
     }
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-xl font-bold text-foreground mb-2">Tipo de Veículo</h2>
-              <p className="text-muted-foreground">Selecione o tipo do seu veículo</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {vehicleTypes.map((type) => (
-                <button
-                  key={type.value}
-                  onClick={() => setFormData(prev => ({ ...prev, vehicle_type: type.value }))}
-                  className={`p-6 rounded-xl border-2 transition-all ${
-                    formData.vehicle_type === type.value
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  }`}
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <div className={formData.vehicle_type === type.value ? "text-primary" : "text-muted-foreground"}>
-                      {type.icon}
-                    </div>
-                    <span className="font-medium text-foreground">{type.label}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        );
+  const currentBrands = brands[formData.vehicle_type as keyof typeof brands] || brands.carro;
 
-      case 2:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-xl font-bold text-foreground mb-2">Dados do Veículo</h2>
-              <p className="text-muted-foreground">Informe os dados técnicos</p>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>Marca *</Label>
-                  <Input
-                    placeholder="Ex: Toyota, Honda"
-                    value={formData.brand}
-                    onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Modelo *</Label>
-                  <Input
-                    placeholder="Ex: Corolla, Civic"
-                    value={formData.model}
-                    onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <Label>Ano Fabricação *</Label>
-                  <Input
-                    type="number"
-                    placeholder="2023"
-                    value={formData.year_manufacture}
-                    onChange={(e) => setFormData(prev => ({ ...prev, year_manufacture: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Ano Modelo</Label>
-                  <Input
-                    type="number"
-                    placeholder="2024"
-                    value={formData.year_model}
-                    onChange={(e) => setFormData(prev => ({ ...prev, year_model: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Quilometragem</Label>
-                  <Input
-                    type="number"
-                    placeholder="45000"
-                    value={formData.km}
-                    onChange={(e) => setFormData(prev => ({ ...prev, km: e.target.value }))}
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <Label>Cor</Label>
-                  <Select value={formData.color} onValueChange={(v) => setFormData(prev => ({ ...prev, color: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      {colorOptions.map((color) => (
-                        <SelectItem key={color} value={color}>{color}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Câmbio</Label>
-                  <Select value={formData.transmission} onValueChange={(v) => setFormData(prev => ({ ...prev, transmission: v }))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {transmissionTypes.map((t) => (
-                        <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Combustível</Label>
-                  <Select value={formData.fuel} onValueChange={(v) => setFormData(prev => ({ ...prev, fuel: v }))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {fuelTypes.map((f) => (
-                        <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>Cidade</Label>
-                  <Input
-                    placeholder="São Paulo"
-                    value={formData.city}
-                    onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Estado</Label>
-                  <Input
-                    placeholder="SP"
-                    maxLength={2}
-                    value={formData.state}
-                    onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value.toUpperCase() }))}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Preço *</Label>
-                <Input
-                  type="number"
-                  placeholder="85000"
-                  value={formData.price}
-                  onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <Label>Aceita Troca</Label>
-                  <p className="text-sm text-muted-foreground">Aceita outro veículo como parte do pagamento</p>
-                </div>
-                <Switch
-                  checked={formData.accepts_trade}
-                  onCheckedChange={(v) => setFormData(prev => ({ ...prev, accepts_trade: v }))}
-                />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-xl font-bold text-foreground mb-2">Diagnóstico</h2>
-              <p className="text-muted-foreground">Avalie a condição do veículo</p>
-            </div>
-
-            <div className="space-y-6">
-              {[
-                { key: "rating_motor", label: "Motor" },
-                { key: "rating_lataria", label: "Lataria/Pintura" },
-                { key: "rating_pneus", label: "Pneus" },
-                { key: "rating_interior", label: "Interior" },
-                { key: "rating_documentacao", label: "Documentação" },
-              ].map(({ key, label }) => (
-                <div key={key} className="space-y-3">
-                  <Label>{label}: {formData[key as keyof typeof formData]}/5</Label>
-                  <Slider
-                    value={[formData[key as keyof typeof formData] as number]}
-                    onValueChange={(v) => setFormData(prev => ({ ...prev, [key]: v[0] }))}
-                    max={5}
-                    min={1}
-                    step={1}
-                  />
-                </div>
-              ))}
-
-              <div className="space-y-2">
-                <Label>Observações do Diagnóstico</Label>
-                <Textarea
-                  placeholder="Detalhes sobre a condição do veículo..."
-                  value={formData.diagnostic_notes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, diagnostic_notes: e.target.value }))}
-                />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 4:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-xl font-bold text-foreground mb-2">Fotos do Veículo</h2>
-              <p className="text-muted-foreground">Adicione fotos obrigatórias</p>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              {requiredPhotos.map((photo) => (
-                <div key={photo.id} className="space-y-2">
-                  <Label>{photo.label} *</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors aspect-video relative">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      id={`photo-${photo.id}`}
-                      onChange={(e) => handleImageUpload(photo.id, e)}
-                    />
-                    <label htmlFor={`photo-${photo.id}`} className="cursor-pointer absolute inset-0 flex items-center justify-center">
-                      {imagePreviews[photo.id] ? (
-                        <img src={imagePreviews[photo.id]} alt={photo.label} className="w-full h-full object-cover rounded-lg" />
-                      ) : (
-                        <div className="flex flex-col items-center gap-2">
-                          <Camera className="h-8 w-8 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">{photo.label}</span>
-                        </div>
-                      )}
-                    </label>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background">
       <Header />
-      
-      <main className="flex-1 container py-8 max-w-3xl">
-        {/* Progress */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            {[1, 2, 3, 4].map((s) => (
-              <div
-                key={s}
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  s === step
-                    ? "bg-primary text-primary-foreground"
-                    : s < step
-                    ? "bg-accent text-accent-foreground"
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {s < step ? <Check className="h-4 w-4" /> : s}
+      <main className="container py-8 max-w-4xl">
+        {/* Stepper */}
+        <div className="flex items-center justify-between mb-8">
+          {steps.map((s, i) => (
+            <div key={s.id} className="flex items-center">
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm ${step >= s.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                {step > s.id ? <Check className="h-5 w-5" /> : s.id}
               </div>
-            ))}
-          </div>
-          <div className="h-2 bg-muted rounded-full">
-            <div
-              className="h-full bg-primary rounded-full transition-all"
-              style={{ width: `${((step - 1) / 3) * 100}%` }}
-            />
-          </div>
+              <span className={`ml-2 hidden sm:block text-sm font-medium ${step >= s.id ? "text-foreground" : "text-muted-foreground"}`}>{s.title}</span>
+              {i < steps.length - 1 && <div className={`w-8 sm:w-16 h-0.5 mx-2 ${step > s.id ? "bg-primary" : "bg-border"}`} />}
+            </div>
+          ))}
         </div>
 
-        {renderStep()}
-
-        {/* Navigation */}
-        <div className="flex justify-between mt-8">
-          <Button
-            variant="outline"
-            onClick={() => setStep(s => s - 1)}
-            disabled={step === 1}
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Anterior
-          </Button>
-
-          {step < 4 ? (
-            <Button onClick={() => setStep(s => s + 1)}>
-              Próximo
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
-          ) : (
-            <Button variant="cta" onClick={handleSubmit} disabled={submitting}>
-              {submitting ? "Cadastrando..." : "Cadastrar Veículo"}
-            </Button>
+        <div className="bg-card rounded-xl border p-6">
+          {/* Step 1 - Dados */}
+          {step === 1 && (
+            <div className="space-y-6">
+              <h2 className="text-xl font-bold">Dados do Veículo</h2>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {vehicleTypes.map((t) => {
+                  const Icon = t.icon;
+                  return (
+                    <button key={t.value} onClick={() => setFormData(p => ({ ...p, vehicle_type: t.value, brand: "" }))}
+                      className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 ${formData.vehicle_type === t.value ? "border-primary bg-primary/5" : "border-border"}`}>
+                      <Icon className={`h-6 w-6 ${formData.vehicle_type === t.value ? "text-primary" : "text-muted-foreground"}`} />
+                      <span className="text-sm font-medium">{t.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div><Label>Marca *</Label><Select value={formData.brand} onValueChange={v => setFormData(p => ({ ...p, brand: v }))}><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger><SelectContent>{currentBrands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent></Select></div>
+                <div><Label>Modelo *</Label><Input value={formData.model} onChange={e => setFormData(p => ({ ...p, model: e.target.value }))} /></div>
+                <div><Label>Ano Fabricação *</Label><Input type="number" value={formData.year_manufacture} onChange={e => setFormData(p => ({ ...p, year_manufacture: e.target.value }))} /></div>
+                <div><Label>Ano Modelo</Label><Input type="number" value={formData.year_model} onChange={e => setFormData(p => ({ ...p, year_model: e.target.value }))} /></div>
+                <div><Label>Quilometragem</Label><Input type="number" value={formData.km} onChange={e => setFormData(p => ({ ...p, km: e.target.value }))} /></div>
+                <div><Label>Preço *</Label><Input type="number" value={formData.price} onChange={e => setFormData(p => ({ ...p, price: e.target.value }))} /></div>
+                <div><Label>Cor</Label><Select value={formData.color} onValueChange={v => setFormData(p => ({ ...p, color: v }))}><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger><SelectContent>{colorOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select></div>
+                <div><Label>Câmbio</Label><Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select></div>
+                <div><Label>Combustível</Label><Select value={formData.fuel} onValueChange={v => setFormData(p => ({ ...p, fuel: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{fuelTypes.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent></Select></div>
+                <div><Label>Cidade</Label><Input value={formData.city} onChange={e => setFormData(p => ({ ...p, city: e.target.value }))} /></div>
+                <div><Label>Estado</Label><Input maxLength={2} value={formData.state} onChange={e => setFormData(p => ({ ...p, state: e.target.value.toUpperCase() }))} /></div>
+              </div>
+              <div className="flex items-center justify-between p-4 border rounded-lg"><div><Label>Aceita Troca</Label><p className="text-sm text-muted-foreground">Aceita outro veículo como parte do pagamento</p></div><Switch checked={formData.accepts_trade} onCheckedChange={v => setFormData(p => ({ ...p, accepts_trade: v }))} /></div>
+            </div>
           )}
+
+          {/* Step 2 - Diagnóstico */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <h2 className="text-xl font-bold">Diagnóstico do Veículo</h2>
+              <p className="text-muted-foreground">Avalie cada item de 0 a 10</p>
+              <div className="grid gap-6 md:grid-cols-2">
+                {diagnosticItems.map(({ key, label }) => (
+                  <div key={key} className="space-y-2">
+                    <div className="flex justify-between"><Label>{label}</Label><span className="font-bold text-primary">{formData[key]}/10</span></div>
+                    <Slider value={[formData[key]]} onValueChange={v => setFormData(p => ({ ...p, [key]: v[0] }))} max={10} min={0} step={1} />
+                  </div>
+                ))}
+              </div>
+              <div><Label>Observações</Label><Textarea value={formData.diagnostic_notes} onChange={e => setFormData(p => ({ ...p, diagnostic_notes: e.target.value }))} placeholder="Detalhes sobre a condição do veículo..." /></div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="flex items-center gap-3 p-3 border rounded-lg"><Switch checked={formData.is_single_owner} onCheckedChange={v => setFormData(p => ({ ...p, is_single_owner: v }))} /><Label>Único Dono</Label></div>
+                <div className="flex items-center gap-3 p-3 border rounded-lg"><Switch checked={formData.ipva_paid} onCheckedChange={v => setFormData(p => ({ ...p, ipva_paid: v }))} /><Label>IPVA Pago</Label></div>
+                <div className="flex items-center gap-3 p-3 border rounded-lg"><Switch checked={formData.has_service_history} onCheckedChange={v => setFormData(p => ({ ...p, has_service_history: v }))} /><Label>Revisões em Dia</Label></div>
+                <div className="flex items-center gap-3 p-3 border rounded-lg"><Switch checked={formData.is_auction} onCheckedChange={v => setFormData(p => ({ ...p, is_auction: v }))} /><Label>Veículo de Leilão</Label></div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3 - Negócio Ideal */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <h2 className="text-xl font-bold">O Negócio Ideal</h2>
+              <p className="text-muted-foreground">Descreva como seria o negócio perfeito para você</p>
+              <div><Label>Descreva a troca ideal</Label><Textarea value={formData.ideal_trade_description} onChange={e => setFormData(p => ({ ...p, ideal_trade_description: e.target.value }))} placeholder="Ex: Aceito moto até R$ 15.000 e o restante em dinheiro, ou carro popular do mesmo valor..." rows={4} /></div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div><Label>Valor máximo de troca aceito (R$)</Label><Input type="number" value={formData.trade_value_accepted} onChange={e => setFormData(p => ({ ...p, trade_value_accepted: e.target.value }))} placeholder="15000" /></div>
+                <div><Label>Volta mínima em dinheiro (R$)</Label><Input type="number" value={formData.min_cash_return} onChange={e => setFormData(p => ({ ...p, min_cash_return: e.target.value }))} placeholder="5000" /></div>
+              </div>
+              <div><Label>Há quanto tempo você possui o veículo?</Label><Select value={formData.ownership_time} onValueChange={v => setFormData(p => ({ ...p, ownership_time: v }))}><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger><SelectContent><SelectItem value="menos_1_ano">Menos de 1 ano</SelectItem><SelectItem value="1_3_anos">1 a 3 anos</SelectItem><SelectItem value="3_5_anos">3 a 5 anos</SelectItem><SelectItem value="mais_5_anos">Mais de 5 anos</SelectItem></SelectContent></Select></div>
+            </div>
+          )}
+
+          {/* Step 4 - Fotos */}
+          {step === 4 && (
+            <div className="space-y-6">
+              <h2 className="text-xl font-bold">Fotos do Veículo</h2>
+              <p className="text-muted-foreground">Adicione fotos de todos os ângulos</p>
+              <div className="grid gap-4 md:grid-cols-3">
+                {requiredPhotos.map((photo) => (
+                  <div key={photo.id}>
+                    <Label>{photo.label} *</Label>
+                    <div className="border-2 border-dashed border-border rounded-lg aspect-video relative hover:border-primary/50 cursor-pointer">
+                      <input type="file" accept="image/*" className="hidden" id={`photo-${photo.id}`} onChange={e => handleImageUpload(photo.id, e)} />
+                      <label htmlFor={`photo-${photo.id}`} className="absolute inset-0 flex items-center justify-center cursor-pointer">
+                        {imagePreviews[photo.id] ? <img src={imagePreviews[photo.id]} alt={photo.label} className="w-full h-full object-cover rounded-lg" /> : <Camera className="h-8 w-8 text-muted-foreground" />}
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex justify-between mt-8 pt-6 border-t">
+            <Button variant="outline" onClick={() => setStep(s => s - 1)} disabled={step === 1}><ChevronLeft className="h-4 w-4 mr-2" />Voltar</Button>
+            {step < 4 ? <Button onClick={() => setStep(s => s + 1)}>Próximo<ChevronRight className="h-4 w-4 ml-2" /></Button> : <Button variant="cta" onClick={handleSubmit} disabled={submitting}>{submitting ? "Cadastrando..." : "Cadastrar Veículo"}</Button>}
+          </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );

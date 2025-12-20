@@ -65,7 +65,7 @@ const Header = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Buscar produtos, veículos, serviços..."
+              placeholder="Buscar marca, modelo ou ano..."
               className="pl-10 pr-4 h-10 w-full bg-muted/50 border-transparent focus:border-primary focus:bg-card"
             />
           </div>

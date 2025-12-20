@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Search, X, ChevronDown, ChevronUp, Star, CheckCircle, ArrowRightLeft } from "lucide-react";
+import { Search, X, ChevronDown, ChevronUp, Star, CheckCircle, ArrowRightLeft, Gauge, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
 
 interface FilterSectionProps {
   title: string;
@@ -44,8 +43,11 @@ const brands = [
 
 const years = ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018"];
 
+const plateEndings = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
 const VehicleFilters = () => {
   const [priceRange, setPriceRange] = useState([0, 500000]);
+  const [kmRange, setKmRange] = useState([0, 200000]);
   const [motorScore, setMotorScore] = useState([0]);
 
   return (
@@ -71,20 +73,20 @@ const VehicleFilters = () => {
 
       <Separator />
 
-      {/* Zé do Rolo Special Filters */}
-      <FilterSection title="Filtros Zé do Rolo">
+      {/* Selo Diagnóstico Zé do Rolo */}
+      <FilterSection title="Selo Diagnóstico Zé do Rolo">
         <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <Checkbox id="certified" />
+            <Label htmlFor="certified" className="flex items-center gap-1.5 text-sm cursor-pointer">
+              🏆 Zé do Rolo Certificado
+            </Label>
+          </div>
           <div className="flex items-center space-x-2">
             <Checkbox id="verified" />
             <Label htmlFor="verified" className="flex items-center gap-1.5 text-sm cursor-pointer">
               <CheckCircle className="h-4 w-4 text-accent" />
               Documentação Verificada
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="certified" />
-            <Label htmlFor="certified" className="flex items-center gap-1.5 text-sm cursor-pointer">
-              🏆 Zé do Rolo Certificado
             </Label>
           </div>
           <div className="flex items-center space-x-2">
@@ -104,35 +106,9 @@ const VehicleFilters = () => {
         </div>
       </FilterSection>
 
-      {/* Motor Score */}
-      <FilterSection title="Diagnóstico do Motor">
-        <div className="space-y-4">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Nota mínima</span>
-            <span className="font-semibold text-primary">{motorScore[0]}/5</span>
-          </div>
-          <Slider
-            value={motorScore}
-            onValueChange={setMotorScore}
-            max={5}
-            step={1}
-            className="w-full"
-          />
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>0</span>
-            <span>5</span>
-          </div>
-        </div>
-      </FilterSection>
-
-      {/* Location */}
-      <FilterSection title="Localização">
-        <Input placeholder="Digite sua cidade ou estado" className="bg-muted/50" />
-      </FilterSection>
-
-      {/* Brands */}
+      {/* Marca */}
       <FilterSection title="Marca">
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {brands.map((brand) => (
             <button
               key={brand.id}
@@ -144,7 +120,12 @@ const VehicleFilters = () => {
         </div>
       </FilterSection>
 
-      {/* Year */}
+      {/* Modelo */}
+      <FilterSection title="Modelo">
+        <Input placeholder="Digite o modelo..." className="bg-muted/50" />
+      </FilterSection>
+
+      {/* Ano */}
       <FilterSection title="Ano">
         <div className="flex flex-wrap gap-2">
           {years.map((year) => (
@@ -158,7 +139,70 @@ const VehicleFilters = () => {
         </div>
       </FilterSection>
 
-      {/* Price Range */}
+      {/* Quilometragem */}
+      <FilterSection title="Quilometragem">
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <Label className="text-xs text-muted-foreground">Mínimo</Label>
+              <Input
+                type="text"
+                value={`${kmRange[0].toLocaleString("pt-BR")} km`}
+                className="bg-muted/50 text-sm"
+                readOnly
+              />
+            </div>
+            <div className="flex-1">
+              <Label className="text-xs text-muted-foreground">Máximo</Label>
+              <Input
+                type="text"
+                value={`${kmRange[1].toLocaleString("pt-BR")} km`}
+                className="bg-muted/50 text-sm"
+                readOnly
+              />
+            </div>
+          </div>
+          <Slider
+            value={kmRange}
+            onValueChange={setKmRange}
+            max={300000}
+            step={5000}
+            className="w-full"
+          />
+        </div>
+      </FilterSection>
+
+      {/* Câmbio */}
+      <FilterSection title="Câmbio">
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <Checkbox id="automatic" />
+            <Label htmlFor="automatic" className="text-sm cursor-pointer">Automático</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="manual" />
+            <Label htmlFor="manual" className="text-sm cursor-pointer">Manual</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="cvt" />
+            <Label htmlFor="cvt" className="text-sm cursor-pointer">CVT</Label>
+          </div>
+        </div>
+      </FilterSection>
+
+      {/* Combustível */}
+      <FilterSection title="Combustível">
+        <div className="space-y-2">
+          {["Gasolina", "Diesel", "Flex", "Elétrico", "Híbrido", "GNV"].map((fuel) => (
+            <div key={fuel} className="flex items-center space-x-2">
+              <Checkbox id={fuel.toLowerCase()} />
+              <Label htmlFor={fuel.toLowerCase()} className="text-sm cursor-pointer">{fuel}</Label>
+            </div>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Preço */}
       <FilterSection title="Preço">
         <div className="space-y-4">
           <div className="flex gap-2">
@@ -191,30 +235,44 @@ const VehicleFilters = () => {
         </div>
       </FilterSection>
 
-      {/* Transmission */}
-      <FilterSection title="Câmbio" defaultOpen={false}>
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <Checkbox id="automatic" />
-            <Label htmlFor="automatic" className="text-sm cursor-pointer">Automático</Label>
+      {/* Final da Placa */}
+      <FilterSection title="Final da Placa" defaultOpen={false}>
+        <div className="flex flex-wrap gap-2">
+          {plateEndings.map((ending) => (
+            <button
+              key={ending}
+              className="w-9 h-9 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all text-sm font-medium flex items-center justify-center"
+            >
+              {ending}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Diagnóstico Motor */}
+      <FilterSection title="Diagnóstico do Motor" defaultOpen={false}>
+        <div className="space-y-4">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Nota mínima</span>
+            <span className="font-semibold text-primary">{motorScore[0]}/5</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="manual" />
-            <Label htmlFor="manual" className="text-sm cursor-pointer">Manual</Label>
+          <Slider
+            value={motorScore}
+            onValueChange={setMotorScore}
+            max={5}
+            step={1}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>0</span>
+            <span>5</span>
           </div>
         </div>
       </FilterSection>
 
-      {/* Fuel */}
-      <FilterSection title="Combustível" defaultOpen={false}>
-        <div className="space-y-2">
-          {["Gasolina", "Diesel", "Flex", "Elétrico", "Híbrido"].map((fuel) => (
-            <div key={fuel} className="flex items-center space-x-2">
-              <Checkbox id={fuel.toLowerCase()} />
-              <Label htmlFor={fuel.toLowerCase()} className="text-sm cursor-pointer">{fuel}</Label>
-            </div>
-          ))}
-        </div>
+      {/* Localização */}
+      <FilterSection title="Localização" defaultOpen={false}>
+        <Input placeholder="Digite sua cidade ou estado" className="bg-muted/50" />
       </FilterSection>
 
       <Button variant="cta" className="w-full mt-4">

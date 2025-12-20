@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,8 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Check, ChevronRight, ChevronLeft, Camera, Car, Truck, Bike, Bus, CarFront } from "lucide-react";
-import { brands, colorOptions, transmissionTypes, fuelTypes, carBodyTypes, motoStyles, truckTypes, vanSubcategories } from "@/components/filters/FilterData";
+import { Check, ChevronRight, ChevronLeft, Camera, Car, Truck, Bike, Bus, CarFront, DollarSign, ExternalLink } from "lucide-react";
+import { brands, colorOptions, transmissionTypes, fuelTypes } from "@/components/filters/FilterData";
 
 const vehicleTypes = [
   { value: "carro", label: "Carro", icon: Car },
@@ -66,15 +66,11 @@ const AddProduct = () => {
     plate: "", km: "", color: "", transmission: "manual", fuel: "flex",
     doors: "", engine: "", price: "", city: "", state: "",
     accepts_trade: true, trade_description: "", description: "",
-    // Diagnósticos (0-10)
     rating_motor: 5, rating_cambio: 5, rating_freios: 5, rating_estetica: 5,
     rating_suspensao: 5, rating_pneus: 5, rating_documentacao: 5,
     rating_mecanica_geral: 5, rating_eletrica: 5, diagnostic_notes: "",
-    // Negócio ideal
     ideal_trade_description: "", trade_value_accepted: "", min_cash_return: "", ownership_time: "",
-    // Procedência
     is_auction: false, is_single_owner: false, ipva_paid: false, has_service_history: false,
-    // Específicos
     body_type: "", moto_style: "", truck_type: "", van_subcategory: "", cylinders: "",
   });
 
@@ -119,21 +115,17 @@ const AddProduct = () => {
         price: parseFloat(formData.price), accepts_trade: formData.accepts_trade,
         city: formData.city || null, state: formData.state || null,
         description: formData.description || null, diagnostic_notes: formData.diagnostic_notes || null,
-        // Diagnósticos
         rating_motor: formData.rating_motor, rating_cambio: formData.rating_cambio,
         rating_freios: formData.rating_freios, rating_estetica: formData.rating_estetica,
         rating_suspensao: formData.rating_suspensao, rating_pneus: formData.rating_pneus,
         rating_documentacao: formData.rating_documentacao, rating_mecanica_geral: formData.rating_mecanica_geral,
         rating_eletrica: formData.rating_eletrica,
-        // Negócio
         ideal_trade_description: formData.ideal_trade_description || null,
         trade_value_accepted: formData.trade_value_accepted ? parseFloat(formData.trade_value_accepted) : null,
         min_cash_return: formData.min_cash_return ? parseFloat(formData.min_cash_return) : null,
         ownership_time: formData.ownership_time || null,
-        // Procedência
         is_auction: formData.is_auction, is_single_owner: formData.is_single_owner,
         ipva_paid: formData.ipva_paid, has_service_history: formData.has_service_history,
-        // Específicos
         body_type: formData.body_type || null, moto_style: formData.moto_style || null,
         truck_type: formData.truck_type || null, van_subcategory: formData.van_subcategory || null,
         cylinders: formData.cylinders ? parseInt(formData.cylinders) : null,
@@ -188,6 +180,7 @@ const AddProduct = () => {
           {step === 1 && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold">Dados do Veículo</h2>
+              
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 {vehicleTypes.map((t) => {
                   const Icon = t.icon;
@@ -200,20 +193,44 @@ const AddProduct = () => {
                   );
                 })}
               </div>
+
+              {/* FIPE Consultation Link */}
+              <div className="p-4 bg-secondary/10 border border-secondary/30 rounded-lg">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="h-5 w-5 text-secondary" />
+                    <div>
+                      <p className="font-medium text-sm">Não sabe o preço do seu veículo?</p>
+                      <p className="text-xs text-muted-foreground">Consulte a Tabela FIPE para obter o valor de referência</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/tabela-fipe" target="_blank">
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Consultar FIPE
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+
               <div className="grid gap-4 md:grid-cols-2">
                 <div><Label>Marca *</Label><Select value={formData.brand} onValueChange={v => setFormData(p => ({ ...p, brand: v }))}><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger><SelectContent>{currentBrands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent></Select></div>
                 <div><Label>Modelo *</Label><Input value={formData.model} onChange={e => setFormData(p => ({ ...p, model: e.target.value }))} /></div>
                 <div><Label>Ano Fabricação *</Label><Input type="number" value={formData.year_manufacture} onChange={e => setFormData(p => ({ ...p, year_manufacture: e.target.value }))} /></div>
                 <div><Label>Ano Modelo</Label><Input type="number" value={formData.year_model} onChange={e => setFormData(p => ({ ...p, year_model: e.target.value }))} /></div>
                 <div><Label>Quilometragem</Label><Input type="number" value={formData.km} onChange={e => setFormData(p => ({ ...p, km: e.target.value }))} /></div>
-                <div><Label>Preço *</Label><Input type="number" value={formData.price} onChange={e => setFormData(p => ({ ...p, price: e.target.value }))} /></div>
+                <div><Label>Preço *</Label><Input type="number" value={formData.price} onChange={e => setFormData(p => ({ ...p, price: e.target.value }))} placeholder="Ex: 85000" /></div>
                 <div><Label>Cor</Label><Select value={formData.color} onValueChange={v => setFormData(p => ({ ...p, color: v }))}><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger><SelectContent>{colorOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select></div>
                 <div><Label>Câmbio</Label><Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select></div>
                 <div><Label>Combustível</Label><Select value={formData.fuel} onValueChange={v => setFormData(p => ({ ...p, fuel: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{fuelTypes.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent></Select></div>
                 <div><Label>Cidade</Label><Input value={formData.city} onChange={e => setFormData(p => ({ ...p, city: e.target.value }))} /></div>
                 <div><Label>Estado</Label><Input maxLength={2} value={formData.state} onChange={e => setFormData(p => ({ ...p, state: e.target.value.toUpperCase() }))} /></div>
               </div>
-              <div className="flex items-center justify-between p-4 border rounded-lg"><div><Label>Aceita Troca</Label><p className="text-sm text-muted-foreground">Aceita outro veículo como parte do pagamento</p></div><Switch checked={formData.accepts_trade} onCheckedChange={v => setFormData(p => ({ ...p, accepts_trade: v }))} /></div>
+              
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div><Label>Aceita Troca</Label><p className="text-sm text-muted-foreground">Aceita outro veículo como parte do pagamento</p></div>
+                <Switch checked={formData.accepts_trade} onCheckedChange={v => setFormData(p => ({ ...p, accepts_trade: v }))} />
+              </div>
             </div>
           )}
 

@@ -37,6 +37,8 @@ const Header = () => {
   const navLinks = [
     { href: "/", label: "Início" },
     { href: "/veiculos", label: "Veículos" },
+    { href: "/tabela-fipe", label: "Tabela FIPE" },
+    { href: "/how-it-works", label: "Como Funciona" },
   ];
 
   const handleSignOut = async () => {

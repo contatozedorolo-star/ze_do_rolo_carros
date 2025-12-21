@@ -1,5 +1,6 @@
 import { Shield, Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 const Footer = () => {
   return (
@@ -8,14 +9,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg gradient-success flex items-center justify-center">
-                <span className="text-accent-foreground font-bold text-lg">Z</span>
-              </div>
-              <span className="text-2xl font-bold">
-                Zé do <span className="text-secondary">Rolo</span>
-              </span>
-            </div>
+            <Link to="/">
+              <img src={logo} alt="Zé do Rolo" className="h-16 w-auto" />
+            </Link>
             <p className="text-primary-foreground/70 text-sm">
               Seu corretor de negócios pessoais. Trocas e vendas com segurança do início ao fim.
             </p>

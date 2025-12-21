@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -64,14 +65,7 @@ const Header = () => {
       <div className="container flex h-16 items-center justify-between gap-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <div className="flex items-center gap-1">
-            <div className="w-8 h-8 rounded-lg gradient-success flex items-center justify-center">
-              <span className="text-accent-foreground font-bold text-sm">Z</span>
-            </div>
-            <span className="text-xl font-bold text-primary hidden sm:block">
-              Zé do <span className="text-secondary">Rolo</span>
-            </span>
-          </div>
+          <img src={logo} alt="Zé do Rolo" className="h-12 w-auto" />
         </Link>
 
         {/* Search Bar - Desktop */}

@@ -44,14 +44,8 @@ const vehicleCategories = [
     href: "/veiculos?tipo=van" 
   },
   { 
-    id: "cavalo", 
-    name: "Cavalos", 
-    image: cavaloImg, 
-    href: "/veiculos?tipo=cavalo" 
-  },
-  { 
     id: "trator", 
-    name: "Tratores", 
+    name: "Tratores",
     image: tratorImg, 
     href: "/veiculos?tipo=trator" 
   },

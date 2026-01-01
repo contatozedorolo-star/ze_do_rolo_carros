@@ -22,7 +22,7 @@ const HeroSection = () => {
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in" style={{ animationDelay: "0.1s", color: "#142562" }}>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in text-white" style={{ animationDelay: "0.1s" }}>
             Negocie tudo, menos a sua{" "}
             <span style={{ color: "#FF8C36" }}>segurança!</span>
           </h1>

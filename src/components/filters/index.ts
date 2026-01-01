@@ -5,4 +5,7 @@ export { default as CarFilters } from "./CarFilters";
 export { default as MotoFilters } from "./MotoFilters";
 export { default as TruckFilters } from "./TruckFilters";
 export { default as VanFilters } from "./VanFilters";
+export { default as CavaloFilters } from "./CavaloFilters";
+export { default as TratorFilters } from "./TratorFilters";
+export { default as ImplementoFilters } from "./ImplementoFilters";
 export * from "./FilterData";

@@ -14,7 +14,10 @@ import CarFilters from "./CarFilters";
 import MotoFilters from "./MotoFilters";
 import TruckFilters from "./TruckFilters";
 import VanFilters from "./VanFilters";
-import { brands, years, plateEndings, brazilianStates } from "./FilterData";
+import CavaloFilters from "./CavaloFilters";
+import TratorFilters from "./TratorFilters";
+import ImplementoFilters from "./ImplementoFilters";
+import { brands, years, plateEndings, brazilianStates, horasUsoRanges } from "./FilterData";
 
 interface AdvancedVehicleFiltersProps {
   onFiltersChange?: (filters: any) => void;
@@ -225,46 +228,72 @@ const AdvancedVehicleFilters = ({ onFiltersChange, initialCategory }: AdvancedVe
         </div>
       </FilterSection>
 
-      {/* Quilometragem */}
-      <FilterSection title="Quilometragem">
-        <div className="space-y-4">
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <Label className="text-xs text-muted-foreground">Mínimo</Label>
-              <Input
-                type="text"
-                value={`${kmRange[0].toLocaleString("pt-BR")} km`}
-                className="bg-muted/50 text-sm"
-                readOnly
-              />
-            </div>
-            <div className="flex-1">
-              <Label className="text-xs text-muted-foreground">Máximo</Label>
-              <Input
-                type="text"
-                value={`${kmRange[1].toLocaleString("pt-BR")} km`}
-                className="bg-muted/50 text-sm"
-                readOnly
-              />
-            </div>
+      {/* Quilometragem / Horímetro */}
+      {(category === "trator" || category === "implemento") ? (
+        <FilterSection title="Horas de Uso (Horímetro)">
+          <div className="grid grid-cols-2 gap-2">
+            {horasUsoRanges.map((h) => (
+              <button
+                key={h.value}
+                onClick={() => {
+                  const current = filters.hours_range || [];
+                  const updated = current.includes(h.value)
+                    ? current.filter((v: string) => v !== h.value)
+                    : [...current, h.value];
+                  handleFilterChange("hours_range", updated);
+                }}
+                className={`p-2 rounded-lg border transition-all text-xs font-medium text-center ${
+                  (filters.hours_range || []).includes(h.value)
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                {h.label}
+              </button>
+            ))}
           </div>
-          <Slider
-            value={kmRange}
-            onValueChange={setKmRange}
-            max={300000}
-            step={5000}
-            className="w-full"
-          />
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="zero-km"
-              checked={filters.is_new === true}
-              onCheckedChange={(checked) => handleFilterChange("is_new", checked ? true : null)}
+        </FilterSection>
+      ) : (
+        <FilterSection title="Quilometragem">
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <Label className="text-xs text-muted-foreground">Mínimo</Label>
+                <Input
+                  type="text"
+                  value={`${kmRange[0].toLocaleString("pt-BR")} km`}
+                  className="bg-muted/50 text-sm"
+                  readOnly
+                />
+              </div>
+              <div className="flex-1">
+                <Label className="text-xs text-muted-foreground">Máximo</Label>
+                <Input
+                  type="text"
+                  value={`${kmRange[1].toLocaleString("pt-BR")} km`}
+                  className="bg-muted/50 text-sm"
+                  readOnly
+                />
+              </div>
+            </div>
+            <Slider
+              value={kmRange}
+              onValueChange={setKmRange}
+              max={300000}
+              step={5000}
+              className="w-full"
             />
-            <Label htmlFor="zero-km" className="text-sm cursor-pointer">Apenas 0 km</Label>
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="zero-km"
+                checked={filters.is_new === true}
+                onCheckedChange={(checked) => handleFilterChange("is_new", checked ? true : null)}
+              />
+              <Label htmlFor="zero-km" className="text-sm cursor-pointer">Apenas 0 km</Label>
+            </div>
           </div>
-        </div>
-      </FilterSection>
+        </FilterSection>
+      )}
 
       {/* Preço */}
       <FilterSection title="Preço">
@@ -329,6 +358,9 @@ const AdvancedVehicleFilters = ({ onFiltersChange, initialCategory }: AdvancedVe
       {category === "moto" && <MotoFilters filters={filters} onFilterChange={handleFilterChange} />}
       {category === "caminhao" && <TruckFilters filters={filters} onFilterChange={handleFilterChange} />}
       {(category === "van" || category === "camionete") && <VanFilters filters={filters} onFilterChange={handleFilterChange} />}
+      {category === "cavalo" && <CavaloFilters filters={filters} onFilterChange={handleFilterChange} />}
+      {category === "trator" && <TratorFilters filters={filters} onFilterChange={handleFilterChange} />}
+      {category === "implemento" && <ImplementoFilters filters={filters} onFilterChange={handleFilterChange} />}
 
       <Button variant="cta" className="w-full mt-4" onClick={applyFilters}>
         Aplicar Filtros

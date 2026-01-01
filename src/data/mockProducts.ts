@@ -180,6 +180,63 @@ export const vehicles = [
     paintOriginal: true,
     type: "van",
   },
+  // Novos: Cavalos Mecânicos
+  {
+    id: "v11",
+    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop",
+    title: "Scania R500 6x4 Highline Cavalo Mecânico",
+    price: 890000,
+    location: "Ribeirão Preto, SP",
+    year: "2022/2022",
+    mileage: 180000,
+    transmission: "Automático",
+    fuel: "Diesel",
+    sellerLevel: "ouro" as const,
+    verified: true,
+    certified: true,
+    acceptsTrade: true,
+    motorScore: 5,
+    paintOriginal: true,
+    type: "cavalo",
+  },
+  // Novos: Tratores
+  {
+    id: "v12",
+    image: "https://images.unsplash.com/photo-1530267981375-f0de937f5f13?w=600&h=400&fit=crop",
+    title: "John Deere 8R 340 Trator Agrícola 340cv",
+    price: 1450000,
+    location: "Sorriso, MT",
+    year: "2021/2021",
+    mileage: 3500, // Horas
+    transmission: "PowerShift",
+    fuel: "Diesel",
+    sellerLevel: "ouro" as const,
+    verified: true,
+    certified: true,
+    acceptsTrade: true,
+    motorScore: 5,
+    paintOriginal: true,
+    type: "trator",
+  },
+  // Novos: Implementos
+  {
+    id: "v13",
+    image: "https://images.unsplash.com/photo-1586191582066-3e3b8a37c14e?w=600&h=400&fit=crop",
+    title: "Randon Graneleiro SR 3 Eixos 2024",
+    price: 320000,
+    location: "Cascavel, PR",
+    year: "2024/2024",
+    mileage: 0,
+    transmission: "N/A",
+    fuel: "N/A",
+    sellerLevel: "ouro" as const,
+    verified: true,
+    certified: true,
+    acceptsTrade: false,
+    motorScore: 5,
+    paintOriginal: true,
+    type: "implemento",
+  },
 ];
 
 // Veículos em destaque (para a home)
@@ -190,3 +247,6 @@ export const zeFindsVehicles = vehicles.filter(v => v.motorScore >= 4 && v.verif
 
 // Veículos que aceitam troca
 export const tradeVehicles = vehicles.filter(v => v.acceptsTrade).slice(0, 5);
+
+// Linha Pesada e Agro
+export const heavyVehicles = vehicles.filter(v => ["cavalo", "trator", "implemento", "caminhao"].includes(v.type)).slice(0, 5);

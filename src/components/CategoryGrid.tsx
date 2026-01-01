@@ -8,6 +8,9 @@ import motoImg from "@/assets/category-moto.jpg";
 import picapeImg from "@/assets/category-picape.jpg";
 import caminhaoImg from "@/assets/category-caminhao.jpg";
 import vanImg from "@/assets/category-van.jpg";
+import cavaloImg from "@/assets/category-cavalo.jpg";
+import tratorImg from "@/assets/category-trator.jpg";
+import implementoImg from "@/assets/category-implemento.jpg";
 
 const vehicleCategories = [
   { 
@@ -46,6 +49,24 @@ const vehicleCategories = [
     image: vanImg, 
     href: "/veiculos?tipo=van" 
   },
+  { 
+    id: "cavalo", 
+    name: "Cavalos", 
+    image: cavaloImg, 
+    href: "/veiculos?tipo=cavalo" 
+  },
+  { 
+    id: "trator", 
+    name: "Tratores", 
+    image: tratorImg, 
+    href: "/veiculos?tipo=trator" 
+  },
+  { 
+    id: "implemento", 
+    name: "Implementos", 
+    image: implementoImg, 
+    href: "/veiculos?tipo=implemento" 
+  },
 ];
 
 const CategoryGrid = () => {
@@ -56,7 +77,7 @@ const CategoryGrid = () => {
       </h2>
       
       {/* Desktop: 3x2 grid, Tablet: 3 columns, Mobile: 2 columns */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
         {vehicleCategories.map((category) => (
           <Link
             key={category.id}

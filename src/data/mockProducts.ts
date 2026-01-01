@@ -128,7 +128,7 @@ export const vehicles = [
   },
   {
     id: "v8",
-    image: "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop",
     title: "Scania R450 6x2 Highline Streamline",
     price: 750000,
     location: "Campinas, SP",
@@ -164,7 +164,7 @@ export const vehicles = [
   },
   {
     id: "v10",
-    image: "https://images.unsplash.com/photo-1609630875171-b1321377ee65?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=600&h=400&fit=crop",
     title: "Mercedes-Benz Sprinter 516 Van 16 Lugares",
     price: 289000,
     location: "Porto Alegre, RS",

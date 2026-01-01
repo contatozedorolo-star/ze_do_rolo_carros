@@ -7,6 +7,8 @@ import implementoGraneleiroImg from "@/assets/vehicle-implemento-graneleiro.jpg"
 import implementoBasculanteImg from "@/assets/vehicle-implemento-basculante.jpg";
 import implementoSiderImg from "@/assets/vehicle-implemento-sider.jpg";
 import tratorImg from "@/assets/category-trator.jpg";
+import s10Img from "@/assets/vehicle-s10.jpg";
+import volvoFhImg from "@/assets/vehicle-volvo-fh.jpg";
 
 export const vehicles = [
   // CARROS
@@ -121,7 +123,7 @@ export const vehicles = [
   // PICAPES / CAMIONETES
   {
     id: "v7",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
+    image: s10Img,
     title: "Chevrolet S10 2.8 High Country 4x4 CD",
     price: 189900,
     location: "Belo Horizonte, MG",
@@ -194,7 +196,7 @@ export const vehicles = [
   },
   {
     id: "v19",
-    image: "https://images.unsplash.com/photo-1586191582066-3e3b8a37c14e?w=600&h=400&fit=crop",
+    image: volvoFhImg,
     title: "Volvo FH 540 6x4 Globetrotter",
     price: 920000,
     location: "Curitiba, PR",

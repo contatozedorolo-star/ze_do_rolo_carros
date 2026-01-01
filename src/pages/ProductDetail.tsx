@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { vehicles as mockVehicles } from "@/data/mockProducts";
+import { 
   MapPin, 
   CheckCircle, 
   Shield, 

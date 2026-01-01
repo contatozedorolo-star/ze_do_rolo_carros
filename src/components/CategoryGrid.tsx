@@ -1,36 +1,120 @@
-import { Car, Truck, Bike, CarFront, Bus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
+// Import category images
+import sedanImg from "@/assets/category-sedan.jpg";
+import suvImg from "@/assets/category-suv.jpg";
+import motoImg from "@/assets/category-moto.jpg";
+import picapeImg from "@/assets/category-picape.jpg";
+import caminhaoImg from "@/assets/category-caminhao.jpg";
+import vanImg from "@/assets/category-van.jpg";
+
 const vehicleCategories = [
-  { id: "sedan", name: "Sedans", icon: Car, color: "bg-blue-500/10 text-blue-600 hover:bg-blue-500/20", href: "/veiculos?tipo=sedan" },
-  { id: "suv", name: "SUVs", icon: CarFront, color: "bg-purple-500/10 text-purple-600 hover:bg-purple-500/20", href: "/veiculos?tipo=suv" },
-  { id: "caminhao", name: "Caminhões", icon: Truck, color: "bg-amber-500/10 text-amber-600 hover:bg-amber-500/20", href: "/veiculos?tipo=caminhao" },
-  { id: "moto", name: "Motos", icon: Bike, color: "bg-green-500/10 text-green-600 hover:bg-green-500/20", href: "/veiculos?tipo=moto" },
-  { id: "picape", name: "Picapes", icon: Truck, color: "bg-red-500/10 text-red-600 hover:bg-red-500/20", href: "/veiculos?tipo=picape" },
-  { id: "van", name: "Vans", icon: Bus, color: "bg-cyan-500/10 text-cyan-600 hover:bg-cyan-500/20", href: "/veiculos?tipo=van" },
+  { 
+    id: "carro", 
+    name: "Carros", 
+    image: sedanImg, 
+    href: "/veiculos?tipo=carro" 
+  },
+  { 
+    id: "suv", 
+    name: "SUVs", 
+    image: suvImg, 
+    href: "/veiculos?tipo=suv" 
+  },
+  { 
+    id: "moto", 
+    name: "Motos", 
+    image: motoImg, 
+    href: "/veiculos?tipo=moto" 
+  },
+  { 
+    id: "camionete", 
+    name: "Picapes", 
+    image: picapeImg, 
+    href: "/veiculos?tipo=camionete" 
+  },
+  { 
+    id: "caminhao", 
+    name: "Caminhões", 
+    image: caminhaoImg, 
+    href: "/veiculos?tipo=caminhao" 
+  },
+  { 
+    id: "van", 
+    name: "Vans", 
+    image: vanImg, 
+    href: "/veiculos?tipo=van" 
+  },
 ];
 
 const CategoryGrid = () => {
   return (
-    <section className="py-8">
-      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-6">
-        Tipos de Veículos
+    <section className="py-10">
+      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-8">
+        Encontre por Categoria
       </h2>
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+      
+      {/* Desktop: 3x2 grid, Tablet: 3 columns, Mobile: 2 columns */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
         {vehicleCategories.map((category) => (
           <Link
             key={category.id}
             to={category.href}
             className={cn(
-              "flex flex-col items-center gap-2 p-4 rounded-xl transition-all duration-200 group",
-              category.color
+              "group relative overflow-hidden rounded-xl",
+              "aspect-[4/3] md:aspect-[3/4]",
+              "shadow-lg hover:shadow-xl",
+              "transition-all duration-300 ease-out",
+              "hover:scale-[1.03]",
+              "ring-2 ring-transparent hover:ring-[#FF8C36]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8C36]"
             )}
           >
-            <category.icon className="h-6 w-6 md:h-8 md:w-8 transition-transform group-hover:scale-110" />
-            <span className="text-xs md:text-sm font-medium text-center text-foreground">
-              {category.name}
-            </span>
+            {/* Background Image */}
+            <img
+              src={category.image}
+              alt={category.name}
+              className={cn(
+                "absolute inset-0 w-full h-full object-cover",
+                "transition-transform duration-500 ease-out",
+                "group-hover:scale-110"
+              )}
+            />
+            
+            {/* Gradient Overlay */}
+            <div 
+              className={cn(
+                "absolute inset-0",
+                "bg-gradient-to-t from-[#142562]/90 via-[#142562]/40 to-transparent",
+                "transition-opacity duration-300",
+                "group-hover:from-[#142562]/95 group-hover:via-[#142562]/50"
+              )}
+            />
+            
+            {/* Orange glow effect on hover */}
+            <div 
+              className={cn(
+                "absolute inset-0 opacity-0 group-hover:opacity-100",
+                "transition-opacity duration-300",
+                "shadow-[inset_0_0_30px_rgba(255,140,54,0.3)]",
+                "pointer-events-none"
+              )}
+            />
+            
+            {/* Category Name */}
+            <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-center">
+              <span 
+                className={cn(
+                  "text-lg md:text-xl font-bold tracking-wide",
+                  "text-white drop-shadow-lg",
+                  "transition-transform duration-300",
+                  "group-hover:translate-y-[-4px]"
+                )}
+              >
+                {category.name}
+              </span>
+            </div>
           </Link>
         ))}
       </div>

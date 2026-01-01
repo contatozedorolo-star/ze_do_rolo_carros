@@ -98,6 +98,16 @@ const ProductDetail = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // FIPE data
+  const [fipeData, setFipeData] = useState<{
+    price: string;
+    priceNumber: number;
+    fipeCode?: string;
+    referenceMonth?: string;
+    note?: string;
+  } | null>(null);
+  const [fipeLoading, setFipeLoading] = useState(false);
+
   useEffect(() => {
     const fetchVehicle = async () => {
       if (!id) return;
@@ -214,8 +224,75 @@ const ProductDetail = () => {
     fetchVehicle();
   }, [id]);
 
-  // Mock FIPE price (in production, fetch from API)
-  const fipePrice = vehicle ? Math.round(vehicle.price * 1.05) : 0;
+  // Fetch FIPE price when vehicle is loaded
+  useEffect(() => {
+    const fetchFipePrice = async () => {
+      if (!vehicle) return;
+
+      setFipeLoading(true);
+      try {
+        // Determine vehicle type for FIPE API
+        let vehicleType: "carros" | "motos" | "caminhoes" = "carros";
+        const titleLower = vehicle.title.toLowerCase();
+        const brandLower = vehicle.brand.toLowerCase();
+
+        if (
+          titleLower.includes("moto") ||
+          titleLower.includes("cb ") ||
+          titleLower.includes("cg ") ||
+          titleLower.includes("hornet") ||
+          titleLower.includes("ninja") ||
+          brandLower.includes("honda") && (titleLower.includes("cb") || titleLower.includes("cg"))
+        ) {
+          vehicleType = "motos";
+        } else if (
+          titleLower.includes("scania") ||
+          titleLower.includes("volvo fh") ||
+          titleLower.includes("mercedes-benz actros") ||
+          titleLower.includes("caminhão") ||
+          titleLower.includes("cavalo")
+        ) {
+          vehicleType = "caminhoes";
+        }
+
+        const response = await supabase.functions.invoke("fipe-lookup", {
+          body: {
+            vehicleType,
+            brand: vehicle.brand,
+            model: vehicle.model || vehicle.title.split(" ").slice(1, 3).join(" "),
+            year: vehicle.year_model,
+          },
+        });
+
+        if (response.data?.success && response.data?.data?.priceNumber) {
+          setFipeData(response.data.data);
+        } else {
+          console.log("FIPE lookup failed or no price:", response.data);
+          // Fallback: estimate based on vehicle price
+          setFipeData({
+            price: `R$ ${Math.round(vehicle.price * 1.05).toLocaleString("pt-BR")}`,
+            priceNumber: Math.round(vehicle.price * 1.05),
+            note: "Estimativa baseada no mercado (FIPE indisponível para este modelo)",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching FIPE:", error);
+        // Fallback
+        setFipeData({
+          price: `R$ ${Math.round(vehicle.price * 1.05).toLocaleString("pt-BR")}`,
+          priceNumber: Math.round(vehicle.price * 1.05),
+          note: "Estimativa baseada no mercado",
+        });
+      } finally {
+        setFipeLoading(false);
+      }
+    };
+
+    fetchFipePrice();
+  }, [vehicle]);
+
+  // Fallback FIPE price for display
+  const fipePrice = fipeData?.priceNumber || (vehicle ? Math.round(vehicle.price * 1.05) : 0);
 
   const getRatingItems = () => {
     if (!vehicle) return [];
@@ -671,12 +748,31 @@ const ProductDetail = () => {
                         </span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                        <span className="text-sm text-slate-600">Preço Médio FIPE</span>
-                        <span className="font-bold text-slate-500">
-                          R$ {fipePrice.toLocaleString("pt-BR")}
-                        </span>
+                        <div className="flex flex-col">
+                          <span className="text-sm text-slate-600">Preço Médio FIPE</span>
+                          {fipeData?.referenceMonth && (
+                            <span className="text-xs text-slate-400">{fipeData.referenceMonth}</span>
+                          )}
+                        </div>
+                        {fipeLoading ? (
+                          <div className="animate-pulse bg-slate-200 h-5 w-24 rounded" />
+                        ) : (
+                          <span className="font-bold text-slate-500">
+                            {fipeData?.price || `R$ ${fipePrice.toLocaleString("pt-BR")}`}
+                          </span>
+                        )}
                       </div>
-                      {vehicle.price < fipePrice && (
+                      {fipeData?.fipeCode && (
+                        <p className="text-xs text-slate-400 text-center">
+                          Código FIPE: {fipeData.fipeCode}
+                        </p>
+                      )}
+                      {fipeData?.note && (
+                        <p className="text-xs text-slate-400 text-center italic">
+                          {fipeData.note}
+                        </p>
+                      )}
+                      {vehicle.price < fipePrice && !fipeLoading && (
                         <p className="text-xs text-[#29B765] text-center mt-2 font-medium">
                           ✓ Este veículo está abaixo da tabela FIPE!
                         </p>

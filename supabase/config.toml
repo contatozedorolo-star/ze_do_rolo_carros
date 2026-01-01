@@ -1,1 +1,4 @@
-project_id = "qpuxjgzotxmnktkvddys"
+project_id = "muvornzsnhncihxawntz"
+
+[functions.fipe-lookup]
+verify_jwt = false

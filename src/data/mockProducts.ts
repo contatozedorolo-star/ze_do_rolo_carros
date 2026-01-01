@@ -3,9 +3,9 @@
 // Importar imagens locais para tratores e implementos
 import tratorCaseImg from "@/assets/vehicle-trator-case.jpg";
 import tratorNewhollandImg from "@/assets/vehicle-trator-newholland.jpg";
-import implementoGraneleiroImg from "@/assets/vehicle-implemento-graneleiro.jpg";
-import implementoBasculanteImg from "@/assets/vehicle-implemento-basculante.jpg";
-import implementoSiderImg from "@/assets/vehicle-implemento-sider.jpg";
+import pulverizadorImg from "@/assets/vehicle-implemento-pulverizador.jpg";
+import plantadeiraImg from "@/assets/vehicle-implemento-plantadeira.jpg";
+import colheitadeiraImg from "@/assets/vehicle-implemento-colheitadeira.jpg";
 import tratorImg from "@/assets/category-trator.jpg";
 import s10Img from "@/assets/vehicle-s10.jpg";
 import volvoFhImg from "@/assets/vehicle-volvo-fh.jpg";
@@ -433,17 +433,17 @@ export const vehicles = [
     paintOriginal: true,
     type: "trator",
   },
-  // IMPLEMENTOS
+  // IMPLEMENTOS AGRÍCOLAS
   {
     id: "v13",
-    image: implementoGraneleiroImg,
-    title: "Randon Graneleiro SR 3 Eixos 2024",
-    price: 320000,
-    location: "Cascavel, PR",
-    year: "2024/2024",
-    mileage: 0,
-    transmission: "N/A",
-    fuel: "N/A",
+    image: pulverizadorImg,
+    title: "John Deere 4730 Pulverizador Autopropelido",
+    price: 980000,
+    location: "Sorriso, MT",
+    year: "2022/2022",
+    mileage: 3200,
+    transmission: "Hidrostática",
+    fuel: "Diesel",
     sellerLevel: "ouro" as const,
     verified: true,
     certified: true,
@@ -454,10 +454,10 @@ export const vehicles = [
   },
   {
     id: "v16",
-    image: implementoBasculanteImg,
-    title: "Librelato Basculante 6 Eixos 2023",
-    price: 280000,
-    location: "Londrina, PR",
+    image: plantadeiraImg,
+    title: "John Deere 2130 Plantadeira 24 Linhas",
+    price: 750000,
+    location: "Rondonópolis, MT",
     year: "2023/2023",
     mileage: 0,
     transmission: "N/A",
@@ -472,14 +472,14 @@ export const vehicles = [
   },
   {
     id: "v27",
-    image: implementoSiderImg,
-    title: "Guerra Sider 3 Eixos 2023",
-    price: 185000,
-    location: "Maringá, PR",
-    year: "2023/2023",
-    mileage: 0,
-    transmission: "N/A",
-    fuel: "N/A",
+    image: colheitadeiraImg,
+    title: "Case IH 8250 Colheitadeira Axial-Flow",
+    price: 1850000,
+    location: "Lucas do Rio Verde, MT",
+    year: "2021/2021",
+    mileage: 2800,
+    transmission: "Hidrostática",
+    fuel: "Diesel",
     sellerLevel: "ouro" as const,
     verified: true,
     certified: true,

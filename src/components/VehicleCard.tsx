@@ -1,4 +1,5 @@
 import { MapPin, Star, CheckCircle, Award, ArrowRightLeft, Calendar, Gauge, Fuel } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ const sellerLevelConfig = {
 };
 
 const VehicleCard = ({
+  id,
   image,
   title,
   price,
@@ -39,8 +41,26 @@ const VehicleCard = ({
   certified,
   acceptsTrade,
 }: VehicleCardProps) => {
+  const navigate = useNavigate();
+
+  const goToDetail = () => {
+    navigate(`/product/${id}`);
+  };
+
   return (
-    <article className="group bg-card rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer border border-border hover:border-primary/20">
+    <article
+      role="link"
+      tabIndex={0}
+      aria-label={`Ver detalhes de ${title}`}
+      onClick={goToDetail}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          goToDetail();
+        }
+      }}
+      className="group bg-card rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer border border-border hover:border-primary/20"
+    >
       {/* Image Container */}
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">
         <img
@@ -48,7 +68,7 @@ const VehicleCard = ({
           alt={title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        
+
         {/* Badges Overlay */}
         <div className="absolute top-2 left-2 flex flex-wrap gap-1.5">
           {verified && (
@@ -103,9 +123,7 @@ const VehicleCard = ({
         </div>
 
         <div className="flex items-center justify-between pt-3 border-t border-border">
-          <p className="text-lg font-bold text-primary">
-            R$ {price.toLocaleString("pt-BR")}
-          </p>
+          <p className="text-lg font-bold text-primary">R$ {price.toLocaleString("pt-BR")}</p>
 
           {sellerLevel && (
             <Badge
@@ -121,8 +139,8 @@ const VehicleCard = ({
           )}
         </div>
 
-        <Button variant="cta" className="w-full">
-          Ver parcelas
+        <Button variant="cta" className="w-full" onClick={goToDetail}>
+          Ver detalhes
         </Button>
       </div>
     </article>

@@ -179,7 +179,7 @@ const ProposalsList = () => {
           <div className="flex items-start justify-between gap-4 mb-3">
             <div className="flex-1 min-w-0">
               <Link 
-                to={`/produto/${proposal.product_id}`}
+                to={`/product/${proposal.product_id}`}
                 className="font-semibold text-foreground hover:text-primary line-clamp-1"
               >
                 {proposal.products?.title || "Produto"}

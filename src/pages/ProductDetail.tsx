@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
-import { 
+import { vehicles as mockVehicles } from "@/data/mockProducts";
   MapPin, 
   CheckCircle, 
   Shield, 
@@ -107,7 +107,81 @@ const ProductDetail = () => {
         .eq("id", id)
         .single();
 
+      // Fallback: veículos fictícios (mock) para visual da Home
       if (vehicleError || !vehicleData) {
+        const mock = mockVehicles.find((v) => v.id === id);
+
+        if (mock) {
+          const [cityRaw, stateRaw] = (mock.location || "").split(",").map((s) => s.trim());
+          const [yearManufactureRaw, yearModelRaw] = (mock.year || "").split("/").map((s) => s.trim());
+          const yearManufacture = Number(yearManufactureRaw) || new Date().getFullYear();
+          const yearModel = Number(yearModelRaw) || yearManufacture;
+
+          const titleParts = (mock.title || "").split(" ");
+          const brand = titleParts[0] || "Veículo";
+          const model = titleParts.slice(1, 3).join(" ") || "";
+
+          const baseScore10 = Math.min(10, Math.max(0, (mock.motorScore || 4) * 2));
+
+          const mockVehicle: Vehicle = {
+            id: mock.id,
+            // uuid “válido” para não quebrar fluxos que esperam uuid
+            user_id: "00000000-0000-0000-0000-000000000000",
+            title: mock.title,
+            description: "Veículo fictício para demonstração do layout da página de vendas.",
+            brand,
+            model,
+            version: null,
+            year_manufacture: yearManufacture,
+            year_model: yearModel,
+            km: mock.mileage || 0,
+            color: "preto",
+            transmission: mock.transmission,
+            fuel: mock.fuel,
+            price: mock.price,
+            accepts_trade: !!mock.acceptsTrade,
+            city: cityRaw || null,
+            state: stateRaw || null,
+            plate_end: null,
+            rating_motor: baseScore10,
+            rating_cambio: baseScore10,
+            rating_lataria: mock.paintOriginal ? 9 : 7,
+            rating_estetica: mock.paintOriginal ? 9 : 7,
+            rating_pneus: 8,
+            rating_interior: 8,
+            rating_documentacao: 9,
+            rating_freios: 8,
+            rating_suspensao: 8,
+            rating_mecanica_geral: baseScore10,
+            rating_eletrica: 8,
+            diagnostic_notes: "O Zé do Rolo realiza a conferência desses itens no ato da vistoria cautelar.",
+            has_ze_seal: !!mock.verified,
+            trade_description: null,
+            trade_value_accepted: null,
+            min_cash_return: null,
+            ideal_trade_description: mock.acceptsTrade
+              ? "Aceita troca + volta em dinheiro (simulação)."
+              : null,
+            engine: null,
+            doors: null,
+            body_type: null,
+            optionals: null,
+            created_at: new Date().toISOString(),
+          };
+
+          setVehicle(mockVehicle);
+          setImages([
+            {
+              id: `${mock.id}-image-1`,
+              image_url: mock.image,
+              image_type: "primary",
+            },
+          ]);
+          setSeller({ id: mockVehicle.user_id, full_name: "Vendedor (Demonstração)" });
+          setLoading(false);
+          return;
+        }
+
         setLoading(false);
         return;
       }

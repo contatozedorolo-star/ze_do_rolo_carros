@@ -10,8 +10,7 @@ const categories = [
   { value: "moto", label: "Motos", icon: Bike },
   { value: "caminhao", label: "Caminhões", icon: Truck },
   { value: "van", label: "Vans", icon: Bus },
-  { value: "camionete", label: "Camionetes", icon: CarFront },
-  { value: "cavalo", label: "Cavalos", icon: Container },
+  { value: "camionete", label: "Picapes", icon: CarFront },
   { value: "trator", label: "Tratores", icon: Tractor },
   { value: "implemento", label: "Implementos", icon: Cog },
 ];

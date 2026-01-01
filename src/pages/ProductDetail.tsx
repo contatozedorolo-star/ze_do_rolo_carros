@@ -5,7 +5,8 @@ import Footer from "@/components/Footer";
 import ProposalDialog from "@/components/ProposalDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   MapPin, 
@@ -20,7 +21,17 @@ import {
   Calendar,
   Gauge,
   Fuel,
-  Settings
+  Settings,
+  Palette,
+  FileText,
+  Eye,
+  Zap,
+  Disc,
+  Sofa,
+  Wrench,
+  CircleDot,
+  TrendingUp,
+  Package
 } from "lucide-react";
 
 interface Vehicle {
@@ -41,13 +52,28 @@ interface Vehicle {
   accepts_trade: boolean;
   city: string | null;
   state: string | null;
+  plate_end: string | null;
   rating_motor: number | null;
   rating_lataria: number | null;
   rating_pneus: number | null;
   rating_interior: number | null;
   rating_documentacao: number | null;
+  rating_cambio: number | null;
+  rating_freios: number | null;
+  rating_suspensao: number | null;
+  rating_estetica: number | null;
+  rating_mecanica_geral: number | null;
+  rating_eletrica: number | null;
   diagnostic_notes: string | null;
   has_ze_seal: boolean;
+  trade_description: string | null;
+  trade_value_accepted: number | null;
+  min_cash_return: number | null;
+  ideal_trade_description: string | null;
+  engine: string | null;
+  doors: number | null;
+  body_type: string | null;
+  optionals: string[] | null;
   created_at: string;
 }
 
@@ -113,65 +139,67 @@ const ProductDetail = () => {
     fetchVehicle();
   }, [id]);
 
-  const renderRatings = () => {
-    if (!vehicle) return null;
+  // Mock FIPE price (in production, fetch from API)
+  const fipePrice = vehicle ? Math.round(vehicle.price * 1.05) : 0;
 
-    const ratings = [
-      { label: "Motor", value: vehicle.rating_motor },
-      { label: "Lataria", value: vehicle.rating_lataria },
-      { label: "Pneus", value: vehicle.rating_pneus },
-      { label: "Interior", value: vehicle.rating_interior },
-      { label: "Documentação", value: vehicle.rating_documentacao },
-    ].filter(r => r.value);
+  const getRatingItems = () => {
+    if (!vehicle) return [];
 
-    if (ratings.length === 0) return null;
+    return [
+      { label: "Motor", value: vehicle.rating_motor, icon: Zap },
+      { label: "Câmbio", value: vehicle.rating_cambio, icon: Settings },
+      { label: "Lataria", value: vehicle.rating_lataria, icon: Car },
+      { label: "Estética", value: vehicle.rating_estetica, icon: Eye },
+      { label: "Pneus", value: vehicle.rating_pneus, icon: CircleDot },
+      { label: "Interior", value: vehicle.rating_interior, icon: Sofa },
+      { label: "Freios", value: vehicle.rating_freios, icon: Disc },
+      { label: "Suspensão", value: vehicle.rating_suspensao, icon: Wrench },
+      { label: "Elétrica", value: vehicle.rating_eletrica, icon: Zap },
+      { label: "Mecânica Geral", value: vehicle.rating_mecanica_geral, icon: Wrench },
+      { label: "Documentação", value: vehicle.rating_documentacao, icon: FileText },
+    ].filter(r => r.value !== null && r.value !== undefined);
+  };
 
-    const avgRating = ratings.reduce((acc, r) => acc + (r.value || 0), 0) / ratings.length;
+  const getAverageRating = () => {
+    const ratings = getRatingItems();
+    if (ratings.length === 0) return 0;
+    return ratings.reduce((acc, r) => acc + (r.value || 0), 0) / ratings.length;
+  };
 
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="text-3xl font-bold text-primary">{avgRating.toFixed(1)}</div>
-          <div className="text-sm text-muted-foreground">/5</div>
-          <Star className="h-6 w-6 text-secondary fill-secondary" />
-        </div>
-        
-        <div className="space-y-3">
-          {ratings.map((rating) => (
-            <div key={rating.label} className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{rating.label}</span>
-                <span className="font-medium text-foreground">{rating.value}/5</span>
-              </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary transition-all"
-                  style={{ width: `${((rating.value || 0) / 5) * 100}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  const getSpecifications = () => {
+    if (!vehicle) return [];
+
+    return [
+      { label: "Ano", value: `${vehicle.year_manufacture}/${vehicle.year_model}`, icon: Calendar },
+      { label: "Quilometragem", value: `${vehicle.km.toLocaleString()} km`, icon: Gauge },
+      { label: "Câmbio", value: vehicle.transmission, icon: Settings },
+      { label: "Combustível", value: vehicle.fuel, icon: Fuel },
+      { label: "Cor", value: vehicle.color, icon: Palette },
+      { label: "Final da Placa", value: vehicle.plate_end || "N/I", icon: FileText },
+      { label: "Motor", value: vehicle.engine || "N/I", icon: Zap },
+      { label: "Portas", value: vehicle.doors ? `${vehicle.doors} portas` : "N/I", icon: Car },
+      { label: "Carroceria", value: vehicle.body_type || "N/I", icon: Package },
+    ];
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#142562] border-t-transparent"></div>
       </div>
     );
   }
 
   if (!vehicle) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-50 flex flex-col">
         <Header />
         <main className="flex-1 container py-16 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Veículo não encontrado</h1>
-          <Button asChild>
-            <Link to="/veiculos">Ver Veículos</Link>
+          <Car className="h-20 w-20 mx-auto text-slate-300 mb-6" />
+          <h1 className="text-2xl font-bold text-[#142562] mb-4">Veículo não encontrado</h1>
+          <p className="text-slate-500 mb-6">O veículo que você está procurando não existe ou foi removido.</p>
+          <Button asChild className="bg-[#FF8C36] hover:bg-[#e67d2e] text-white">
+            <Link to="/veiculos">Ver Veículos Disponíveis</Link>
           </Button>
         </main>
         <Footer />
@@ -179,170 +207,434 @@ const ProductDetail = () => {
     );
   }
 
+  const ratings = getRatingItems();
+  const avgRating = getAverageRating();
+  const specifications = getSpecifications();
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       <Header />
       
-      <main className="flex-1 container py-8">
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Image Gallery */}
-          <div className="space-y-4">
-            <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted">
-              {images.length > 0 ? (
-                <>
-                  <img
-                    src={images[currentImage].image_url}
-                    alt={vehicle.title}
-                    className="w-full h-full object-cover"
-                  />
-                  {images.length > 1 && (
-                    <>
-                      <button
-                        onClick={() => setCurrentImage(prev => prev === 0 ? images.length - 1 : prev - 1)}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-background/80 rounded-full hover:bg-background"
-                      >
-                        <ChevronLeft className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => setCurrentImage(prev => prev === images.length - 1 ? 0 : prev + 1)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-background/80 rounded-full hover:bg-background"
-                      >
-                        <ChevronRight className="h-5 w-5" />
-                      </button>
-                    </>
-                  )}
-                </>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <Car className="h-16 w-16" />
-                </div>
-              )}
-            </div>
-
-            {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {images.map((img, index) => (
-                  <button
-                    key={img.id}
-                    onClick={() => setCurrentImage(index)}
-                    className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                      currentImage === index ? "border-primary" : "border-transparent"
-                    }`}
-                  >
-                    <img src={img.image_url} alt="" className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Vehicle Info */}
-          <div className="space-y-6">
-            <div className="flex flex-wrap gap-2">
-              {vehicle.has_ze_seal && (
-                <Badge variant="outline" className="border-accent text-accent">
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Selo Zé do Rolo
-                </Badge>
-              )}
-              {vehicle.accepts_trade && (
-                <Badge variant="outline" className="border-secondary text-secondary">
-                  <ArrowLeftRight className="h-3 w-3 mr-1" />
-                  Aceita Troca
-                </Badge>
-              )}
-            </div>
-
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{vehicle.title}</h1>
-              <p className="text-muted-foreground">{vehicle.brand} {vehicle.model} {vehicle.version}</p>
-              <div className="flex items-baseline gap-2 mt-2">
-                <span className="text-3xl font-bold text-primary">
-                  R$ {vehicle.price.toLocaleString("pt-BR")}
-                </span>
-              </div>
-            </div>
-
-            {/* Specs */}
-            <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">{vehicle.year_manufacture}/{vehicle.year_model}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Gauge className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">{vehicle.km.toLocaleString()} km</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Settings className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm capitalize">{vehicle.transmission}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Fuel className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm capitalize">{vehicle.fuel}</span>
-              </div>
-            </div>
-
-            {/* Location & Seller */}
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              {(vehicle.city || vehicle.state) && (
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {vehicle.city}{vehicle.city && vehicle.state ? ", " : ""}{vehicle.state}
-                </div>
-              )}
-              {seller && (
-                <span>Vendedor: {seller.full_name}</span>
-              )}
-            </div>
-
-            {vehicle.description && (
-              <div>
-                <h3 className="font-semibold text-foreground mb-2">Descrição</h3>
-                <p className="text-muted-foreground">{vehicle.description}</p>
-              </div>
-            )}
-
-            {/* CTA Buttons */}
-            <div className="flex gap-3">
-              <ProposalDialog
-                vehicleId={vehicle.id}
-                vehicleTitle={vehicle.title}
-                vehiclePrice={vehicle.price}
-                sellerId={vehicle.user_id}
-                acceptsTrade={vehicle.accepts_trade}
-                trigger={
-                  <Button variant="cta" size="lg" className="flex-1">
-                    Fazer Proposta
-                  </Button>
-                }
-              />
-              <Button variant="outline" size="lg">
-                <MessageCircle className="h-5 w-5" />
-              </Button>
-            </div>
+      <main className="flex-1">
+        {/* Breadcrumb */}
+        <div className="bg-white border-b">
+          <div className="container py-3">
+            <nav className="text-sm text-slate-500">
+              <Link to="/" className="hover:text-[#142562]">Home</Link>
+              <span className="mx-2">/</span>
+              <Link to="/veiculos" className="hover:text-[#142562]">Veículos</Link>
+              <span className="mx-2">/</span>
+              <span className="text-[#142562] font-medium">{vehicle.brand} {vehicle.model}</span>
+            </nav>
           </div>
         </div>
 
-        {/* Diagnosis Card */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-accent" />
-              Diagnóstico Zé do Rolo
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="max-w-md">
-              {renderRatings()}
-              {vehicle.diagnostic_notes && (
-                <div className="mt-4 p-4 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground">{vehicle.diagnostic_notes}</p>
+        <div className="container py-6">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left Column - Gallery & Details */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Image Gallery */}
+              <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
+                <div className="relative aspect-[16/10]">
+                  {images.length > 0 ? (
+                    <>
+                      <img
+                        src={images[currentImage].image_url}
+                        alt={vehicle.title}
+                        className="w-full h-full object-cover"
+                      />
+                      
+                      {/* Verified Badge Overlay */}
+                      {vehicle.has_ze_seal && (
+                        <div className="absolute top-4 left-4 bg-[#29B765] text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
+                          <Shield className="h-5 w-5" />
+                          <span className="font-semibold text-sm">Verificado pelo Zé</span>
+                        </div>
+                      )}
+
+                      {/* Image Counter */}
+                      <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+                        {currentImage + 1} / {images.length}
+                      </div>
+                      
+                      {/* Navigation Arrows */}
+                      {images.length > 1 && (
+                        <>
+                          <button
+                            onClick={() => setCurrentImage(prev => prev === 0 ? images.length - 1 : prev - 1)}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 rounded-full hover:bg-white shadow-lg transition-all hover:scale-105"
+                          >
+                            <ChevronLeft className="h-6 w-6 text-[#142562]" />
+                          </button>
+                          <button
+                            onClick={() => setCurrentImage(prev => prev === images.length - 1 ? 0 : prev + 1)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 rounded-full hover:bg-white shadow-lg transition-all hover:scale-105"
+                          >
+                            <ChevronRight className="h-6 w-6 text-[#142562]" />
+                          </button>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                      <Car className="h-24 w-24 text-slate-300" />
+                    </div>
+                  )}
                 </div>
+
+                {/* Thumbnails */}
+                {images.length > 1 && (
+                  <div className="p-4 border-t">
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {images.map((img, index) => (
+                        <button
+                          key={img.id}
+                          onClick={() => setCurrentImage(index)}
+                          className={`shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                            currentImage === index 
+                              ? "border-[#FF8C36] shadow-md" 
+                              : "border-transparent hover:border-slate-300"
+                          }`}
+                        >
+                          <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Technical Specifications Grid */}
+              <Card className="bg-white shadow-sm border-0">
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-bold text-[#142562] mb-6 flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Especificações Técnicas
+                  </h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {specifications.map((spec) => (
+                      <div 
+                        key={spec.label}
+                        className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
+                      >
+                        <div className="p-2 bg-[#142562]/10 rounded-lg">
+                          <spec.icon className="h-5 w-5 text-[#142562]" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500 uppercase tracking-wide">{spec.label}</p>
+                          <p className="font-semibold text-[#142562] capitalize">{spec.value}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Seller Description */}
+              {vehicle.description && (
+                <Card className="bg-white shadow-sm border-0">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-bold text-[#142562] mb-4 flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Descrição do Vendedor
+                    </h2>
+                    <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">
+                      {vehicle.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Optionals */}
+              {vehicle.optionals && vehicle.optionals.length > 0 && (
+                <Card className="bg-white shadow-sm border-0">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-bold text-[#142562] mb-4 flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5" />
+                      Opcionais
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {vehicle.optionals.map((opt, index) => (
+                        <Badge 
+                          key={index}
+                          variant="secondary"
+                          className="bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5"
+                        >
+                          {opt}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Diagnóstico de Confiança do Dono */}
+              {ratings.length > 0 && (
+                <Card className="bg-gradient-to-br from-[#142562] to-[#1e3a8a] text-white shadow-lg border-0">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="p-3 bg-white/20 rounded-xl">
+                          <Shield className="h-7 w-7 text-[#29B765]" />
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-bold">Diagnóstico de Confiança do Dono</h2>
+                          <p className="text-white/70 text-sm">Avaliação detalhada do veículo</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-6 w-6 text-[#FF8C36] fill-[#FF8C36]" />
+                          <span className="text-3xl font-bold">{avgRating.toFixed(1)}</span>
+                          <span className="text-white/60">/10</span>
+                        </div>
+                        <p className="text-xs text-white/60">Nota Geral</p>
+                      </div>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {ratings.map((rating) => (
+                        <div key={rating.label} className="bg-white/10 rounded-xl p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <rating.icon className="h-4 w-4 text-white/70" />
+                              <span className="text-sm font-medium">{rating.label}</span>
+                            </div>
+                            <span className="font-bold text-[#FF8C36]">{rating.value}/10</span>
+                          </div>
+                          <Progress 
+                            value={(rating.value || 0) * 10} 
+                            className="h-2 bg-white/20"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {vehicle.diagnostic_notes && (
+                      <div className="mt-6 p-4 bg-white/10 rounded-xl border border-white/20">
+                        <p className="text-sm text-white/90 italic">
+                          "{vehicle.diagnostic_notes}"
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="mt-6 p-4 bg-[#29B765]/20 rounded-xl border border-[#29B765]/30 flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-[#29B765] shrink-0 mt-0.5" />
+                      <p className="text-sm text-white/90">
+                        O Zé do Rolo realiza a conferência desses itens no ato da vistoria cautelar, 
+                        garantindo transparência e segurança para sua compra.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Trade Section */}
+              {vehicle.accepts_trade && (
+                <Card className="bg-gradient-to-r from-[#FF8C36] to-[#f97316] text-white shadow-lg border-0">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 bg-white/20 rounded-xl">
+                        <ArrowLeftRight className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold">O que o Dono Aceita na Troca</h2>
+                        <p className="text-white/80 text-sm">Faça uma proposta personalizada</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 mb-6">
+                      {vehicle.ideal_trade_description && (
+                        <div className="p-4 bg-white/20 rounded-xl">
+                          <p className="font-medium">{vehicle.ideal_trade_description}</p>
+                        </div>
+                      )}
+                      
+                      {vehicle.trade_value_accepted && (
+                        <div className="flex items-center justify-between p-4 bg-white/20 rounded-xl">
+                          <span>Valor aceito em troca:</span>
+                          <span className="font-bold text-lg">
+                            Até R$ {vehicle.trade_value_accepted.toLocaleString("pt-BR")}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {vehicle.min_cash_return && (
+                        <div className="flex items-center justify-between p-4 bg-white/20 rounded-xl">
+                          <span>Mínimo de volta em dinheiro:</span>
+                          <span className="font-bold text-lg">
+                            R$ {vehicle.min_cash_return.toLocaleString("pt-BR")}
+                          </span>
+                        </div>
+                      )}
+
+                      {!vehicle.ideal_trade_description && !vehicle.trade_value_accepted && (
+                        <div className="p-4 bg-white/20 rounded-xl">
+                          <p>Este vendedor está aberto a propostas de troca. Entre em contato para negociar!</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <ProposalDialog
+                      vehicleId={vehicle.id}
+                      vehicleTitle={vehicle.title}
+                      vehiclePrice={vehicle.price}
+                      sellerId={vehicle.user_id}
+                      acceptsTrade={true}
+                      trigger={
+                        <Button 
+                          className="w-full bg-white text-[#FF8C36] hover:bg-white/90 font-bold py-6 text-lg shadow-lg"
+                        >
+                          <Package className="h-5 w-5 mr-2" />
+                          Montar Meu Lote para Troca
+                        </Button>
+                      }
+                    />
+                  </CardContent>
+                </Card>
               )}
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Right Column - Sticky Conversion Block */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-4 space-y-4">
+                {/* Main Conversion Card */}
+                <Card className="bg-white shadow-lg border-0 overflow-hidden">
+                  <CardContent className="p-6">
+                    {/* Badges */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {vehicle.has_ze_seal && (
+                        <Badge className="bg-[#29B765] text-white border-0">
+                          <Shield className="h-3 w-3 mr-1" />
+                          Verificado
+                        </Badge>
+                      )}
+                      {vehicle.accepts_trade && (
+                        <Badge className="bg-[#FF8C36] text-white border-0">
+                          <ArrowLeftRight className="h-3 w-3 mr-1" />
+                          Aceita Troca
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Title */}
+                    <h1 className="text-2xl font-bold text-[#142562] mb-1">
+                      {vehicle.brand} {vehicle.model}
+                    </h1>
+                    <p className="text-slate-500 mb-4">
+                      {vehicle.version || vehicle.title}
+                    </p>
+
+                    {/* Price */}
+                    <div className="mb-6">
+                      <span className="text-4xl font-bold text-[#142562]">
+                        R$ {vehicle.price.toLocaleString("pt-BR")}
+                      </span>
+                    </div>
+
+                    {/* Quick Info */}
+                    <div className="grid grid-cols-2 gap-3 mb-6 p-4 bg-slate-50 rounded-xl">
+                      <div className="text-center">
+                        <p className="text-xs text-slate-500 uppercase">Ano</p>
+                        <p className="font-bold text-[#142562]">{vehicle.year_manufacture}/{vehicle.year_model}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-slate-500 uppercase">KM</p>
+                        <p className="font-bold text-[#142562]">{vehicle.km.toLocaleString()}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-slate-500 uppercase">Cor</p>
+                        <p className="font-bold text-[#142562] capitalize">{vehicle.color}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-slate-500 uppercase">Final Placa</p>
+                        <p className="font-bold text-[#142562]">{vehicle.plate_end || "-"}</p>
+                      </div>
+                    </div>
+
+                    {/* CTA Buttons */}
+                    <div className="space-y-3">
+                      <ProposalDialog
+                        vehicleId={vehicle.id}
+                        vehicleTitle={vehicle.title}
+                        vehiclePrice={vehicle.price}
+                        sellerId={vehicle.user_id}
+                        acceptsTrade={vehicle.accepts_trade}
+                        trigger={
+                          <Button 
+                            className="w-full bg-[#FF8C36] hover:bg-[#e67d2e] text-white font-bold py-6 text-lg shadow-lg hover:shadow-xl transition-all"
+                          >
+                            <ArrowLeftRight className="h-5 w-5 mr-2" />
+                            FAZER PROPOSTA DE TROCA
+                          </Button>
+                        }
+                      />
+                      
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-2 border-[#142562] text-[#142562] hover:bg-[#142562] hover:text-white font-bold py-6 text-lg transition-all"
+                      >
+                        <MessageCircle className="h-5 w-5 mr-2" />
+                        FALAR COM CONSULTOR ZÉ
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* FIPE Comparison */}
+                <Card className="bg-white shadow-sm border-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <TrendingUp className="h-5 w-5 text-[#142562]" />
+                      <h3 className="font-semibold text-[#142562]">Comparativo FIPE</h3>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center p-3 bg-[#29B765]/10 rounded-lg">
+                        <span className="text-sm text-slate-600">Preço Zé do Rolo</span>
+                        <span className="font-bold text-[#29B765]">
+                          R$ {vehicle.price.toLocaleString("pt-BR")}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                        <span className="text-sm text-slate-600">Preço Médio FIPE</span>
+                        <span className="font-bold text-slate-500">
+                          R$ {fipePrice.toLocaleString("pt-BR")}
+                        </span>
+                      </div>
+                      {vehicle.price < fipePrice && (
+                        <p className="text-xs text-[#29B765] text-center mt-2 font-medium">
+                          ✓ Este veículo está abaixo da tabela FIPE!
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Seller Info */}
+                <Card className="bg-white shadow-sm border-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-[#142562] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        {seller?.full_name?.charAt(0) || "V"}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[#142562]">
+                          {seller?.full_name || "Vendedor"}
+                        </p>
+                        {(vehicle.city || vehicle.state) && (
+                          <p className="text-sm text-slate-500 flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {vehicle.city}{vehicle.city && vehicle.state ? ", " : ""}{vehicle.state}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
 
       <Footer />

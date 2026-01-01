@@ -1,4 +1,4 @@
-import { Car, Truck, Bike, Bus, CarFront } from "lucide-react";
+import { Car, Truck, Bike, Bus, CarFront, Container, Tractor, Cog } from "lucide-react";
 
 interface CategoryTabsProps {
   selectedCategory: string;
@@ -11,6 +11,9 @@ const categories = [
   { value: "caminhao", label: "Caminhões", icon: Truck },
   { value: "van", label: "Vans", icon: Bus },
   { value: "camionete", label: "Camionetes", icon: CarFront },
+  { value: "cavalo", label: "Cavalos", icon: Container },
+  { value: "trator", label: "Tratores", icon: Tractor },
+  { value: "implemento", label: "Implementos", icon: Cog },
 ];
 
 const CategoryTabs = ({ selectedCategory, onCategoryChange }: CategoryTabsProps) => {

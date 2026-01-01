@@ -6,6 +6,9 @@ export const brands = {
   caminhao: ["Mercedes-Benz", "Volvo", "Scania", "DAF", "Iveco", "MAN", "Ford", "Volkswagen"],
   van: ["Fiat", "Mercedes-Benz", "Renault", "Peugeot", "Citroën", "Iveco", "Hyundai"],
   camionete: ["Toyota", "Chevrolet", "Ford", "Volkswagen", "Mitsubishi", "Nissan", "Fiat", "RAM"],
+  cavalo: ["Scania", "Volvo", "Mercedes-Benz", "DAF", "Iveco", "MAN", "Volkswagen"],
+  trator: ["John Deere", "Case IH", "New Holland", "Massey Ferguson", "Valtra", "Agrale", "LS Tractor", "Yanmar", "Mahindra"],
+  implemento: ["Randon", "Guerra", "Noma", "Librelato", "Facchini", "Rossetti", "Rodofort", "Krone", "Stara"],
 };
 
 export const colorOptions = [
@@ -152,6 +155,92 @@ export const vanSubcategories = [
   { value: "mista", label: "Mista" },
 ];
 
+// Filtros específicos para CAVALOS MECÂNICOS
+export const cavaloTractions = [
+  { value: "4x2", label: "4x2" },
+  { value: "6x2", label: "6x2" },
+  { value: "6x4", label: "6x4" },
+  { value: "8x4", label: "8x4" },
+];
+
+export const cavaloCabins = [
+  { value: "simples", label: "Cabine Simples" },
+  { value: "leito", label: "Cabine Leito" },
+  { value: "leito_alto", label: "Leito Alto" },
+];
+
+export const cavaloPotencias = [
+  { value: "300-400", label: "300-400 CV" },
+  { value: "400-500", label: "400-500 CV" },
+  { value: "500-600", label: "500-600 CV" },
+  { value: "600+", label: "Acima de 600 CV" },
+];
+
+// Filtros específicos para TRATORES E MÁQUINAS
+export const tratorTypes = [
+  { value: "trator_agricola", label: "Trator Agrícola" },
+  { value: "trator_esteira", label: "Trator de Esteira" },
+  { value: "retroescavadeira", label: "Retroescavadeira" },
+  { value: "escavadeira", label: "Escavadeira" },
+  { value: "colheitadeira", label: "Colheitadeira" },
+  { value: "pulverizador", label: "Pulverizador" },
+  { value: "plantadeira", label: "Plantadeira" },
+];
+
+export const tratorTractions = [
+  { value: "4x2", label: "4x2 (Simples)" },
+  { value: "4x4", label: "4x4 (TDA)" },
+  { value: "esteira", label: "Esteira" },
+];
+
+export const tratorPotencias = [
+  { value: "0-50", label: "Até 50 CV" },
+  { value: "50-100", label: "50-100 CV" },
+  { value: "100-150", label: "100-150 CV" },
+  { value: "150-200", label: "150-200 CV" },
+  { value: "200-300", label: "200-300 CV" },
+  { value: "300+", label: "Acima de 300 CV" },
+];
+
+export const horasUsoRanges = [
+  { value: "0-1000", label: "Até 1.000h" },
+  { value: "1000-3000", label: "1.000 - 3.000h" },
+  { value: "3000-5000", label: "3.000 - 5.000h" },
+  { value: "5000-8000", label: "5.000 - 8.000h" },
+  { value: "8000-12000", label: "8.000 - 12.000h" },
+  { value: "12000+", label: "Acima de 12.000h" },
+];
+
+// Filtros específicos para IMPLEMENTOS
+export const implementoTypes = [
+  { value: "graneleiro", label: "Graneleiro" },
+  { value: "sider", label: "Sider" },
+  { value: "bau", label: "Baú" },
+  { value: "bau_refrigerado", label: "Baú Refrigerado" },
+  { value: "prancha", label: "Prancha" },
+  { value: "tanque", label: "Tanque" },
+  { value: "cacamba", label: "Caçamba" },
+  { value: "cegonheira", label: "Cegonheira" },
+  { value: "porta_container", label: "Porta-Container" },
+  { value: "dolly", label: "Dolly" },
+];
+
+export const implementoEixos = [
+  { value: "1", label: "1 Eixo" },
+  { value: "2", label: "2 Eixos" },
+  { value: "3", label: "3 Eixos" },
+  { value: "4", label: "4 Eixos" },
+  { value: "5+", label: "5+ Eixos" },
+];
+
+export const implementoComprimentos = [
+  { value: "6-8", label: "6-8 metros" },
+  { value: "8-10", label: "8-10 metros" },
+  { value: "10-12", label: "10-12 metros" },
+  { value: "12-14", label: "12-14 metros" },
+  { value: "14+", label: "Acima de 14 metros" },
+];
+
 // Estados brasileiros
 export const brazilianStates = [
   "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", 
@@ -165,6 +254,7 @@ export const sortOptions = [
   { value: "price_asc", label: "Menor preço" },
   { value: "price_desc", label: "Maior preço" },
   { value: "km_asc", label: "Menor quilometragem" },
+  { value: "hours_asc", label: "Menos horas de uso" },
   { value: "year_desc", label: "Ano mais novo" },
   { value: "created_desc", label: "Mais recente" },
   { value: "location", label: "Localização próxima" },

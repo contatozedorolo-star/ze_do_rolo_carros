@@ -221,7 +221,7 @@ export const vehicles = [
   // Novos: Implementos
   {
     id: "v13",
-    image: "https://images.unsplash.com/photo-1586191582066-3e3b8a37c14e?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop",
     title: "Randon Graneleiro SR 3 Eixos 2024",
     price: 320000,
     location: "Cascavel, PR",

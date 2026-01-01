@@ -3,6 +3,7 @@ import { SlidersHorizontal, Grid3X3, List, ChevronDown, MapPin, Search } from "l
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CategoryGrid from "@/components/CategoryGrid";
 import { AdvancedVehicleFilters } from "@/components/filters";
 import VehicleCard from "@/components/VehicleCard";
 import { Button } from "@/components/ui/button";
@@ -203,6 +204,9 @@ const Veiculos = () => {
       </section>
 
       <main className="container py-6">
+        {/* Category Grid */}
+        <CategoryGrid />
+
         {/* Breadcrumb */}
         <nav className="text-sm text-muted-foreground mb-4">
           <span className="hover:text-primary cursor-pointer">Home</span>

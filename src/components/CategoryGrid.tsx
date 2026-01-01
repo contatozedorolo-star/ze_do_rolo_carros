@@ -16,14 +16,8 @@ const vehicleCategories = [
   { 
     id: "carro", 
     name: "Carros", 
-    image: sedanImg, 
-    href: "/veiculos?tipo=carro" 
-  },
-  { 
-    id: "suv", 
-    name: "SUVs", 
     image: suvImg, 
-    href: "/veiculos?tipo=suv" 
+    href: "/veiculos?tipo=carro" 
   },
   { 
     id: "moto", 

@@ -9,6 +9,8 @@ import implementoSiderImg from "@/assets/vehicle-implemento-sider.jpg";
 import tratorImg from "@/assets/category-trator.jpg";
 import s10Img from "@/assets/vehicle-s10.jpg";
 import volvoFhImg from "@/assets/vehicle-volvo-fh.jpg";
+import vanSprinterImg from "@/assets/vehicle-van-sprinter.jpg";
+import vanMasterImg from "@/assets/vehicle-van-master.jpg";
 
 export const vehicles = [
   // CARROS
@@ -324,7 +326,7 @@ export const vehicles = [
   // VANS
   {
     id: "v10",
-    image: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=600&h=400&fit=crop",
+    image: vanSprinterImg,
     title: "Mercedes-Benz Sprinter 516 Van 16 Lugares",
     price: 289000,
     location: "Porto Alegre, RS",
@@ -343,7 +345,7 @@ export const vehicles = [
   {
     id: "v23",
     image: "https://images.unsplash.com/photo-1464219789935-c2d9d9aba644?w=600&h=400&fit=crop",
-    title: "Fiat Ducato Minibus 2.3 16L",
+    title: "Volkswagen Kombi 1.4 Last Edition",
     price: 195000,
     location: "Belo Horizonte, MG",
     year: "2023/2023",
@@ -360,7 +362,7 @@ export const vehicles = [
   },
   {
     id: "v24",
-    image: "https://images.unsplash.com/photo-1532581140115-3e355d1ed1de?w=600&h=400&fit=crop",
+    image: vanMasterImg,
     title: "Renault Master 2.3 Executive L3H2",
     price: 175000,
     location: "Florianópolis, SC",

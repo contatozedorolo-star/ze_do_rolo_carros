@@ -64,15 +64,15 @@ const CategoryGrid = () => {
         Encontre por Categoria
       </h2>
       
-      {/* Desktop: 3x2 grid, Tablet: 3 columns, Mobile: 2 columns */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+      {/* Single row with horizontal scroll on mobile, all visible on desktop */}
+      <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 scrollbar-hide">
         {vehicleCategories.map((category) => (
           <Link
             key={category.id}
             to={category.href}
             className={cn(
-              "group relative overflow-hidden rounded-xl",
-              "aspect-[4/3] md:aspect-[3/4]",
+              "group relative overflow-hidden rounded-xl flex-shrink-0",
+              "w-40 md:w-48 lg:w-52 aspect-[3/4]",
               "shadow-lg hover:shadow-xl",
               "transition-all duration-300 ease-out",
               "hover:scale-[1.03]",

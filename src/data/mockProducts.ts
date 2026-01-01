@@ -1,4 +1,13 @@
 // Veículos - Dados de exemplo para o marketplace automotivo
+
+// Importar imagens locais para tratores e implementos
+import tratorCaseImg from "@/assets/vehicle-trator-case.jpg";
+import tratorNewhollandImg from "@/assets/vehicle-trator-newholland.jpg";
+import implementoGraneleiroImg from "@/assets/vehicle-implemento-graneleiro.jpg";
+import implementoBasculanteImg from "@/assets/vehicle-implemento-basculante.jpg";
+import implementoSiderImg from "@/assets/vehicle-implemento-sider.jpg";
+import tratorImg from "@/assets/category-trator.jpg";
+
 export const vehicles = [
   // CARROS
   {
@@ -368,7 +377,7 @@ export const vehicles = [
   // TRATORES
   {
     id: "v12",
-    image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop",
+    image: tratorImg,
     title: "John Deere 8R 340 Trator Agrícola 340cv",
     price: 1450000,
     location: "Sorriso, MT",
@@ -386,7 +395,7 @@ export const vehicles = [
   },
   {
     id: "v25",
-    image: "https://images.unsplash.com/photo-1589328328047-c2c238d7dcb6?w=600&h=400&fit=crop",
+    image: tratorCaseImg,
     title: "Case IH Magnum 380 CVT 380cv",
     price: 1680000,
     location: "Rondonópolis, MT",
@@ -404,7 +413,7 @@ export const vehicles = [
   },
   {
     id: "v26",
-    image: "https://images.unsplash.com/photo-1562051036-e0eea191d42f?w=600&h=400&fit=crop",
+    image: tratorNewhollandImg,
     title: "New Holland T7.245 245cv",
     price: 890000,
     location: "Dourados, MS",
@@ -423,7 +432,7 @@ export const vehicles = [
   // IMPLEMENTOS
   {
     id: "v13",
-    image: "https://images.unsplash.com/photo-1586191582066-3e3b8a37c14e?w=600&h=400&fit=crop",
+    image: implementoGraneleiroImg,
     title: "Randon Graneleiro SR 3 Eixos 2024",
     price: 320000,
     location: "Cascavel, PR",
@@ -441,7 +450,7 @@ export const vehicles = [
   },
   {
     id: "v16",
-    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=600&h=400&fit=crop",
+    image: implementoBasculanteImg,
     title: "Librelato Basculante 6 Eixos 2023",
     price: 280000,
     location: "Londrina, PR",
@@ -459,7 +468,7 @@ export const vehicles = [
   },
   {
     id: "v27",
-    image: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=600&h=400&fit=crop",
+    image: implementoSiderImg,
     title: "Guerra Sider 3 Eixos 2023",
     price: 185000,
     location: "Maringá, PR",

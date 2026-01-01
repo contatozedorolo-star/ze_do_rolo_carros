@@ -29,11 +29,13 @@ import {
 } from "@/components/ui/select";
 
 const vehicleTypes = [
-  { value: "carro", label: "Carro" },
-  { value: "moto", label: "Moto" },
-  { value: "caminhao", label: "Caminhão" },
-  { value: "van", label: "Van" },
-  { value: "camionete", label: "Camionete" },
+  { value: "carro", label: "Carros" },
+  { value: "moto", label: "Motos" },
+  { value: "caminhao", label: "Caminhões" },
+  { value: "van", label: "Vans" },
+  { value: "camionete", label: "Picapes" },
+  { value: "trator", label: "Tratores" },
+  { value: "implemento", label: "Implementos" },
 ];
 
 const Veiculos = () => {
@@ -223,10 +225,21 @@ const Veiculos = () => {
         {/* Page Title */}
         <div className="mb-6">
           <h2 className="text-xl md:text-2xl font-bold text-foreground">
-            Veículos em todo o Brasil
+            {filters.category ? (
+              <>
+                {vehicleTypes.find(t => t.value === filters.category)?.label || "Veículos"} em todo o Brasil
+              </>
+            ) : (
+              "Veículos em todo o Brasil"
+            )}
           </h2>
           <p className="text-muted-foreground mt-1 flex items-center gap-2">
-            <span>{vehicles.length.toLocaleString("pt-BR")} anúncios encontrados</span>
+            <span>
+              {vehicles
+                .filter(v => !filters.category || v.type === filters.category)
+                .filter(v => !quickSearch.searchTerm || v.title.toLowerCase().includes(quickSearch.searchTerm.toLowerCase()))
+                .length.toLocaleString("pt-BR")} anúncios encontrados
+            </span>
             {filters.state && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <MapPin className="h-3 w-3" />
@@ -346,9 +359,24 @@ const Veiculos = () => {
                 ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
                 : "flex flex-col gap-4"
             }>
-              {vehicles.map((vehicle) => (
-                <VehicleCard key={vehicle.id} {...vehicle} />
-              ))}
+              {vehicles
+                .filter(vehicle => {
+                  // Filtrar por categoria se selecionada
+                  if (filters.category && filters.category !== "") {
+                    return vehicle.type === filters.category;
+                  }
+                  return true;
+                })
+                .filter(vehicle => {
+                  // Filtrar por termo de busca
+                  if (quickSearch.searchTerm && quickSearch.searchTerm !== "") {
+                    return vehicle.title.toLowerCase().includes(quickSearch.searchTerm.toLowerCase());
+                  }
+                  return true;
+                })
+                .map((vehicle) => (
+                  <VehicleCard key={vehicle.id} {...vehicle} />
+                ))}
             </div>
 
             {/* Load More */}

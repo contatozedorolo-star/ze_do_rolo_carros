@@ -368,7 +368,7 @@ export const vehicles = [
   // TRATORES
   {
     id: "v12",
-    image: "https://images.unsplash.com/photo-1530267981375-f0de937f5f13?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop",
     title: "John Deere 8R 340 Trator Agrícola 340cv",
     price: 1450000,
     location: "Sorriso, MT",
@@ -386,7 +386,7 @@ export const vehicles = [
   },
   {
     id: "v25",
-    image: "https://images.unsplash.com/photo-1592878904946-b3cd8ae243d0?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1589328328047-c2c238d7dcb6?w=600&h=400&fit=crop",
     title: "Case IH Magnum 380 CVT 380cv",
     price: 1680000,
     location: "Rondonópolis, MT",
@@ -404,7 +404,7 @@ export const vehicles = [
   },
   {
     id: "v26",
-    image: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1562051036-e0eea191d42f?w=600&h=400&fit=crop",
     title: "New Holland T7.245 245cv",
     price: 890000,
     location: "Dourados, MS",
@@ -423,7 +423,7 @@ export const vehicles = [
   // IMPLEMENTOS
   {
     id: "v13",
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1586191582066-3e3b8a37c14e?w=600&h=400&fit=crop",
     title: "Randon Graneleiro SR 3 Eixos 2024",
     price: 320000,
     location: "Cascavel, PR",
@@ -441,7 +441,7 @@ export const vehicles = [
   },
   {
     id: "v16",
-    image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=600&h=400&fit=crop",
     title: "Librelato Basculante 6 Eixos 2023",
     price: 280000,
     location: "Londrina, PR",
@@ -459,7 +459,7 @@ export const vehicles = [
   },
   {
     id: "v27",
-    image: "https://images.unsplash.com/photo-1574263867128-a3d5c1b1decc?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=600&h=400&fit=crop",
     title: "Guerra Sider 3 Eixos 2023",
     price: 185000,
     location: "Maringá, PR",

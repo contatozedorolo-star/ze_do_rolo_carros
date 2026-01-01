@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Car, Bike, Truck, Search, DollarSign, Calendar, Hash, Loader2 } from "lucide-react";
+import { Car, Bike, Truck, Search, DollarSign, Calendar, Hash, Loader2, RotateCcw } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,16 @@ const TabelaFipe = () => {
   const [loadingYears, setLoadingYears] = useState(false);
   const [loadingResult, setLoadingResult] = useState(false);
 
+  // Clear all selections and result
+  const handleClearAll = () => {
+    setSelectedBrand("");
+    setSelectedModel("");
+    setSelectedYear("");
+    setModels([]);
+    setYears([]);
+    setResult(null);
+  };
+
   // Fetch brands when vehicle type changes
   useEffect(() => {
     const fetchBrands = async () => {
@@ -62,9 +72,10 @@ const TabelaFipe = () => {
       try {
         const response = await fetch(`${API_BASE}/${vehicleType}/marcas`);
         const data = await response.json();
-        setBrands(data);
+        setBrands(Array.isArray(data) ? data : []);
       } catch (error) {
         toast({ title: "Erro", description: "Não foi possível carregar as marcas", variant: "destructive" });
+        setBrands([]);
       } finally {
         setLoadingBrands(false);
       }
@@ -88,9 +99,10 @@ const TabelaFipe = () => {
       try {
         const response = await fetch(`${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos`);
         const data = await response.json();
-        setModels(data.modelos);
+        setModels(Array.isArray(data?.modelos) ? data.modelos : []);
       } catch (error) {
         toast({ title: "Erro", description: "Não foi possível carregar os modelos", variant: "destructive" });
+        setModels([]);
       } finally {
         setLoadingModels(false);
       }
@@ -112,9 +124,10 @@ const TabelaFipe = () => {
       try {
         const response = await fetch(`${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos`);
         const data = await response.json();
-        setYears(data);
+        setYears(Array.isArray(data) ? data : []);
       } catch (error) {
         toast({ title: "Erro", description: "Não foi possível carregar os anos", variant: "destructive" });
+        setYears([]);
       } finally {
         setLoadingYears(false);
       }
@@ -327,6 +340,17 @@ const TabelaFipe = () => {
                   💡 Este é o preço médio de mercado conforme a Tabela FIPE. 
                   Use como referência para negociações de compra, venda ou troca.
                 </p>
+              </div>
+
+              <div className="mt-6 flex justify-center">
+                <Button 
+                  variant="outline" 
+                  onClick={handleClearAll}
+                  className="flex items-center gap-2"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Nova Consulta
+                </Button>
               </div>
             </CardContent>
           </Card>

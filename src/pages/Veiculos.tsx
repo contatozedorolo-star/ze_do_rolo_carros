@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { SlidersHorizontal, Grid3X3, List, ChevronDown, MapPin, Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
@@ -40,18 +40,30 @@ const vehicleTypes = [
 
 const Veiculos = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, loading } = useAuth();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedSort, setSelectedSort] = useState("relevance");
   const [filters, setFilters] = useState<any>({});
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
   
+  // Get category from URL parameter
+  const urlCategory = searchParams.get("tipo") || "";
+  
   // Quick search state
   const [quickSearch, setQuickSearch] = useState({
-    category: "",
+    category: urlCategory,
     searchTerm: "",
     state: "",
   });
+
+  // Initialize filters from URL parameter
+  useEffect(() => {
+    if (urlCategory) {
+      setFilters(prev => ({ ...prev, category: urlCategory }));
+      setQuickSearch(prev => ({ ...prev, category: urlCategory }));
+    }
+  }, [urlCategory]);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -225,9 +237,9 @@ const Veiculos = () => {
         {/* Page Title */}
         <div className="mb-6">
           <h2 className="text-xl md:text-2xl font-bold text-foreground">
-            {filters.category ? (
+            {(filters.category || urlCategory) ? (
               <>
-                {vehicleTypes.find(t => t.value === filters.category)?.label || "Veículos"} em todo o Brasil
+                {vehicleTypes.find(t => t.value === (filters.category || urlCategory))?.label || "Veículos"} em todo o Brasil
               </>
             ) : (
               "Veículos em todo o Brasil"
@@ -236,7 +248,10 @@ const Veiculos = () => {
           <p className="text-muted-foreground mt-1 flex items-center gap-2">
             <span>
               {vehicles
-                .filter(v => !filters.category || v.type === filters.category)
+                .filter(v => {
+                  const activeCategory = filters.category || urlCategory;
+                  return !activeCategory || v.type === activeCategory;
+                })
                 .filter(v => !quickSearch.searchTerm || v.title.toLowerCase().includes(quickSearch.searchTerm.toLowerCase()))
                 .length.toLocaleString("pt-BR")} anúncios encontrados
             </span>
@@ -280,7 +295,7 @@ const Veiculos = () => {
           <div className="hidden lg:block">
             <AdvancedVehicleFilters 
               onFiltersChange={handleFiltersChange} 
-              initialCategory={quickSearch.category}
+              initialCategory={urlCategory || quickSearch.category}
             />
           </div>
 
@@ -305,7 +320,7 @@ const Veiculos = () => {
                   <div className="p-4">
                     <AdvancedVehicleFilters 
                       onFiltersChange={handleFiltersChange}
-                      initialCategory={quickSearch.category}
+                      initialCategory={urlCategory || quickSearch.category}
                     />
                   </div>
                 </SheetContent>
@@ -361,9 +376,10 @@ const Veiculos = () => {
             }>
               {vehicles
                 .filter(vehicle => {
-                  // Filtrar por categoria se selecionada
-                  if (filters.category && filters.category !== "") {
-                    return vehicle.type === filters.category;
+                  // Filtrar por categoria (URL ou filtro selecionado)
+                  const activeCategory = filters.category || urlCategory;
+                  if (activeCategory && activeCategory !== "") {
+                    return vehicle.type === activeCategory;
                   }
                   return true;
                 })

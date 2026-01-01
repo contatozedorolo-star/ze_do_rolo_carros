@@ -17,34 +17,43 @@ const HeroSection = () => {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/30 animate-fade-in">
             <Shield className="h-4 w-4 text-accent" />
             <span className="text-sm font-semibold text-accent">
-              100% Seguro e Verificado
+              🛡️ 100% SEGURO E VERIFICADO
             </span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            Troque ou Venda seu Veículo{" "}
-            <span className="text-secondary">com a Segurança do Zé do Rolo.</span>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in" style={{ animationDelay: "0.1s", color: "#142562" }}>
+            Negocie tudo, menos a sua{" "}
+            <span style={{ color: "#FF8C36" }}>segurança!</span>
           </h1>
 
           {/* Sub-headline */}
           <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            Intermediação ativa para carros e caminhões. Nós verificamos a procedência para você{" "}
-            <strong className="text-accent">negociar sem medo</strong>.
+            Somos seus consultores de negócios pessoais. Diga o que você tem, o que você precisa e nós encontramos o negócio perfeito para você!
+          </p>
+
+          {/* Highlight Block */}
+          <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.25s" }}>
+            Compra, venda e principalmente troca, com{" "}
+            <span style={{ color: "#29B765" }}>transparência</span> e segurança!
           </p>
 
           {/* Trust Points */}
           <div className="flex flex-wrap justify-center gap-4 text-sm text-primary-foreground/70 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            {[
-              "Documentação Verificada",
-              "Vendedores Certificados",
-              "Transações Seguras",
-            ].map((point) => (
-              <div key={point} className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-accent" />
-                <span>{point}</span>
-              </div>
-            ))}
+            <div className="flex items-center gap-1.5">
+              <CheckCircle className="h-4 w-4 text-accent" />
+              <span>Identidade verificada</span>
+            </div>
+            <span className="text-primary-foreground/50">+</span>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle className="h-4 w-4 text-accent" />
+              <span>Produto verificado</span>
+            </div>
+            <span className="text-primary-foreground/50">=</span>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle className="h-4 w-4 text-accent" />
+              <span>Negociação segura</span>
+            </div>
           </div>
 
           {/* CTAs */}

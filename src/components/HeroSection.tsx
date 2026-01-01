@@ -12,90 +12,44 @@ const HeroSection = () => {
       </div>
 
       <div className="container relative py-16 md:py-24">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          {/* 1. Security Badge - Green background */}
-          <div 
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full animate-fade-in shadow-lg"
-            style={{ backgroundColor: '#29B765' }}
-          >
-            <Shield className="h-5 w-5 text-white" />
-            <span className="text-sm font-bold text-white tracking-wide">
-              🛡️ 100% SEGURO E VERIFICADO
+        <div className="max-w-3xl mx-auto text-center space-y-8">
+          {/* Trust Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/30 animate-fade-in">
+            <Shield className="h-4 w-4 text-accent" />
+            <span className="text-sm font-semibold text-accent">
+              100% Seguro e Verificado
             </span>
           </div>
 
-          {/* 2. Headline Principal */}
-          <h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in" 
-            style={{ animationDelay: "0.1s" }}
-          >
-            <span style={{ color: '#142562' }}>Negocie tudo, menos a sua </span>
-            <span style={{ color: '#FF8C36' }}>segurança!</span>
+          {/* Headline */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            Troque ou Venda seu Veículo{" "}
+            <span className="text-secondary">com a Segurança do Zé do Rolo.</span>
           </h1>
 
-          {/* 3. Bloco de Consultoria */}
-          <p 
-            className="text-lg md:text-xl max-w-3xl mx-auto animate-fade-in leading-relaxed" 
-            style={{ animationDelay: "0.2s" }}
-          >
-            <span className="text-gray-600">Somos seus </span>
-            <strong style={{ color: '#142562' }}>consultores de negócios pessoais</strong>
-            <span className="text-gray-600">. Diga </span>
-            <strong style={{ color: '#142562' }}>o que você tem</strong>
-            <span className="text-gray-600">, </span>
-            <strong style={{ color: '#142562' }}>o que você precisa</strong>
-            <span className="text-gray-600"> e nós encontramos o </span>
-            <strong style={{ color: '#142562' }}>negócio perfeito</strong>
-            <span className="text-gray-600"> para você!</span>
+          {/* Sub-headline */}
+          <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            Intermediação ativa para carros e caminhões. Nós verificamos a procedência para você{" "}
+            <strong className="text-accent">negociar sem medo</strong>.
           </p>
 
-          {/* 4. Bloco de Transparência */}
-          <div 
-            className="py-4 px-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm inline-block animate-fade-in" 
-            style={{ animationDelay: "0.25s" }}
-          >
-            <p className="text-lg md:text-xl text-gray-700 font-medium">
-              Compra, venda e principalmente troca, com{" "}
-              <span className="font-bold" style={{ color: '#29B765' }}>transparência</span>
-              {" "}e{" "}
-              <span className="font-bold" style={{ color: '#142562' }}>segurança</span>!
-            </p>
+          {/* Trust Points */}
+          <div className="flex flex-wrap justify-center gap-4 text-sm text-primary-foreground/70 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+            {[
+              "Documentação Verificada",
+              "Vendedores Certificados",
+              "Transações Seguras",
+            ].map((point) => (
+              <div key={point} className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-accent" />
+                <span>{point}</span>
+              </div>
+            ))}
           </div>
 
-          {/* 5. Equação da Confiança */}
-          <div 
-            className="bg-white/90 backdrop-blur-sm rounded-2xl py-5 px-8 shadow-md inline-flex flex-wrap items-center justify-center gap-3 md:gap-4 animate-fade-in" 
-            style={{ animationDelay: "0.3s" }}
-          >
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5" style={{ color: '#29B765' }} />
-              <span className="text-gray-700 font-medium text-sm md:text-base">Identidade verificada</span>
-            </div>
-            <span className="text-gray-400 font-bold text-lg">+</span>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5" style={{ color: '#29B765' }} />
-              <span className="text-gray-700 font-medium text-sm md:text-base">Produto verificado</span>
-            </div>
-            <span className="text-gray-400 font-bold text-lg">=</span>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5" style={{ color: '#29B765' }} />
-              <span 
-                className="font-bold uppercase text-sm md:text-base tracking-wide"
-                style={{ color: '#142562' }}
-              >
-                NEGOCIAÇÃO SEGURA
-              </span>
-            </div>
-          </div>
-
-          {/* 6. CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-            <Button 
-              size="xl" 
-              className="group text-white font-bold shadow-lg hover:shadow-xl transition-all"
-              style={{ backgroundColor: '#FF8C36' }}
-              asChild
-            >
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <Button variant="hero" size="xl" className="group" asChild>
               <Link to="/auth">
                 Cadastre-se Agora
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />

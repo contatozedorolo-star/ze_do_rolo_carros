@@ -62,10 +62,10 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
-      <div className="container flex h-20 items-center justify-between gap-4">
+      <div className="container flex h-24 items-center justify-between gap-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={logo} alt="Zé do Rolo" className="h-14 md:h-16 w-auto" />
+          <img src={logo} alt="Zé do Rolo" className="h-16 md:h-20 w-auto" />
         </Link>
 
         {/* Search Bar - Desktop */}

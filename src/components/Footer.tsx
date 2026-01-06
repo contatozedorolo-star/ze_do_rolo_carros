@@ -1,6 +1,6 @@
 import { Shield, Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo.png";
+import logoFooter from "@/assets/logo-footer.png";
 
 const Footer = () => {
   return (
@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/">
-              <img src={logo} alt="Zé do Rolo" className="h-16 w-auto" />
+              <img src={logoFooter} alt="Zé do Rolo" className="h-20 md:h-28 w-auto" />
             </Link>
             <p className="text-primary-foreground/70 text-sm">
               Seu corretor de negócios pessoais. Trocas e vendas com segurança do início ao fim.

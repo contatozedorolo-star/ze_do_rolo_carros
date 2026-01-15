@@ -188,15 +188,15 @@ const AdminAnalytics = () => {
         {/* Admin Navigation */}
         <div className="flex gap-2 mb-6">
           <Button variant="outline" asChild>
-            <Link to="/admin/kyc">
-              <Shield className="h-4 w-4 mr-2" />
-              KYC
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
             <Link to="/admin/usuarios">
               <Users className="h-4 w-4 mr-2" />
               Usuários
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/admin/kyc">
+              <Shield className="h-4 w-4 mr-2" />
+              KYC
             </Link>
           </Button>
           <Button variant="default" disabled>

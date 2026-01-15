@@ -300,7 +300,78 @@ export const vanSubcategories = [
   { value: "passageiro", label: "Passageiro" },
   { value: "furgao", label: "Furgão" },
   { value: "carroceria", label: "Carroceria" },
-  { value: "mista", label: "Mista" },
+];
+
+export const vanTractions = [
+  { value: "dianteira", label: "Dianteira" },
+  { value: "traseira", label: "Traseira" },
+  { value: "4x4", label: "4x4" },
+];
+
+export const vanSeatRanges = [
+  { value: "1-5", label: "1 a 5 lugares" },
+  { value: "6-10", label: "6 a 10 lugares" },
+  { value: "11-15", label: "11 a 15 lugares" },
+  { value: "16-20", label: "16 a 20 lugares" },
+  { value: "21-30", label: "21 a 30 lugares" },
+  { value: "31+", label: "Acima de 30 lugares" },
+];
+
+export const vanOptionals = [
+  { value: "ar_condicionado", label: "Ar Condicionado" },
+  { value: "direcao_hidraulica", label: "Direção Hidráulica" },
+  { value: "direcao_eletrica", label: "Direção Elétrica" },
+  { value: "vidro_eletrico", label: "Vidros Elétricos" },
+  { value: "trava_eletrica", label: "Travas Elétricas" },
+  { value: "airbag", label: "Airbag" },
+  { value: "abs", label: "Freios ABS" },
+  { value: "sensor_estacionamento", label: "Sensor de Estacionamento" },
+  { value: "camera_re", label: "Câmera de Ré" },
+  { value: "central_multimidia", label: "Central Multimídia" },
+  { value: "bluetooth", label: "Bluetooth" },
+  { value: "gps", label: "GPS" },
+  { value: "alarme", label: "Alarme" },
+  { value: "som", label: "Som" },
+  { value: "banco_couro", label: "Bancos de Couro" },
+  { value: "banco_regulavel", label: "Banco Regulável" },
+  { value: "retrovisor_eletrico", label: "Retrovisores Elétricos" },
+  { value: "farol_neblina", label: "Farol de Neblina" },
+  { value: "porta_lateral_eletrica", label: "Porta Lateral Elétrica" },
+  { value: "ar_traseiro", label: "Ar Condicionado Traseiro" },
+];
+
+export const vanDoorOptions = [
+  { value: "2", label: "2 portas" },
+  { value: "3", label: "3 portas" },
+  { value: "4", label: "4 portas" },
+  { value: "5", label: "5 portas" },
+  { value: "6", label: "6+ portas" },
+];
+
+export const vanEngineLiters = [
+  { value: "1.0", label: "1.0" },
+  { value: "1.4", label: "1.4" },
+  { value: "1.5", label: "1.5" },
+  { value: "1.6", label: "1.6" },
+  { value: "1.8", label: "1.8" },
+  { value: "2.0", label: "2.0" },
+  { value: "2.2", label: "2.2" },
+  { value: "2.3", label: "2.3" },
+  { value: "2.5", label: "2.5" },
+  { value: "2.8", label: "2.8" },
+  { value: "3.0", label: "3.0+" },
+];
+
+export const steeringTypes = [
+  { value: "hidraulica", label: "Hidráulica" },
+  { value: "eletrica", label: "Elétrica" },
+  { value: "eletrohidraulica", label: "Eletro-Hidráulica" },
+  { value: "mecanica", label: "Mecânica" },
+];
+
+export const windowTypes = [
+  { value: "eletrico", label: "Elétrico" },
+  { value: "manual", label: "Manual" },
 ];
 
 // Filtros específicos para CAVALOS MECÂNICOS

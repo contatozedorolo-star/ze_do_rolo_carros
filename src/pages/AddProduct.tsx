@@ -18,7 +18,8 @@ import {
   engineLiters, doorOptions, seatOptions, auctionReasons,
   insuranceOptions, tradePriorityOptions,
   motoStartTypes, motoMotorTypes, motoBrakeTypes, motoOptionals, cylinderRanges, motoFuelSystems,
-  truckTractions, truckBodies, truckCabins, truckOptionals, truckSeatOptions
+  truckTractions, truckBodies, truckCabins, truckOptionals, truckSeatOptions,
+  vanOptionals, vanTractions, steeringTypes, windowTypes, vanEngineLiters
 } from "@/components/filters/FilterData";
 import StepIndicator from "@/components/add-product/StepIndicator";
 import CarBodyTypeSelector from "@/components/add-product/CarBodyTypeSelector";
@@ -29,6 +30,8 @@ import MotoStyleSelector from "@/components/add-product/MotoStyleSelector";
 import MotoPhotoUploadGrid, { motoPhotoCategories } from "@/components/add-product/MotoPhotoUploadGrid";
 import TruckTypeSelector from "@/components/add-product/TruckTypeSelector";
 import TruckPhotoUploadGrid, { truckPhotoCategories } from "@/components/add-product/TruckPhotoUploadGrid";
+import VanTypeSelector from "@/components/add-product/VanTypeSelector";
+import VanPhotoUploadGrid, { vanPhotoCategories } from "@/components/add-product/VanPhotoUploadGrid";
 
 const vehicleTypes = [
   { value: "carro", label: "Carro", icon: Car },
@@ -58,6 +61,17 @@ const truckSteps = [
   { id: 8, title: "Fotos", description: "Galeria 360° pesados" },
 ];
 
+const vanSteps = [
+  { id: 1, title: "Carroceria", description: "Tipo da van" },
+  { id: 2, title: "Especificações", description: "Dados técnicos" },
+  { id: 3, title: "Detalhes", description: "Opcionais e acabamento" },
+  { id: 4, title: "Conforto", description: "Itens de conforto" },
+  { id: 5, title: "Histórico", description: "Procedência e segurança" },
+  { id: 6, title: "Diagnóstico", description: "Avaliação Zé do Rolo" },
+  { id: 7, title: "Negócio Ideal", description: "Preferências de troca" },
+  { id: 8, title: "Fotos", description: "Galeria 360° vans" },
+];
+
 const diagnosticItems = [
   { key: "rating_motor", label: "Motor", description: "Estado geral do motor" },
   { key: "rating_cambio", label: "Câmbio", description: "Funcionamento da transmissão" },
@@ -83,6 +97,19 @@ const truckDiagnosticItems = [
   { key: "rating_mecanica_geral", label: "Mecânica Geral", description: "Funcionamento geral" },
   { key: "rating_eletrica", label: "Elétrica", description: "Faróis, lanternas, painel" },
   { key: "rating_interior", label: "Cabine/Interior", description: "Leito, painel, bancos" },
+];
+
+const vanDiagnosticItems = [
+  { key: "rating_motor", label: "Motor", description: "Funcionamento e ruídos" },
+  { key: "rating_cambio", label: "Câmbio", description: "Engates e embreagem" },
+  { key: "rating_freios", label: "Freios", description: "Sistema de frenagem" },
+  { key: "rating_estetica", label: "Estética/Pintura", description: "Aparência externa" },
+  { key: "rating_suspensao", label: "Suspensão", description: "Molas e amortecedores" },
+  { key: "rating_pneus", label: "Pneus", description: "Estado dos pneus" },
+  { key: "rating_documentacao", label: "Documentação", description: "Documentos em dia" },
+  { key: "rating_mecanica_geral", label: "Mecânica Geral", description: "Funcionamento geral" },
+  { key: "rating_eletrica", label: "Elétrica", description: "Sistema elétrico" },
+  { key: "rating_interior", label: "Parte Interna", description: "Bancos, revestimentos, acabamento" },
 ];
 
 const ownershipTimeOptions = [
@@ -114,6 +141,7 @@ const AddProduct = () => {
     body_type: "",
     moto_style: "",
     truck_type: "",
+    van_subcategory: "",
     
     // Etapa 2 - Dados Técnicos
     city: "", state: "",
@@ -127,6 +155,9 @@ const AddProduct = () => {
     // Campos específicos de Caminhões
     truck_traction: "", truck_body: "", truck_cabin: "",
     truck_optionals: [] as string[],
+    // Campos específicos de Vans
+    van_traction: "", steering_type: "", window_type: "",
+    van_optionals: [] as string[],
     
     // Etapa 3 - Histórico
     is_auction: false, auction_reason: "",
@@ -154,8 +185,19 @@ const AddProduct = () => {
   });
 
   // Seleciona os steps baseado no tipo de veículo
-  const steps = formData.vehicle_type === "caminhao" ? truckSteps : carSteps;
-  const currentDiagnosticItems = formData.vehicle_type === "caminhao" ? truckDiagnosticItems : diagnosticItems;
+  const getSteps = () => {
+    if (formData.vehicle_type === "caminhao") return truckSteps;
+    if (formData.vehicle_type === "van") return vanSteps;
+    return carSteps;
+  };
+  const steps = getSteps();
+  
+  const getDiagnosticItems = () => {
+    if (formData.vehicle_type === "caminhao") return truckDiagnosticItems;
+    if (formData.vehicle_type === "van") return vanDiagnosticItems;
+    return diagnosticItems;
+  };
+  const currentDiagnosticItems = getDiagnosticItems();
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth");
@@ -194,6 +236,11 @@ const AddProduct = () => {
         .flatMap((cat) => cat.photos)
         .filter((p) => p.required);
     }
+    if (formData.vehicle_type === "van") {
+      return Object.values(vanPhotoCategories)
+        .flatMap((cat) => cat.photos)
+        .filter((p) => p.required);
+    }
     return Object.values(photoCategories)
       .flatMap((cat) => cat.photos)
       .filter((p) => p.required);
@@ -206,6 +253,26 @@ const AddProduct = () => {
         case 1:
           if (!formData.truck_type) {
             toast({ title: "Selecione o tipo de caminhão", variant: "destructive" });
+            return false;
+          }
+          return true;
+        case 2:
+          if (!formData.brand || !formData.model || !formData.year_manufacture || !formData.price) {
+            toast({ title: "Preencha marca, modelo, ano e preço", variant: "destructive" });
+            return false;
+          }
+          return true;
+        default:
+          return true;
+      }
+    }
+    
+    // Para vans, a validação é diferente
+    if (formData.vehicle_type === "van") {
+      switch (stepNumber) {
+        case 1:
+          if (!formData.van_subcategory) {
+            toast({ title: "Selecione o tipo de carroceria da van", variant: "destructive" });
             return false;
           }
           return true;
@@ -303,6 +370,7 @@ const AddProduct = () => {
         diagnostic_notes: formData.diagnostic_notes || null,
         body_type: formData.body_type || null,
         is_armored: formData.is_armored,
+        van_subcategory: formData.vehicle_type === "van" ? formData.van_subcategory : null,
         
         // Campos específicos de Moto
         moto_style: formData.vehicle_type === "moto" ? formData.moto_style : null,
@@ -465,6 +533,17 @@ const AddProduct = () => {
                   <TruckTypeSelector
                     value={formData.truck_type}
                     onChange={(value) => setFormData(p => ({ ...p, truck_type: value }))}
+                  />
+                </div>
+              )}
+
+              {formData.vehicle_type === "van" && (
+                <div className="pt-4 border-t">
+                  <Label className="text-base font-semibold">Tipo de Carroceria *</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Selecione o tipo que melhor descreve sua van</p>
+                  <VanTypeSelector
+                    value={formData.van_subcategory}
+                    onChange={(value) => setFormData(p => ({ ...p, van_subcategory: value }))}
                   />
                 </div>
               )}

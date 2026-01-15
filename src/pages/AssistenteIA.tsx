@@ -8,6 +8,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import RestrictedAccessModal from "@/components/RestrictedAccessModal";
 import logoZe from "@/assets/logo-zedorolo.png";
 
 const Spline = lazy(() => import("@splinetool/react-spline"));
@@ -34,17 +35,8 @@ const AssistenteIA = () => {
   const [hasStartedConversation, setHasStartedConversation] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auth protection - redirect if not logged in
-  useEffect(() => {
-    if (!loading && !user) {
-      toast({
-        title: "Acesso exclusivo para membros",
-        description: "Faça login ou cadastre-se para negociar com o Consultor Zé IA!",
-        variant: "default",
-      });
-      navigate("/auth", { state: { from: location.pathname } });
-    }
-  }, [user, loading, navigate, location, toast]);
+  // Show modal if not logged in instead of redirecting
+  const showRestrictedModal = !loading && !user;
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -160,6 +152,11 @@ const AssistenteIA = () => {
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <Header />
+
+      {/* Restricted Access Modal */}
+      {showRestrictedModal && (
+        <RestrictedAccessModal type="assistente-ia" redirectPath="/assistente-ia" />
+      )}
 
       {/* Top Banner - Breathing Space */}
       <div className="bg-white py-4 md:py-6 px-4 flex flex-col items-center justify-center shadow-sm border-b border-border">

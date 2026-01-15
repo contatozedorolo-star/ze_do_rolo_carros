@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
 import { AdvancedVehicleFilters } from "@/components/filters";
 import VehicleCard from "@/components/VehicleCard";
+import RestrictedAccessModal from "@/components/RestrictedAccessModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -65,12 +66,8 @@ const Veiculos = () => {
     }
   }, [urlCategory]);
 
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth", { state: { from: "/veiculos" } });
-    }
-  }, [user, loading, navigate]);
+  // Show modal if not logged in instead of redirecting
+  const showRestrictedModal = !loading && !user;
 
   const handleFiltersChange = (newFilters: any) => {
     setFilters(newFilters);
@@ -125,6 +122,11 @@ const Veiculos = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      
+      {/* Restricted Access Modal */}
+      {showRestrictedModal && (
+        <RestrictedAccessModal type="veiculos" redirectPath="/veiculos" />
+      )}
       
       {/* Hero Section with Quick Search */}
       <section className="relative overflow-hidden">

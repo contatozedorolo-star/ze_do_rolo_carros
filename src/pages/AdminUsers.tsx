@@ -56,6 +56,7 @@ import {
   ExternalLink,
   Trash2,
   AlertTriangle,
+  BarChart3,
 } from "lucide-react";
 import {
   Tooltip,
@@ -346,6 +347,12 @@ const AdminUsers = () => {
           <Button variant="default" disabled>
             <Users className="h-4 w-4 mr-2" />
             Usuários
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/admin/analytics">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics
+            </Link>
           </Button>
         </div>
 

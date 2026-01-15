@@ -14,6 +14,7 @@ import HowItWorks from "./pages/HowItWorks";
 import Dashboard from "./pages/Dashboard";
 import AdminKYC from "./pages/AdminKYC";
 import AdminUsers from "./pages/AdminUsers";
+import AdminAnalytics from "./pages/AdminAnalytics";
 import TabelaFipe from "./pages/TabelaFipe";
 import FAQ from "./pages/FAQ";
 import TermosDeUso from "./pages/TermosDeUso";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin/kyc" element={<AdminKYC />} />
             <Route path="/admin/usuarios" element={<AdminUsers />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/tabela-fipe" element={<TabelaFipe />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/termos-de-uso" element={<TermosDeUso />} />

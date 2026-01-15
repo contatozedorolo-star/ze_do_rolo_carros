@@ -523,37 +523,6 @@ const AdminUsers = () => {
 
               {/* User Info Grid */}
               <div className="space-y-3">
-                {/* Email with copy */}
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
-                    <div className="min-w-0">
-                      <p className="text-sm text-muted-foreground">Email</p>
-                      <p className="font-medium truncate">
-                        {selectedUser.email || "Não disponível"}
-                      </p>
-                    </div>
-                  </div>
-                  {selectedUser.email && (
-                    <TooltipProvider>
-                      <Tooltip open={copiedEmail === selectedUser.email ? true : undefined}>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleCopyEmail(selectedUser.email!)}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{copiedEmail === selectedUser.email ? "Copiado!" : "Copiar email"}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </div>
-
                 {/* CPF with toggle */}
                 <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3">
@@ -599,6 +568,37 @@ const AdminUsers = () => {
                     >
                       {showPhone ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
+                  )}
+                </div>
+
+                {/* Email with copy - always visible */}
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm text-muted-foreground">E-mail</p>
+                      <p className="font-medium truncate">
+                        {selectedUser.email || "Não disponível"}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedUser.email && (
+                    <TooltipProvider>
+                      <Tooltip open={copiedEmail === selectedUser.email ? true : undefined}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCopyEmail(selectedUser.email!)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{copiedEmail === selectedUser.email ? "Copiado!" : "Copiar e-mail"}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}
                 </div>
 

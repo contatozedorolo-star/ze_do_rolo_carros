@@ -34,6 +34,7 @@ import {
   User,
   Loader2,
   Users,
+  BarChart3,
 } from "lucide-react";
 
 interface KYCVerification {
@@ -222,6 +223,12 @@ const AdminKYC = () => {
             <Link to="/admin/usuarios">
               <Users className="h-4 w-4 mr-2" />
               Usuários
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/admin/analytics">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics
             </Link>
           </Button>
         </div>

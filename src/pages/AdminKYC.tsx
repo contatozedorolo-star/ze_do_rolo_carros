@@ -215,15 +215,15 @@ const AdminKYC = () => {
 
         {/* Admin Navigation */}
         <div className="flex gap-2 mb-6">
-          <Button variant="default" disabled>
-            <Shield className="h-4 w-4 mr-2" />
-            KYC
-          </Button>
           <Button variant="outline" asChild>
             <Link to="/admin/usuarios">
               <Users className="h-4 w-4 mr-2" />
               Usuários
             </Link>
+          </Button>
+          <Button variant="default" disabled>
+            <Shield className="h-4 w-4 mr-2" />
+            KYC
           </Button>
           <Button variant="outline" asChild>
             <Link to="/admin/analytics">

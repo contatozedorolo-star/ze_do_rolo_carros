@@ -1,4 +1,4 @@
-import { Search, User, Menu, X, LogOut, Shield, UserCircle } from "lucide-react";
+import { Search, User, Menu, X, LogOut, Shield, UserCircle, Sparkles, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -41,6 +41,7 @@ const Header = () => {
     { href: "/veiculos", label: "Veículos", protected: true },
     { href: "/tabela-fipe", label: "Tabela FIPE" },
     { href: "/como-funciona", label: "Como Funciona" },
+    { href: "/assistente-ia", label: "Zé IA", isNew: true },
   ];
 
   const handleNavClick = (e: React.MouseEvent, link: { href: string; protected?: boolean }) => {
@@ -88,13 +89,21 @@ const Header = () => {
               to={link.href}
               onClick={(e) => handleNavClick(e, link)}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                location.pathname === link.href
+                "px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5",
+                link.isNew && "bg-gradient-to-r from-[#142562] to-[#1a3080] text-white hover:from-[#1a3080] hover:to-[#142562]",
+                !link.isNew && location.pathname === link.href
                   ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  : !link.isNew && "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
+              {link.isNew && <Bot className="h-4 w-4" />}
               {link.label}
+              {link.isNew && (
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-[#FF8C36] text-white rounded-full flex items-center gap-0.5">
+                  <Sparkles className="h-2.5 w-2.5" />
+                  Novo
+                </span>
+              )}
             </Link>
           ))}
           {isAdmin && (
@@ -183,13 +192,21 @@ const Header = () => {
                     setMobileMenuOpen(false);
                   }}
                   className={cn(
-                    "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                    location.pathname === link.href
+                    "px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
+                    link.isNew && "bg-gradient-to-r from-[#142562] to-[#1a3080] text-white",
+                    !link.isNew && location.pathname === link.href
                       ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      : !link.isNew && "text-muted-foreground hover:text-foreground hover:bg-muted"
                   )}
                 >
+                  {link.isNew && <Bot className="h-4 w-4" />}
                   {link.label}
+                  {link.isNew && (
+                    <span className="ml-auto px-1.5 py-0.5 text-[10px] font-bold bg-[#FF8C36] text-white rounded-full flex items-center gap-0.5">
+                      <Sparkles className="h-2.5 w-2.5" />
+                      Novo
+                    </span>
+                  )}
                 </Link>
               ))}
               {user && (

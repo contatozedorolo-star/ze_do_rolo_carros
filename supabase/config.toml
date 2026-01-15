@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.ze-ia-chat]
 verify_jwt = false
+
+[functions.admin-get-users]
+verify_jwt = false

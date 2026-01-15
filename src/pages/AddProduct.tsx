@@ -9,19 +9,23 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronRight, ChevronLeft, Car, Truck, Bike, Bus, CarFront, DollarSign, ExternalLink, ShieldCheck, AlertTriangle } from "lucide-react";
 import { 
   brands, colorOptions, transmissionTypes, fuelTypes, 
   engineLiters, doorOptions, seatOptions, auctionReasons,
-  insuranceOptions, tradePriorityOptions 
+  insuranceOptions, tradePriorityOptions,
+  motoStartTypes, motoMotorTypes, motoBrakeTypes, motoOptionals, cylinderRanges, motoFuelSystems
 } from "@/components/filters/FilterData";
 import StepIndicator from "@/components/add-product/StepIndicator";
 import CarBodyTypeSelector from "@/components/add-product/CarBodyTypeSelector";
 import DiagnosticSlider from "@/components/add-product/DiagnosticSlider";
 import PhotoUploadGrid, { photoCategories } from "@/components/add-product/PhotoUploadGrid";
 import TradeRestrictionsInput from "@/components/add-product/TradeRestrictionsInput";
+import MotoStyleSelector from "@/components/add-product/MotoStyleSelector";
+import MotoPhotoUploadGrid, { motoPhotoCategories } from "@/components/add-product/MotoPhotoUploadGrid";
 
 const vehicleTypes = [
   { value: "carro", label: "Carro", icon: Car },
@@ -81,6 +85,7 @@ const AddProduct = () => {
     // Etapa 1 - Identificação
     vehicle_type: "carro",
     body_type: "",
+    moto_style: "",
     
     // Etapa 2 - Dados Técnicos
     city: "", state: "",
@@ -89,12 +94,16 @@ const AddProduct = () => {
     price: "", transmission: "manual", fuel: "flex",
     plate_end: "", is_armored: false, color: "",
     doors: "", engine_liters: "", seats: "",
+    // Campos específicos de Motos
+    cylinders: "", start_type: "", motor_type: "", brake_type: "", fuel_system: "",
     
     // Etapa 3 - Histórico
     is_auction: false, auction_reason: "",
     insurance_covers_100: "", insurance_coverage_percent: "",
     accepts_trade: true, is_financed: false, has_warranty: false,
     ipva_paid: false, is_single_owner: false,
+    is_chassis_remarked: false,
+    moto_optionals: [] as string[],
     
     // Etapa 4 - Diagnóstico
     rating_motor: 5, rating_cambio: 5, rating_freios: 5, 
@@ -140,6 +149,11 @@ const AddProduct = () => {
   };
 
   const getRequiredPhotos = () => {
+    if (formData.vehicle_type === "moto") {
+      return Object.values(motoPhotoCategories)
+        .flatMap((cat) => cat.photos)
+        .filter((p) => p.required);
+    }
     return Object.values(photoCategories)
       .flatMap((cat) => cat.photos)
       .filter((p) => p.required);
@@ -154,6 +168,10 @@ const AddProduct = () => {
         }
         if (formData.vehicle_type === "carro" && !formData.body_type) {
           toast({ title: "Selecione o tipo de carroceria", variant: "destructive" });
+          return false;
+        }
+        if (formData.vehicle_type === "moto" && !formData.moto_style) {
+          toast({ title: "Selecione o estilo da moto", variant: "destructive" });
           return false;
         }
         return true;
@@ -212,7 +230,7 @@ const AddProduct = () => {
         plate_end: formData.plate_end || null,
         km: parseInt(formData.km) || 0, 
         color: formData.color,
-        transmission: formData.transmission, 
+        transmission: formData.vehicle_type === "moto" ? "manual" : formData.transmission, 
         fuel: formData.fuel,
         doors: formData.doors ? parseInt(formData.doors) : null,
         engine: formData.engine_liters || null,
@@ -224,6 +242,16 @@ const AddProduct = () => {
         diagnostic_notes: formData.diagnostic_notes || null,
         body_type: formData.body_type || null,
         is_armored: formData.is_armored,
+        
+        // Campos específicos de Moto
+        moto_style: formData.vehicle_type === "moto" ? formData.moto_style : null,
+        cylinders: formData.cylinders ? parseInt(formData.cylinders) : null,
+        start_type: formData.start_type || null,
+        motor_type: formData.motor_type || null,
+        brake_type: formData.brake_type || null,
+        fuel_system: formData.fuel_system || null,
+        moto_optionals: formData.moto_optionals.length > 0 ? formData.moto_optionals : null,
+        is_chassis_remarked: formData.is_chassis_remarked,
         
         // Ratings
         rating_motor: formData.rating_motor, 
@@ -357,6 +385,17 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
+
+              {formData.vehicle_type === "moto" && (
+                <div className="pt-4 border-t">
+                  <Label className="text-base font-semibold">Estilo da Moto *</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Selecione o estilo que melhor descreve sua moto</p>
+                  <MotoStyleSelector
+                    value={formData.moto_style}
+                    onChange={(value) => setFormData(p => ({ ...p, moto_style: value }))}
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -455,21 +494,23 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* Preço, Câmbio, Combustível */}
+              {/* Preço e Combustível */}
               <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label>Preço (R$) *</Label>
                   <Input type="number" value={formData.price} onChange={e => setFormData(p => ({ ...p, price: e.target.value }))} placeholder="Ex: 85000" />
                 </div>
-                <div>
-                  <Label>Câmbio</Label>
-                  <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {formData.vehicle_type !== "moto" && (
+                  <div>
+                    <Label>Câmbio</Label>
+                    <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        {transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div>
                   <Label>Combustível</Label>
                   <Select value={formData.fuel} onValueChange={v => setFormData(p => ({ ...p, fuel: v }))}>
@@ -480,6 +521,91 @@ const AddProduct = () => {
                   </Select>
                 </div>
               </div>
+
+              {/* Campos específicos para MOTO */}
+              {formData.vehicle_type === "moto" && (
+                <>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <div>
+                      <Label>Cilindradas *</Label>
+                      <Select value={formData.cylinders} onValueChange={v => setFormData(p => ({ ...p, cylinders: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {cylinderRanges.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Tipo de Partida</Label>
+                      <Select value={formData.start_type} onValueChange={v => setFormData(p => ({ ...p, start_type: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {motoStartTypes.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Tipo de Motor</Label>
+                      <Select value={formData.motor_type} onValueChange={v => setFormData(p => ({ ...p, motor_type: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {motoMotorTypes.map(m => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <div>
+                      <Label>Freios</Label>
+                      <Select value={formData.brake_type} onValueChange={v => setFormData(p => ({ ...p, brake_type: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {motoBrakeTypes.map(b => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Alimentação</Label>
+                      <Select value={formData.fuel_system} onValueChange={v => setFormData(p => ({ ...p, fuel_system: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {motoFuelSystems.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Cor</Label>
+                      <Select value={formData.color} onValueChange={v => setFormData(p => ({ ...p, color: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card max-h-60">
+                          {colorOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  {/* Opcionais da Moto */}
+                  <div className="p-4 border rounded-lg space-y-3">
+                    <Label className="text-base font-semibold">Opcionais</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {motoOptionals.map(opt => (
+                        <div key={opt.value} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={`opt-${opt.value}`}
+                            checked={formData.moto_optionals.includes(opt.value)}
+                            onCheckedChange={(checked) => {
+                              const newOpts = checked 
+                                ? [...formData.moto_optionals, opt.value]
+                                : formData.moto_optionals.filter((o: string) => o !== opt.value);
+                              setFormData(p => ({ ...p, moto_optionals: newOpts }));
+                            }}
+                          />
+                          <Label htmlFor={`opt-${opt.value}`} className="text-sm cursor-pointer">{opt.label}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* Final da Placa, Blindagem, Cor */}
               <div className="grid gap-4 md:grid-cols-3">
@@ -789,12 +915,21 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Adicione fotos de todos os ângulos do veículo</p>
               </div>
 
-              <PhotoUploadGrid
-                images={images}
-                previews={imagePreviews}
-                onUpload={handleImageUpload}
-                onRemove={handleRemoveImage}
-              />
+              {formData.vehicle_type === "moto" ? (
+                <MotoPhotoUploadGrid
+                  images={images}
+                  previews={imagePreviews}
+                  onUpload={handleImageUpload}
+                  onRemove={handleRemoveImage}
+                />
+              ) : (
+                <PhotoUploadGrid
+                  images={images}
+                  previews={imagePreviews}
+                  onUpload={handleImageUpload}
+                  onRemove={handleRemoveImage}
+                />
+              )}
 
               {/* Descrição adicional */}
               <div>
@@ -803,7 +938,9 @@ const AddProduct = () => {
                 <Textarea 
                   value={formData.description} 
                   onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} 
-                  placeholder="Ex: Carro de família, sempre revisado em concessionária, nunca bateu..."
+                  placeholder={formData.vehicle_type === "moto" 
+                    ? "Ex: Moto bem cuidada, sempre revisada, nunca caiu..."
+                    : "Ex: Carro de família, sempre revisado em concessionária, nunca bateu..."}
                   rows={4}
                 />
               </div>

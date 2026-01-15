@@ -557,6 +557,14 @@ export type Database = {
         | "touring"
         | "street"
         | "cross"
+        | "ciclomotor"
+        | "eletrica"
+        | "quadriciclo"
+        | "supermotard"
+        | "big_trail"
+        | "trial"
+        | "triciclo"
+        | "utilitaria"
       proposal_status:
         | "pending"
         | "accepted"
@@ -729,6 +737,14 @@ export const Constants = {
         "touring",
         "street",
         "cross",
+        "ciclomotor",
+        "eletrica",
+        "quadriciclo",
+        "supermotard",
+        "big_trail",
+        "trial",
+        "triciclo",
+        "utilitaria",
       ],
       proposal_status: [
         "pending",

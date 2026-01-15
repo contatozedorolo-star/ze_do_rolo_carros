@@ -134,19 +134,26 @@ export const fuelTypes = [
 
 // Filtros específicos para MOTOS
 export const motoStyles = [
+  { value: "ciclomotor", label: "Ciclomotor" },
   { value: "custom", label: "Custom" },
+  { value: "eletrica", label: "Elétrica" },
   { value: "esportiva", label: "Esportiva" },
   { value: "naked", label: "Naked" },
+  { value: "cross", label: "Cross/Off-Road" },
+  { value: "quadriciclo", label: "Quadriciclo" },
   { value: "scooter", label: "Scooter" },
-  { value: "trail", label: "Trail/Enduro" },
-  { value: "touring", label: "Touring" },
   { value: "street", label: "Street" },
-  { value: "cross", label: "Cross/Motocross" },
+  { value: "supermotard", label: "Supermotard" },
+  { value: "touring", label: "Touring" },
+  { value: "big_trail", label: "Big Trail/Adventure" },
+  { value: "trial", label: "Trial" },
+  { value: "triciclo", label: "Triciclo" },
+  { value: "utilitaria", label: "Utilitária" },
 ];
 
 export const motoStartTypes = [
-  { value: "eletrica", label: "Elétrica" },
-  { value: "pedal", label: "Pedal" },
+  { value: "eletrica", label: "Partida Elétrica" },
+  { value: "pedal", label: "Pedal (Kick)" },
   { value: "ambos", label: "Elétrica + Pedal" },
 ];
 
@@ -164,23 +171,47 @@ export const motoBrakeTypes = [
   { value: "cbs", label: "CBS" },
 ];
 
+export const motoFuelSystems = [
+  { value: "carburador", label: "Carburador" },
+  { value: "injecao", label: "Injeção Eletrônica" },
+];
+
 export const motoOptionals = [
   { value: "abs", label: "ABS" },
   { value: "alarme", label: "Alarme" },
+  { value: "amortecedor_direcao", label: "Amortecedor de Direção" },
   { value: "bau", label: "Baú" },
+  { value: "computador_bordo", label: "Computador de Bordo" },
+  { value: "escapamento_esportivo", label: "Escapamento Esportivo" },
   { value: "gps", label: "GPS" },
   { value: "bluetooth", label: "Bluetooth" },
   { value: "aquecimento_punho", label: "Aquecimento no Punho" },
+  { value: "protetor_motor", label: "Protetor de Motor" },
+  { value: "protetor_mao", label: "Protetor de Mão" },
+  { value: "central_multimida", label: "Central Multimídia" },
+  { value: "quickshifter", label: "Quickshifter" },
+  { value: "controle_tracao", label: "Controle de Tração" },
+  { value: "modos_pilotagem", label: "Modos de Pilotagem" },
 ];
 
 export const cylinderRanges = [
   { value: "50", label: "Até 50cc" },
-  { value: "125", label: "Até 125cc" },
+  { value: "125", label: "51cc - 125cc" },
   { value: "250", label: "126cc - 250cc" },
-  { value: "500", label: "251cc - 500cc" },
+  { value: "300", label: "251cc - 300cc" },
+  { value: "500", label: "301cc - 500cc" },
   { value: "750", label: "501cc - 750cc" },
   { value: "1000", label: "751cc - 1000cc" },
   { value: "1000+", label: "Acima de 1000cc" },
+];
+
+export const motoUsageCategories = [
+  { value: "urbano", label: "Uso Urbano" },
+  { value: "lazer", label: "Lazer" },
+  { value: "trabalho", label: "Trabalho/Delivery" },
+  { value: "viagem", label: "Viagens" },
+  { value: "trilha", label: "Trilha" },
+  { value: "esportivo", label: "Esportivo" },
 ];
 
 // Filtros específicos para CAMINHÕES

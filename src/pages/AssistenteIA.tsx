@@ -141,16 +141,20 @@ const AssistenteIA = () => {
 
   return (
     <div className="min-h-screen bg-[#142562] flex flex-col overflow-hidden">
-      {/* Security Badge */}
-      <div className="bg-[#29B765] text-white py-2 px-4 flex items-center justify-center gap-2 text-sm font-medium z-50">
-        <Shield className="w-4 h-4" />
-        🛡️ 100% Seguro e Verificado
+      {/* Top Banner - Breathing Space */}
+      <div className="bg-white py-3 md:py-4 px-4 flex items-center justify-center shadow-sm z-50">
+        <div className="flex items-center gap-2 text-[#142562]">
+          <Shield className="w-4 h-4 md:w-5 md:h-5 text-[#29B765]" />
+          <span className="text-xs md:text-sm font-semibold">
+            🛡️ Central de Inteligência Zé do Rolo — Versão Beta 2.0
+          </span>
+        </div>
       </div>
 
       {/* Main Content - Split Screen */}
       <div className="flex-1 flex flex-col lg:flex-row relative">
         {/* Left Side - Spline 3D Robot & Info */}
-        <div className="w-full lg:w-1/2 relative flex flex-col items-center justify-center p-6 lg:p-12">
+        <div className="w-full lg:w-1/2 relative flex flex-col items-center justify-center p-4 md:p-6 lg:p-12 min-h-[40vh] lg:min-h-0">
           {/* Spline 3D Scene */}
           <div className="absolute inset-0 z-0">
             <Suspense fallback={
@@ -167,33 +171,36 @@ const AssistenteIA = () => {
 
           {/* Headline & Benefits Overlay */}
           <div className={`relative z-10 text-center lg:text-left max-w-lg transition-all duration-500 ${hasStartedConversation ? 'opacity-0 lg:opacity-100' : 'opacity-100'}`}>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-              Negocie com <span className="text-[#FF8C36]">Inteligência.</span>
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 leading-tight">
+              Seu Próximo Negócio <span className="text-[#FF8C36]">Começa Aqui.</span>
             </h1>
+            <p className="text-white/80 text-sm md:text-base mb-6 hidden md:block">
+              O futuro das trocas é inteligente. Deixe a IA trabalhar por você.
+            </p>
             
             {!hasStartedConversation && (
-              <div className="space-y-4 mt-8">
-                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <Rocket className="w-6 h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
+              <div className="space-y-3 md:space-y-4 mt-4 md:mt-8">
+                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                  <Rocket className="w-5 h-5 md:w-6 md:h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-white font-semibold text-sm">Match Perfeito</h3>
-                    <p className="text-white/70 text-sm">Analisamos milhares de veículos para achar a troca ideal.</p>
+                    <h3 className="text-white font-semibold text-xs md:text-sm">Match Perfeito</h3>
+                    <p className="text-white/70 text-xs md:text-sm">Cruzamos dados de milhares de anúncios para você não perder tempo.</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <ShieldCheck className="w-6 h-6 text-[#29B765] flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                  <ShieldCheck className="w-5 h-5 md:w-6 md:h-6 text-[#29B765] flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-white font-semibold text-sm">Segurança Total</h3>
-                    <p className="text-white/70 text-sm">Consultoria baseada apenas em veículos 100% verificados.</p>
+                    <h3 className="text-white font-semibold text-xs md:text-sm">Segurança Total</h3>
+                    <p className="text-white/70 text-xs md:text-sm">Consultoria baseada em vistorias reais e vendedores verificados.</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <Clock className="w-6 h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                  <Clock className="w-5 h-5 md:w-6 md:h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-white font-semibold text-sm">Rapidez</h3>
-                    <p className="text-white/70 text-sm">Tire dúvidas sobre FIPE, vistorias e propostas em segundos.</p>
+                    <h3 className="text-white font-semibold text-xs md:text-sm">Rapidez</h3>
+                    <p className="text-white/70 text-xs md:text-sm">Respostas instantâneas sobre preços FIPE e condições de troca.</p>
                   </div>
                 </div>
               </div>

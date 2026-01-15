@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, Suspense, lazy } from "react";
-import { Send, Shield, ArrowLeft, Rocket, Clock, ShieldCheck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Send, Shield, Rocket, Clock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import logoZe from "@/assets/logo-zedorolo.png";
 
 const Spline = lazy(() => import("@splinetool/react-spline"));
@@ -19,7 +20,6 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ze-ia-chat`;
 const INITIAL_MESSAGE = "Olá! Sou o assistente do Zé. Estou visualizando todos os carros, motos, caminhões e vans do site agora. O que você quer negociar hoje?";
 
 const AssistenteIA = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: INITIAL_MESSAGE }
@@ -140,19 +140,25 @@ const AssistenteIA = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#142562] flex flex-col overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Header */}
+      <Header />
+
       {/* Top Banner - Breathing Space */}
-      <div className="bg-white py-3 md:py-4 px-4 flex items-center justify-center shadow-sm z-50">
-        <div className="flex items-center gap-2 text-[#142562]">
-          <Shield className="w-4 h-4 md:w-5 md:h-5 text-[#29B765]" />
-          <span className="text-xs md:text-sm font-semibold">
+      <div className="bg-white py-4 md:py-6 px-4 flex flex-col items-center justify-center shadow-sm border-b border-border">
+        <div className="flex items-center gap-2 text-[#142562] mb-2">
+          <Shield className="w-5 h-5 md:w-6 md:h-6 text-[#29B765]" />
+          <span className="text-sm md:text-base font-semibold">
             🛡️ Central de Inteligência Zé do Rolo — Versão Beta 2.0
           </span>
         </div>
+        <p className="text-muted-foreground text-xs md:text-sm text-center max-w-xl">
+          Zé IA: O seu consultor inteligente para compras e trocas. Diga o que você tem, eu encontro o que você precisa.
+        </p>
       </div>
 
       {/* Main Content - Split Screen */}
-      <div className="flex-1 flex flex-col lg:flex-row relative">
+      <div className="flex-1 flex flex-col lg:flex-row bg-[#142562] min-h-[70vh]">
         {/* Left Side - Spline 3D Robot & Info */}
         <div className="w-full lg:w-1/2 relative flex flex-col items-center justify-center p-4 md:p-6 lg:p-12 min-h-[40vh] lg:min-h-0">
           {/* Spline 3D Scene */}
@@ -214,15 +220,6 @@ const AssistenteIA = () => {
           <div className="flex-1 flex flex-col m-4 lg:m-8 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
             {/* Chat Header */}
             <div className="bg-white/10 backdrop-blur-sm border-b border-white/10 px-6 py-4 flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate(-1)}
-                className="text-white hover:bg-white/10 lg:hidden"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              
               <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-lg">
                 <img src={logoZe} alt="Consultor Zé" className="w-10 h-10 object-contain" />
               </div>
@@ -234,15 +231,6 @@ const AssistenteIA = () => {
                   <span className="text-white/70 text-sm">Online - IA de Negócios</span>
                 </div>
               </div>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate(-1)}
-                className="text-white hover:bg-white/10 hidden lg:flex"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
             </div>
 
             {/* Messages Area */}
@@ -316,6 +304,9 @@ const AssistenteIA = () => {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

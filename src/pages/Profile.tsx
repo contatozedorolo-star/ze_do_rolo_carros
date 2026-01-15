@@ -24,8 +24,16 @@ import {
   Eye,
   EyeOff,
   Camera,
-  Loader2
+  Loader2,
+  Copy,
+  Shield
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 
 interface Vehicle {
@@ -82,6 +90,8 @@ const Profile = () => {
   // Privacy toggles
   const [showCPF, setShowCPF] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
   
   const [formData, setFormData] = useState({
     full_name: "",
@@ -109,7 +119,7 @@ const Profile = () => {
     const fetchData = async () => {
       if (!user) return;
       
-      const [vehiclesRes, kycRes] = await Promise.all([
+      const [vehiclesRes, kycRes, adminRes] = await Promise.all([
         supabase
           .from("vehicles")
           .select("id, title, brand, model, price, is_active, created_at")
@@ -120,6 +130,12 @@ const Profile = () => {
           .select("status")
           .eq("user_id", user.id)
           .eq("status", "approved")
+          .maybeSingle(),
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .eq("role", "admin")
           .maybeSingle()
       ]);
 
@@ -127,6 +143,7 @@ const Profile = () => {
         setVehicles(vehiclesRes.data);
       }
       setIsVerified(!!kycRes.data);
+      setIsAdmin(!!adminRes.data);
       setLoadingVehicles(false);
     };
 
@@ -233,6 +250,17 @@ const Profile = () => {
     navigate("/");
   };
 
+  const handleCopyEmail = async () => {
+    if (!user?.email) return;
+    await navigator.clipboard.writeText(user.email);
+    setEmailCopied(true);
+    toast({
+      title: "Email copiado!",
+      description: "O email foi copiado para a área de transferência.",
+    });
+    setTimeout(() => setEmailCopied(false), 2000);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -290,8 +318,43 @@ const Profile = () => {
             </div>
             
             <div>
-              <h1 className="text-2xl font-bold text-foreground">{profile.full_name || 'Usuário'}</h1>
-              <p className="text-muted-foreground">{user?.email}</p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-2xl font-bold text-foreground">{profile.full_name || 'Usuário'}</h1>
+                {isAdmin && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white border-0 shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-shadow cursor-default">
+                          <Shield className="h-3 w-3 mr-1" />
+                          Administrador
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Perfil com poderes de gestão na plataforma</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-muted-foreground">{user?.email}</p>
+                <TooltipProvider>
+                  <Tooltip open={emailCopied ? true : undefined}>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={handleCopyEmail}
+                        className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded hover:bg-muted"
+                        title="Copiar email"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{emailCopied ? "Copiado!" : "Copiar email"}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <div className="flex items-center gap-2 mt-2">
                 {isVerified ? (
                   <Badge variant="outline" className="border-accent text-accent">

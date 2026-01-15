@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import logoZe from "@/assets/logo-zedorolo.png";
@@ -20,7 +22,10 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ze-ia-chat`;
 const INITIAL_MESSAGE = "Olá! Sou o assistente do Zé. Estou visualizando todos os carros, motos, caminhões e vans do site agora. O que você quer negociar hoje?";
 
 const AssistenteIA = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: INITIAL_MESSAGE }
   ]);
@@ -28,6 +33,18 @@ const AssistenteIA = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasStartedConversation, setHasStartedConversation] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Auth protection - redirect if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      toast({
+        title: "Acesso exclusivo para membros",
+        description: "Faça login ou cadastre-se para negociar com o Consultor Zé IA!",
+        variant: "default",
+      });
+      navigate("/auth", { state: { from: location.pathname } });
+    }
+  }, [user, loading, navigate, location, toast]);
 
   useEffect(() => {
     if (scrollRef.current) {

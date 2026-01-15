@@ -2,3 +2,6 @@ project_id = "muvornzsnhncihxawntz"
 
 [functions.fipe-lookup]
 verify_jwt = false
+
+[functions.ze-ia-chat]
+verify_jwt = false

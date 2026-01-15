@@ -68,7 +68,7 @@ const Veiculos = () => {
   // Redirect if not logged in
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/auth");
+      navigate("/auth", { state: { from: "/veiculos" } });
     }
   }, [user, loading, navigate]);
 

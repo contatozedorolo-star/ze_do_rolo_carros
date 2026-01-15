@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car } from "lucide-react";
+import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car, Lock, Sparkles } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
@@ -79,6 +79,7 @@ const Auth = () => {
   
   // Get the intended destination from state or default to dashboard
   const from = (location.state as { from?: string })?.from || "/dashboard";
+  const isRestrictedRedirect = from === "/veiculos" || from === "/assistente-ia";
 
   useEffect(() => {
     // Check if we're in password reset mode from URL
@@ -316,8 +317,23 @@ const Auth = () => {
             <p className="text-muted-foreground mt-2">{getSubtitle()}</p>
           </div>
 
+          {/* Restricted Access Banner */}
+          {isRestrictedRedirect && (
+            <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border border-primary/20 rounded-xl p-4 text-center">
+              <div className="flex items-center justify-center gap-2 text-primary mb-2">
+                <Lock className="h-5 w-5" />
+                <span className="font-semibold">Acesso Restrito</span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Para ver nossas melhores ofertas e conversar com o <span className="font-semibold text-foreground">Zé IA</span>, você precisa fazer parte da comunidade <span className="font-semibold text-primary">Zé do Rolo</span>! 
+                <br />
+                <span className="text-accent font-medium">Cadastre-se agora, é rápido e seguro.</span>
+              </p>
+            </div>
+          )}
+
           {/* Trust Badges */}
-          {mode === 'signup' && (
+          {mode === 'signup' && !isRestrictedRedirect && (
             <div className="flex items-center justify-center gap-4 text-sm">
               <div className="flex items-center gap-1 text-accent">
                 <Shield className="h-4 w-4" />

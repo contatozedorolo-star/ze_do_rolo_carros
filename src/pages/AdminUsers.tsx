@@ -1,0 +1,521 @@
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Users,
+  Search,
+  Eye,
+  EyeOff,
+  Loader2,
+  UserCheck,
+  UserX,
+  Phone,
+  Mail,
+  IdCard,
+  Calendar,
+  Shield,
+  FileText,
+} from "lucide-react";
+
+interface UserProfile {
+  id: string;
+  full_name: string | null;
+  phone: string | null;
+  cpf: string | null;
+  avatar_url: string | null;
+  city: string | null;
+  state: string | null;
+  created_at: string;
+  email?: string;
+  is_verified?: boolean;
+  vehicles_count?: number;
+}
+
+// Helper functions
+const formatCPF = (cpf: string | null) => {
+  if (!cpf) return null;
+  const cleaned = cpf.replace(/\D/g, '');
+  return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+};
+
+const formatPhone = (phone: string | null) => {
+  if (!phone) return null;
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 11) {
+    return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  }
+  return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+};
+
+const maskCPF = () => "***.***.***-**";
+const maskPhone = () => "(**) *****-****";
+
+const AdminUsers = () => {
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  
+  // Privacy toggles for detail view
+  const [showCPF, setShowCPF] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    const checkAdminAndFetch = async () => {
+      if (!user) return;
+
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (!roleData) {
+        toast({
+          title: "Acesso negado",
+          description: "Você não tem permissão para acessar esta página.",
+          variant: "destructive",
+        });
+        navigate("/dashboard");
+        return;
+      }
+
+      setIsAdmin(true);
+      fetchUsers();
+    };
+
+    checkAdminAndFetch();
+  }, [user, navigate, toast]);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      // Fetch all profiles
+      const { data: profiles, error: profilesError } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (profilesError) throw profilesError;
+
+      // Fetch KYC verification status for each user
+      const usersWithDetails = await Promise.all(
+        (profiles || []).map(async (profile) => {
+          // Check if user is verified
+          const { data: kycData } = await supabase
+            .from("kyc_verifications")
+            .select("status")
+            .eq("user_id", profile.id)
+            .eq("status", "approved")
+            .maybeSingle();
+
+          // Count user's vehicles
+          const { count: vehiclesCount } = await supabase
+            .from("vehicles")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", profile.id);
+
+          return {
+            ...profile,
+            is_verified: !!kycData,
+            vehicles_count: vehiclesCount || 0,
+          } as UserProfile;
+        })
+      );
+
+      setUsers(usersWithDetails);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao carregar usuários.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter users based on search query
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery.trim()) return users;
+    
+    const query = searchQuery.toLowerCase();
+    return users.filter((user) => {
+      const nameMatch = user.full_name?.toLowerCase().includes(query);
+      const cpfMatch = user.cpf?.includes(query.replace(/\D/g, ''));
+      const phoneMatch = user.phone?.includes(query.replace(/\D/g, ''));
+      const cityMatch = user.city?.toLowerCase().includes(query);
+      const stateMatch = user.state?.toLowerCase().includes(query);
+      
+      return nameMatch || cpfMatch || phoneMatch || cityMatch || stateMatch;
+    });
+  }, [users, searchQuery]);
+
+  const getInitials = (name: string | null) => {
+    if (!name) return "U";
+    return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+  };
+
+  const openUserDetails = (user: UserProfile) => {
+    setSelectedUser(user);
+    setShowCPF(false);
+    setShowPhone(false);
+    setViewDialogOpen(true);
+  };
+
+  if (authLoading || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) return null;
+
+  const verifiedCount = users.filter((u) => u.is_verified).length;
+  const withVehiclesCount = users.filter((u) => (u.vehicles_count || 0) > 0).length;
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header />
+
+      <main className="flex-1 container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <Users className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold text-foreground">Painel de Usuários</h1>
+          </div>
+          <p className="text-muted-foreground">Gerencie todos os usuários cadastrados na plataforma.</p>
+        </div>
+
+        {/* Admin Navigation */}
+        <div className="flex gap-2 mb-6">
+          <Button variant="outline" asChild>
+            <Link to="/admin/kyc">
+              <Shield className="h-4 w-4 mr-2" />
+              KYC
+            </Link>
+          </Button>
+          <Button variant="default" disabled>
+            <Users className="h-4 w-4 mr-2" />
+            Usuários
+          </Button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total de Usuários</p>
+                  <p className="text-2xl font-bold">{users.length}</p>
+                </div>
+                <Users className="h-8 w-8 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-green-500/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Verificados</p>
+                  <p className="text-2xl font-bold text-green-500">{verifiedCount}</p>
+                </div>
+                <UserCheck className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-amber-500/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Não Verificados</p>
+                  <p className="text-2xl font-bold text-amber-500">{users.length - verifiedCount}</p>
+                </div>
+                <UserX className="h-8 w-8 text-amber-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-primary/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Com Veículos</p>
+                  <p className="text-2xl font-bold text-primary">{withVehiclesCount}</p>
+                </div>
+                <FileText className="h-8 w-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Search */}
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome, CPF, telefone, cidade ou estado..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Users Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Usuários Cadastrados
+              {searchQuery && (
+                <span className="text-sm font-normal text-muted-foreground ml-2">
+                  ({filteredUsers.length} resultado{filteredUsers.length !== 1 ? 's' : ''})
+                </span>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {filteredUsers.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>{searchQuery ? "Nenhum usuário encontrado." : "Nenhum usuário cadastrado."}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Usuário</TableHead>
+                      <TableHead>Localização</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Veículos</TableHead>
+                      <TableHead>Cadastro</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUsers.map((userItem) => (
+                      <TableRow key={userItem.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={userItem.avatar_url || undefined} />
+                              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                {getInitials(userItem.full_name)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium">{userItem.full_name || "Sem nome"}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {userItem.cpf ? maskCPF() : "CPF não informado"}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {userItem.city && userItem.state ? (
+                            <span>{userItem.city}, {userItem.state}</span>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {userItem.is_verified ? (
+                            <Badge className="bg-green-500">
+                              <UserCheck className="w-3 h-3 mr-1" />
+                              Verificado
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">
+                              <UserX className="w-3 h-3 mr-1" />
+                              Pendente
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{userItem.vehicles_count || 0}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(userItem.created_at).toLocaleDateString("pt-BR")}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openUserDetails(userItem)}
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Ver
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </main>
+
+      {/* User Details Dialog */}
+      <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Detalhes do Usuário</DialogTitle>
+          </DialogHeader>
+
+          {selectedUser && (
+            <div className="space-y-6">
+              {/* User Header */}
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage src={selectedUser.avatar_url || undefined} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-xl">
+                    {getInitials(selectedUser.full_name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="text-lg font-semibold">{selectedUser.full_name || "Sem nome"}</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    {selectedUser.is_verified ? (
+                      <Badge className="bg-green-500">Verificado</Badge>
+                    ) : (
+                      <Badge variant="secondary">Não Verificado</Badge>
+                    )}
+                    <Badge variant="outline">{selectedUser.vehicles_count || 0} veículo(s)</Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* User Info Grid */}
+              <div className="space-y-4">
+                {/* CPF with toggle */}
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <IdCard className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">CPF</p>
+                      <p className="font-medium">
+                        {selectedUser.cpf 
+                          ? (showCPF ? formatCPF(selectedUser.cpf) : maskCPF())
+                          : "Não informado"}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedUser.cpf && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowCPF(!showCPF)}
+                    >
+                      {showCPF ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  )}
+                </div>
+
+                {/* Phone with toggle */}
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Telefone</p>
+                      <p className="font-medium">
+                        {selectedUser.phone 
+                          ? (showPhone ? formatPhone(selectedUser.phone) : maskPhone())
+                          : "Não informado"}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedUser.phone && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowPhone(!showPhone)}
+                    >
+                      {showPhone ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  )}
+                </div>
+
+                {/* Location */}
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                  <Mail className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Localização</p>
+                    <p className="font-medium">
+                      {selectedUser.city && selectedUser.state 
+                        ? `${selectedUser.city}, ${selectedUser.state}`
+                        : "Não informado"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Registration Date */}
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                  <Calendar className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Data de Cadastro</p>
+                    <p className="font-medium">
+                      {new Date(selectedUser.created_at).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default AdminUsers;

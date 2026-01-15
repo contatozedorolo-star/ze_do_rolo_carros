@@ -17,7 +17,9 @@ import TabelaFipe from "./pages/TabelaFipe";
 import FAQ from "./pages/FAQ";
 import TermosDeUso from "./pages/TermosDeUso";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
+import AssistenteIA from "./pages/AssistenteIA";
 import NotFound from "./pages/NotFound";
+import FloatingAssistantButton from "./components/FloatingAssistantButton";
 
 const queryClient = new QueryClient();
 
@@ -44,9 +46,11 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/termos-de-uso" element={<TermosDeUso />} />
             <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
+            <Route path="/assistente-ia" element={<AssistenteIA />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <FloatingAssistantButton />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

@@ -290,21 +290,27 @@ export type Database = {
           diagnostic_notes: string | null
           doors: number | null
           engine: string | null
+          engine_liters: number | null
           fuel: Database["public"]["Enums"]["fuel_type"]
           fuel_system: string | null
           has_service_history: boolean | null
+          has_warranty: boolean | null
           has_ze_seal: boolean
           id: string
           ideal_trade_description: string | null
+          insurance_coverage_percent: number | null
+          insurance_covers_100: string | null
           ipva_paid: boolean | null
           is_active: boolean
           is_armored: boolean | null
           is_auction: boolean | null
           is_chassis_remarked: boolean | null
           is_featured: boolean
+          is_financed: boolean | null
           is_single_owner: boolean | null
           is_sold: boolean
           km: number
+          max_cash_return: number | null
           min_cash_return: number | null
           model: string
           moto_optionals: string[] | null
@@ -313,6 +319,7 @@ export type Database = {
           need_type: string[] | null
           optionals: string[] | null
           ownership_time: string | null
+          photo_checklist: Json | null
           plate: string | null
           plate_end: string | null
           price: number
@@ -327,10 +334,13 @@ export type Database = {
           rating_motor: number | null
           rating_pneus: number | null
           rating_suspensao: number | null
+          seats: number | null
           start_type: string | null
           state: string | null
           title: string
           trade_description: string | null
+          trade_priority: string | null
+          trade_restrictions: string[] | null
           trade_value_accepted: number | null
           transmission: Database["public"]["Enums"]["transmission_type"]
           truck_body: string | null
@@ -359,21 +369,27 @@ export type Database = {
           diagnostic_notes?: string | null
           doors?: number | null
           engine?: string | null
+          engine_liters?: number | null
           fuel?: Database["public"]["Enums"]["fuel_type"]
           fuel_system?: string | null
           has_service_history?: boolean | null
+          has_warranty?: boolean | null
           has_ze_seal?: boolean
           id?: string
           ideal_trade_description?: string | null
+          insurance_coverage_percent?: number | null
+          insurance_covers_100?: string | null
           ipva_paid?: boolean | null
           is_active?: boolean
           is_armored?: boolean | null
           is_auction?: boolean | null
           is_chassis_remarked?: boolean | null
           is_featured?: boolean
+          is_financed?: boolean | null
           is_single_owner?: boolean | null
           is_sold?: boolean
           km?: number
+          max_cash_return?: number | null
           min_cash_return?: number | null
           model: string
           moto_optionals?: string[] | null
@@ -382,6 +398,7 @@ export type Database = {
           need_type?: string[] | null
           optionals?: string[] | null
           ownership_time?: string | null
+          photo_checklist?: Json | null
           plate?: string | null
           plate_end?: string | null
           price: number
@@ -396,10 +413,13 @@ export type Database = {
           rating_motor?: number | null
           rating_pneus?: number | null
           rating_suspensao?: number | null
+          seats?: number | null
           start_type?: string | null
           state?: string | null
           title: string
           trade_description?: string | null
+          trade_priority?: string | null
+          trade_restrictions?: string[] | null
           trade_value_accepted?: number | null
           transmission?: Database["public"]["Enums"]["transmission_type"]
           truck_body?: string | null
@@ -428,21 +448,27 @@ export type Database = {
           diagnostic_notes?: string | null
           doors?: number | null
           engine?: string | null
+          engine_liters?: number | null
           fuel?: Database["public"]["Enums"]["fuel_type"]
           fuel_system?: string | null
           has_service_history?: boolean | null
+          has_warranty?: boolean | null
           has_ze_seal?: boolean
           id?: string
           ideal_trade_description?: string | null
+          insurance_coverage_percent?: number | null
+          insurance_covers_100?: string | null
           ipva_paid?: boolean | null
           is_active?: boolean
           is_armored?: boolean | null
           is_auction?: boolean | null
           is_chassis_remarked?: boolean | null
           is_featured?: boolean
+          is_financed?: boolean | null
           is_single_owner?: boolean | null
           is_sold?: boolean
           km?: number
+          max_cash_return?: number | null
           min_cash_return?: number | null
           model?: string
           moto_optionals?: string[] | null
@@ -451,6 +477,7 @@ export type Database = {
           need_type?: string[] | null
           optionals?: string[] | null
           ownership_time?: string | null
+          photo_checklist?: Json | null
           plate?: string | null
           plate_end?: string | null
           price?: number
@@ -465,10 +492,13 @@ export type Database = {
           rating_motor?: number | null
           rating_pneus?: number | null
           rating_suspensao?: number | null
+          seats?: number | null
           start_type?: string | null
           state?: string | null
           title?: string
           trade_description?: string | null
+          trade_priority?: string | null
+          trade_restrictions?: string[] | null
           trade_value_accepted?: number | null
           transmission?: Database["public"]["Enums"]["transmission_type"]
           truck_body?: string | null

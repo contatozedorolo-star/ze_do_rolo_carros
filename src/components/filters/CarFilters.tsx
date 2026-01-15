@@ -1,12 +1,16 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import FilterSection from "./FilterSection";
 import { 
   carBodyTypes, 
   carNeedTypes, 
   transmissionTypes, 
   fuelTypes, 
-  colorOptions 
+  colorOptions,
+  ratingRanges,
+  engineLiters,
+  doorOptions,
 } from "./FilterData";
 
 interface CarFiltersProps {
@@ -25,6 +29,22 @@ const CarFilters = ({ filters, onFilterChange }: CarFiltersProps) => {
 
   return (
     <>
+      {/* Aceita Troca */}
+      <FilterSection title="Negociação">
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="accepts-trade"
+              checked={filters.accepts_trade === true}
+              onCheckedChange={(checked) => onFilterChange("accepts_trade", checked ? true : null)}
+            />
+            <Label htmlFor="accepts-trade" className="text-sm cursor-pointer font-medium text-secondary">
+              Aceita Troca
+            </Label>
+          </div>
+        </div>
+      </FilterSection>
+
       {/* Câmbio */}
       <FilterSection title="Câmbio">
         <div className="space-y-2">
@@ -62,7 +82,7 @@ const CarFilters = ({ filters, onFilterChange }: CarFiltersProps) => {
       </FilterSection>
 
       {/* Carroceria */}
-      <FilterSection title="Carroceria" defaultOpen={false}>
+      <FilterSection title="Carroceria">
         <div className="grid grid-cols-2 gap-2">
           {carBodyTypes.map((b) => (
             <button
@@ -81,7 +101,7 @@ const CarFilters = ({ filters, onFilterChange }: CarFiltersProps) => {
       </FilterSection>
 
       {/* Tipo de Necessidade */}
-      <FilterSection title="Tipo de Necessidade" defaultOpen={false}>
+      <FilterSection title="Tipo de Necessidade">
         <div className="flex flex-wrap gap-2">
           {carNeedTypes.map((n) => (
             <button
@@ -94,6 +114,97 @@ const CarFilters = ({ filters, onFilterChange }: CarFiltersProps) => {
               }`}
             >
               {n.label}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Qualidade - Notas de Diagnóstico */}
+      <FilterSection title="Qualidade do Veículo" defaultOpen={false}>
+        <div className="space-y-4">
+          <p className="text-xs text-muted-foreground">Filtrar por nota mínima do diagnóstico</p>
+          
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="rating-motor-high"
+                checked={filters.min_rating_motor >= 8}
+                onCheckedChange={(checked) => onFilterChange("min_rating_motor", checked ? 8 : null)}
+              />
+              <Label htmlFor="rating-motor-high" className="text-sm cursor-pointer">
+                Motor nota 8+
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="rating-mecanica-high"
+                checked={filters.min_rating_mecanica >= 8}
+                onCheckedChange={(checked) => onFilterChange("min_rating_mecanica", checked ? 8 : null)}
+              />
+              <Label htmlFor="rating-mecanica-high" className="text-sm cursor-pointer">
+                Mecânica geral nota 8+
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="rating-estetica-high"
+                checked={filters.min_rating_estetica >= 8}
+                onCheckedChange={(checked) => onFilterChange("min_rating_estetica", checked ? 8 : null)}
+              />
+              <Label htmlFor="rating-estetica-high" className="text-sm cursor-pointer">
+                Estética nota 8+
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="rating-documentacao-high"
+                checked={filters.min_rating_documentacao >= 8}
+                onCheckedChange={(checked) => onFilterChange("min_rating_documentacao", checked ? 8 : null)}
+              />
+              <Label htmlFor="rating-documentacao-high" className="text-sm cursor-pointer">
+                Documentação nota 8+
+              </Label>
+            </div>
+          </div>
+        </div>
+      </FilterSection>
+
+      {/* Motor */}
+      <FilterSection title="Motor" defaultOpen={false}>
+        <div className="flex flex-wrap gap-2">
+          {engineLiters.slice(0, 10).map((e) => (
+            <button
+              key={e.value}
+              onClick={() => toggleArrayFilter("engine_liters", e.value)}
+              className={`px-3 py-1.5 rounded-full border transition-all text-xs font-medium ${
+                (filters.engine_liters || []).includes(e.value)
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              {e.label}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Portas */}
+      <FilterSection title="Portas" defaultOpen={false}>
+        <div className="flex flex-wrap gap-2">
+          {doorOptions.map((d) => (
+            <button
+              key={d.value}
+              onClick={() => toggleArrayFilter("doors", d.value)}
+              className={`px-3 py-1.5 rounded-full border transition-all text-xs font-medium ${
+                (filters.doors || []).includes(d.value)
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              {d.label}
             </button>
           ))}
         </div>
@@ -145,7 +256,7 @@ const CarFilters = ({ filters, onFilterChange }: CarFiltersProps) => {
       </FilterSection>
 
       {/* Procedência */}
-      <FilterSection title="Procedência" defaultOpen={false}>
+      <FilterSection title="Procedência">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <Checkbox 
@@ -185,6 +296,26 @@ const CarFilters = ({ filters, onFilterChange }: CarFiltersProps) => {
             />
             <Label htmlFor="not-auction" className="text-sm cursor-pointer">
               Não é de leilão
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="has-warranty"
+              checked={filters.has_warranty === true}
+              onCheckedChange={(checked) => onFilterChange("has_warranty", checked ? true : null)}
+            />
+            <Label htmlFor="has-warranty" className="text-sm cursor-pointer">
+              Com garantia
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="not-financed"
+              checked={filters.is_financed === false}
+              onCheckedChange={(checked) => onFilterChange("is_financed", checked ? false : null)}
+            />
+            <Label htmlFor="not-financed" className="text-sm cursor-pointer">
+              Quitado (não financiado)
             </Label>
           </div>
         </div>

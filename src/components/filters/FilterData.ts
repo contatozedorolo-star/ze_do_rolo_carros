@@ -1,7 +1,7 @@
 // Dados estáticos para os filtros
 
 export const brands = {
-  carro: ["Chevrolet", "Fiat", "Ford", "Honda", "Hyundai", "Toyota", "Volkswagen", "Jeep", "Nissan", "Renault", "BMW", "Mercedes-Benz", "Audi", "Mitsubishi", "Peugeot", "Citroën", "Kia", "JAC", "Caoa Chery", "BYD"],
+  carro: ["Chevrolet", "Fiat", "Ford", "Honda", "Hyundai", "Toyota", "Volkswagen", "Jeep", "Nissan", "Renault", "BMW", "Mercedes-Benz", "Audi", "Mitsubishi", "Peugeot", "Citroën", "Kia", "JAC", "Caoa Chery", "BYD", "Volvo", "Land Rover", "Porsche", "Ferrari", "Lamborghini", "Maserati", "Alfa Romeo", "Mini", "Subaru", "Suzuki", "Troller", "RAM"],
   moto: ["Honda", "Yamaha", "Suzuki", "Kawasaki", "BMW", "Harley-Davidson", "Ducati", "Triumph", "KTM", "Royal Enfield", "Dafra", "Shineray", "Haojue"],
   caminhao: ["Mercedes-Benz", "Volvo", "Scania", "DAF", "Iveco", "MAN", "Ford", "Volkswagen"],
   van: ["Fiat", "Mercedes-Benz", "Renault", "Peugeot", "Citroën", "Iveco", "Hyundai"],
@@ -20,16 +20,54 @@ export const years = Array.from({ length: 30 }, (_, i) => (new Date().getFullYea
 
 export const plateEndings = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
+// Motor em Litros
+export const engineLiters = [
+  { value: "1.0", label: "1.0" },
+  { value: "1.2", label: "1.2" },
+  { value: "1.3", label: "1.3" },
+  { value: "1.4", label: "1.4" },
+  { value: "1.5", label: "1.5" },
+  { value: "1.6", label: "1.6" },
+  { value: "1.8", label: "1.8" },
+  { value: "2.0", label: "2.0" },
+  { value: "2.2", label: "2.2" },
+  { value: "2.4", label: "2.4" },
+  { value: "2.5", label: "2.5" },
+  { value: "3.0", label: "3.0" },
+  { value: "3.5", label: "3.5" },
+  { value: "4.0", label: "4.0" },
+  { value: "5.0", label: "5.0+" },
+];
+
+// Portas
+export const doorOptions = [
+  { value: "2", label: "2 portas" },
+  { value: "3", label: "3 portas" },
+  { value: "4", label: "4 portas" },
+  { value: "5", label: "5 portas" },
+];
+
+// Lugares
+export const seatOptions = [
+  { value: "2", label: "2 lugares" },
+  { value: "4", label: "4 lugares" },
+  { value: "5", label: "5 lugares" },
+  { value: "7", label: "7 lugares" },
+  { value: "8", label: "8+ lugares" },
+];
+
 // Filtros específicos para CARROS
 export const carBodyTypes = [
-  { value: "suv", label: "SUV" },
-  { value: "sedan", label: "Sedã" },
-  { value: "hatch", label: "Hatch" },
-  { value: "pickup", label: "Picape" },
-  { value: "coupe", label: "Cupê" },
+  { value: "buggy", label: "Buggy" },
   { value: "conversivel", label: "Conversível" },
-  { value: "wagon", label: "Perua/Wagon" },
+  { value: "coupe", label: "Cupê" },
+  { value: "hatch", label: "Hatch" },
   { value: "minivan", label: "Minivan" },
+  { value: "perua", label: "Perua" },
+  { value: "pickup", label: "Picape" },
+  { value: "sedan", label: "Sedã" },
+  { value: "suv", label: "SUV" },
+  { value: "van", label: "Van" },
 ];
 
 export const carNeedTypes = [
@@ -40,6 +78,40 @@ export const carNeedTypes = [
   { value: "esportivo", label: "Esportivo" },
   { value: "trabalho", label: "Trabalho" },
   { value: "off-road", label: "Off-Road" },
+  { value: "uber", label: "Uber/App" },
+  { value: "primeiro_carro", label: "Primeiro Carro" },
+];
+
+// Motivos de Leilão
+export const auctionReasons = [
+  { value: "financeira", label: "Financeira" },
+  { value: "roubo_recuperado", label: "Roubo/Furto Recuperado" },
+  { value: "sinistro", label: "Sinistro/Batida" },
+  { value: "apreensao", label: "Apreensão" },
+  { value: "frota", label: "Renovação de Frota" },
+  { value: "outros", label: "Outros" },
+];
+
+// Opções de Seguro
+export const insuranceOptions = [
+  { value: "sim", label: "Sim, cobre 100%" },
+  { value: "nao", label: "Não cobre 100%" },
+  { value: "nao_sei", label: "Não sei informar" },
+];
+
+// Prioridade de Negócio
+export const tradePriorityOptions = [
+  { value: "dinheiro", label: "Prefiro dinheiro" },
+  { value: "troca", label: "Prefiro troca" },
+  { value: "indiferente", label: "Tanto faz" },
+];
+
+// Faixas de Nota para Filtro
+export const ratingRanges = [
+  { value: "8-10", label: "Excelente (8-10)" },
+  { value: "6-7", label: "Bom (6-7)" },
+  { value: "4-5", label: "Regular (4-5)" },
+  { value: "0-3", label: "Precisa de reparos (0-3)" },
 ];
 
 export const transmissionTypes = [

@@ -507,8 +507,16 @@ const AdminUsers = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          {userItem.city && userItem.state ? (
-                            <span>{userItem.city}, {userItem.state}</span>
+                          {userItem.state ? (
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                              <span className="font-medium">{userItem.state}</span>
+                              {userItem.city && (
+                                <span className="text-xs text-muted-foreground">
+                                  ({userItem.city})
+                                </span>
+                              )}
+                            </div>
                           ) : (
                             <span className="text-muted-foreground">—</span>
                           )}
@@ -705,8 +713,10 @@ const AdminUsers = () => {
                   <div>
                     <p className="text-sm text-muted-foreground">Localização</p>
                     <p className="font-medium">
-                      {selectedUser.city && selectedUser.state 
-                        ? `${selectedUser.city}, ${selectedUser.state}`
+                      {selectedUser.state 
+                        ? (selectedUser.city 
+                            ? `${selectedUser.city}, ${selectedUser.state}`
+                            : selectedUser.state)
                         : "Não informado"}
                     </p>
                   </div>

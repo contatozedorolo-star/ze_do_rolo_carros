@@ -8,4 +8,5 @@ export { default as VanFilters } from "./VanFilters";
 export { default as CavaloFilters } from "./CavaloFilters";
 export { default as TratorFilters } from "./TratorFilters";
 export { default as ImplementoFilters } from "./ImplementoFilters";
+export { default as BusFilters } from "./BusFilters";
 export * from "./FilterData";

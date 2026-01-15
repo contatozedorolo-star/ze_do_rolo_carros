@@ -478,3 +478,68 @@ export const sortOptions = [
   { value: "created_desc", label: "Mais recente" },
   { value: "location", label: "Localização próxima" },
 ];
+
+// =====================================
+// Filtros específicos para ÔNIBUS
+// =====================================
+
+export const busSubcategories = [
+  { value: "onibus", label: "Ônibus" },
+  { value: "micro_onibus", label: "Micro-Ônibus" },
+];
+
+export const busTractions = [
+  { value: "4x2", label: "4x2" },
+  { value: "6x2", label: "6x2" },
+  { value: "8x2", label: "8x2" },
+];
+
+export const busSeatRanges = [
+  { value: "1-15", label: "1 a 15 lugares" },
+  { value: "16-25", label: "16 a 25 lugares" },
+  { value: "26-35", label: "26 a 35 lugares" },
+  { value: "36-45", label: "36 a 45 lugares" },
+  { value: "46-55", label: "46 a 55 lugares" },
+  { value: "56-70", label: "56 a 70 lugares" },
+  { value: "71-99", label: "71 a 99 lugares" },
+];
+
+export const busFuelTypes = [
+  { value: "diesel", label: "Diesel" },
+  { value: "gnv", label: "GNV" },
+  { value: "eletrico", label: "Elétrico" },
+  { value: "hibrido", label: "Híbrido" },
+];
+
+export const busOptionals = [
+  { value: "ar_condicionado", label: "Ar Condicionado" },
+  { value: "ar_digital", label: "Ar Digital" },
+  { value: "ar_duas_zonas", label: "Ar 2 Zonas" },
+  { value: "ar_tres_zonas", label: "Ar 3+ Zonas" },
+  { value: "abs", label: "Freios ABS" },
+  { value: "alarme", label: "Alarme" },
+  { value: "direcao_hidraulica", label: "Direção Hidráulica" },
+  { value: "direcao_eletrica", label: "Direção Elétrica" },
+  { value: "dvd_player", label: "DVD Player" },
+  { value: "tv", label: "TV" },
+  { value: "wifi", label: "Wi-Fi" },
+  { value: "usb", label: "Carregadores USB" },
+  { value: "tomadas_110v", label: "Tomadas 110V" },
+  { value: "banheiro", label: "Banheiro" },
+  { value: "geladeira", label: "Geladeira/Frigobar" },
+  { value: "cortinas", label: "Cortinas" },
+  { value: "porta_automatica", label: "Porta Automática" },
+  { value: "elevador_pcd", label: "Elevador PCD" },
+  { value: "camera_re", label: "Câmera de Ré" },
+  { value: "sensor_ponto_cego", label: "Sensor de Ponto Cego" },
+  { value: "gps", label: "GPS/Rastreador" },
+  { value: "tacografo", label: "Tacógrafo" },
+  { value: "poltronas_reclinaveis", label: "Poltronas Reclináveis" },
+  { value: "apoio_pe", label: "Apoio para Pés" },
+  { value: "bagageiro_interno", label: "Bagageiro Interno" },
+  { value: "bagageiro_externo", label: "Bagageiro Externo" },
+  { value: "som", label: "Som/Multimídia" },
+  { value: "microfone", label: "Sistema de Microfone" },
+  { value: "retarder", label: "Retarder" },
+  { value: "freio_motor", label: "Freio Motor" },
+];

@@ -19,7 +19,8 @@ import {
   insuranceOptions, tradePriorityOptions,
   motoStartTypes, motoMotorTypes, motoBrakeTypes, motoOptionals, cylinderRanges, motoFuelSystems,
   truckTractions, truckBodies, truckCabins, truckOptionals, truckSeatOptions,
-  vanOptionals, vanTractions, steeringTypes, windowTypes, vanEngineLiters
+  vanOptionals, vanTractions, steeringTypes, windowTypes, vanEngineLiters,
+  busOptionals, busTractions, busSeatRanges
 } from "@/components/filters/FilterData";
 import StepIndicator from "@/components/add-product/StepIndicator";
 import CarBodyTypeSelector from "@/components/add-product/CarBodyTypeSelector";
@@ -32,12 +33,15 @@ import TruckTypeSelector from "@/components/add-product/TruckTypeSelector";
 import TruckPhotoUploadGrid, { truckPhotoCategories } from "@/components/add-product/TruckPhotoUploadGrid";
 import VanTypeSelector from "@/components/add-product/VanTypeSelector";
 import VanPhotoUploadGrid, { vanPhotoCategories } from "@/components/add-product/VanPhotoUploadGrid";
+import BusTypeSelector from "@/components/add-product/BusTypeSelector";
+import BusPhotoUploadGrid, { busPhotoCategories } from "@/components/add-product/BusPhotoUploadGrid";
 
 const vehicleTypes = [
   { value: "carro", label: "Carro", icon: Car },
   { value: "moto", label: "Moto", icon: Bike },
   { value: "caminhao", label: "Caminhão", icon: Truck },
   { value: "van", label: "Van", icon: Bus },
+  { value: "onibus", label: "Ônibus", icon: Bus },
   { value: "camionete", label: "Camionete", icon: CarFront },
 ];
 
@@ -70,6 +74,17 @@ const vanSteps = [
   { id: 6, title: "Diagnóstico", description: "Avaliação Zé do Rolo" },
   { id: 7, title: "Negócio Ideal", description: "Preferências de troca" },
   { id: 8, title: "Fotos", description: "Galeria 360° vans" },
+];
+
+const busSteps = [
+  { id: 1, title: "Carroceria", description: "Tipo de ônibus" },
+  { id: 2, title: "Especificações", description: "Dados técnicos" },
+  { id: 3, title: "Conforto", description: "Capacidade e itens" },
+  { id: 4, title: "Itens de Série", description: "Opcionais completos" },
+  { id: 5, title: "Histórico", description: "Procedência e segurança" },
+  { id: 6, title: "Diagnóstico", description: "Avaliação Zé do Rolo" },
+  { id: 7, title: "Negócio Ideal", description: "Preferências de troca" },
+  { id: 8, title: "Fotos", description: "Galeria 360° ônibus" },
 ];
 
 const diagnosticItems = [
@@ -112,6 +127,19 @@ const vanDiagnosticItems = [
   { key: "rating_interior", label: "Parte Interna", description: "Bancos, revestimentos, acabamento" },
 ];
 
+const busDiagnosticItems = [
+  { key: "rating_motor", label: "Motor", description: "Fumaça, ruídos, vazamentos" },
+  { key: "rating_cambio", label: "Câmbio", description: "Engates e embreagem" },
+  { key: "rating_freios", label: "Freios", description: "Sistema de frenagem completo" },
+  { key: "rating_estetica", label: "Estética/Pintura", description: "Aparência externa" },
+  { key: "rating_suspensao", label: "Suspensão", description: "Molas e amortecedores" },
+  { key: "rating_pneus", label: "Pneus", description: "Estado dos pneus" },
+  { key: "rating_documentacao", label: "Documentação", description: "CRLV, multas, restrições" },
+  { key: "rating_mecanica_geral", label: "Mecânica Geral", description: "Funcionamento geral" },
+  { key: "rating_eletrica", label: "Elétrica", description: "Faróis, lanternas, painel" },
+  { key: "rating_interior", label: "Parte Interna", description: "Bancos passageiros, acabamento" },
+];
+
 const ownershipTimeOptions = [
   { value: "menos_6_meses", label: "Menos de 6 meses" },
   { value: "6_12_meses", label: "6 meses a 1 ano" },
@@ -142,6 +170,7 @@ const AddProduct = () => {
     moto_style: "",
     truck_type: "",
     van_subcategory: "",
+    bus_subcategory: "",
     
     // Etapa 2 - Dados Técnicos
     city: "", state: "",
@@ -158,6 +187,9 @@ const AddProduct = () => {
     // Campos específicos de Vans
     van_traction: "", steering_type: "", window_type: "",
     van_optionals: [] as string[],
+    // Campos específicos de Ônibus
+    bus_traction: "",
+    bus_optionals: [] as string[],
     
     // Etapa 3 - Histórico
     is_auction: false, auction_reason: "",
@@ -188,6 +220,7 @@ const AddProduct = () => {
   const getSteps = () => {
     if (formData.vehicle_type === "caminhao") return truckSteps;
     if (formData.vehicle_type === "van") return vanSteps;
+    if (formData.vehicle_type === "onibus") return busSteps;
     return carSteps;
   };
   const steps = getSteps();
@@ -195,6 +228,7 @@ const AddProduct = () => {
   const getDiagnosticItems = () => {
     if (formData.vehicle_type === "caminhao") return truckDiagnosticItems;
     if (formData.vehicle_type === "van") return vanDiagnosticItems;
+    if (formData.vehicle_type === "onibus") return busDiagnosticItems;
     return diagnosticItems;
   };
   const currentDiagnosticItems = getDiagnosticItems();
@@ -241,6 +275,11 @@ const AddProduct = () => {
         .flatMap((cat) => cat.photos)
         .filter((p) => p.required);
     }
+    if (formData.vehicle_type === "onibus") {
+      return Object.values(busPhotoCategories)
+        .flatMap((cat) => cat.photos)
+        .filter((p) => p.required);
+    }
     return Object.values(photoCategories)
       .flatMap((cat) => cat.photos)
       .filter((p) => p.required);
@@ -273,6 +312,26 @@ const AddProduct = () => {
         case 1:
           if (!formData.van_subcategory) {
             toast({ title: "Selecione o tipo de carroceria da van", variant: "destructive" });
+            return false;
+          }
+          return true;
+        case 2:
+          if (!formData.brand || !formData.model || !formData.year_manufacture || !formData.price) {
+            toast({ title: "Preencha marca, modelo, ano e preço", variant: "destructive" });
+            return false;
+          }
+          return true;
+        default:
+          return true;
+      }
+    }
+    
+    // Para ônibus, a validação é diferente
+    if (formData.vehicle_type === "onibus") {
+      switch (stepNumber) {
+        case 1:
+          if (!formData.bus_subcategory) {
+            toast({ title: "Selecione o tipo de ônibus", variant: "destructive" });
             return false;
           }
           return true;
@@ -544,6 +603,17 @@ const AddProduct = () => {
                   <VanTypeSelector
                     value={formData.van_subcategory}
                     onChange={(value) => setFormData(p => ({ ...p, van_subcategory: value }))}
+                  />
+                </div>
+              )}
+
+              {formData.vehicle_type === "onibus" && (
+                <div className="pt-4 border-t">
+                  <Label className="text-base font-semibold">Tipo de Ônibus *</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Selecione o tipo que melhor descreve seu ônibus</p>
+                  <BusTypeSelector
+                    value={formData.bus_subcategory}
+                    onChange={(value) => setFormData(p => ({ ...p, bus_subcategory: value }))}
                   />
                 </div>
               )}
@@ -1242,8 +1312,252 @@ const AddProduct = () => {
             </div>
           )}
 
+          {/* ============= ETAPAS ESPECÍFICAS PARA ÔNIBUS ============= */}
+          
+          {/* Etapa 3 - Conforto e Capacidade (ÔNIBUS) */}
+          {step === 3 && formData.vehicle_type === "onibus" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Conforto e Capacidade</h2>
+                <p className="text-muted-foreground mt-1">Detalhes de acomodação do ônibus</p>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <Label>Lugares/Ocupantes *</Label>
+                  <Input 
+                    type="number" 
+                    value={formData.seats} 
+                    onChange={e => setFormData(p => ({ ...p, seats: e.target.value }))} 
+                    placeholder="Ex: 46"
+                    min="1"
+                    max="99"
+                  />
+                </div>
+                <div>
+                  <Label>Portas</Label>
+                  <Select value={formData.doors} onValueChange={v => setFormData(p => ({ ...p, doors: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectContent className="bg-card">
+                      {[1,2,3,4,5,6,7,8,9].map(n => <SelectItem key={n} value={n.toString()}>{n} porta(s)</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Motor (Litragem)</Label>
+                  <Select value={formData.engine_liters} onValueChange={v => setFormData(p => ({ ...p, engine_liters: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectContent className="bg-card max-h-60">
+                      {engineLiters.map(e => <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <Label>Tração</Label>
+                  <Select value={formData.bus_traction} onValueChange={v => setFormData(p => ({ ...p, bus_traction: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectContent className="bg-card">
+                      {busTractions.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Direção</Label>
+                  <Select value={formData.steering_type} onValueChange={v => setFormData(p => ({ ...p, steering_type: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectContent className="bg-card">
+                      {steeringTypes.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Bancos</Label>
+                  <Select value={formData.seat_material} onValueChange={v => setFormData(p => ({ ...p, seat_material: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectContent className="bg-card">
+                      <SelectItem value="couro">Couro</SelectItem>
+                      <SelectItem value="tecido">Tecido</SelectItem>
+                      <SelectItem value="misto">Misto</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Etapa 4 - Itens de Série (ÔNIBUS) */}
+          {step === 4 && formData.vehicle_type === "onibus" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Itens de Série</h2>
+                <p className="text-muted-foreground mt-1">Opcionais e equipamentos do ônibus</p>
+              </div>
+
+              <div className="p-4 border rounded-lg space-y-3">
+                <Label className="text-base font-semibold">Opcionais</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {busOptionals.map(opt => (
+                    <div key={opt.value} className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={`bus-opt-${opt.value}`}
+                        checked={formData.bus_optionals.includes(opt.value)}
+                        onCheckedChange={(checked) => {
+                          const newOpts = checked 
+                            ? [...formData.bus_optionals, opt.value]
+                            : formData.bus_optionals.filter((o: string) => o !== opt.value);
+                          setFormData(p => ({ ...p, bus_optionals: newOpts }));
+                        }}
+                      />
+                      <Label htmlFor={`bus-opt-${opt.value}`} className="text-sm cursor-pointer">{opt.label}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Etapa 5 - Histórico e Segurança (ÔNIBUS) */}
+          {step === 5 && formData.vehicle_type === "onibus" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Histórico e Segurança</h2>
+                <p className="text-muted-foreground mt-1">Informações sobre procedência e condições legais</p>
+              </div>
+
+              <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg flex items-start gap-3">
+                <ShieldCheck className="h-6 w-6 text-primary mt-0.5" />
+                <div>
+                  <p className="font-medium text-primary">Seja honesto(a), não omita nada!</p>
+                  <p className="text-sm text-muted-foreground">O Zé do Rolo busca transparência total para negócios sem surpresas.</p>
+                </div>
+              </div>
+
+              <div className="p-4 border rounded-lg space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="h-5 w-5 text-orange-500" />
+                    <div>
+                      <Label className="text-base">Veículo de Leilão?</Label>
+                      <p className="text-sm text-muted-foreground">Informe se o veículo tem passagem por leilão</p>
+                    </div>
+                  </div>
+                  <Switch checked={formData.is_auction} onCheckedChange={v => setFormData(p => ({ ...p, is_auction: v }))} />
+                </div>
+                {formData.is_auction && (
+                  <Textarea value={formData.auction_reason} onChange={e => setFormData(p => ({ ...p, auction_reason: e.target.value }))} placeholder="Descreva o motivo do leilão..." rows={2} />
+                )}
+              </div>
+
+              <div className="p-4 border rounded-lg space-y-4">
+                <Label className="text-base">Condições do Veículo</Label>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                    <Label>Chassis Remarcado</Label>
+                    <Switch checked={formData.is_chassis_remarked} onCheckedChange={v => setFormData(p => ({ ...p, is_chassis_remarked: v }))} />
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                    <Label>Blindagem</Label>
+                    <Switch checked={formData.is_armored} onCheckedChange={v => setFormData(p => ({ ...p, is_armored: v }))} />
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                    <Label>Alienado/Financiado</Label>
+                    <Switch checked={formData.is_financed} onCheckedChange={v => setFormData(p => ({ ...p, is_financed: v }))} />
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                    <Label>IPVA Pago</Label>
+                    <Switch checked={formData.ipva_paid} onCheckedChange={v => setFormData(p => ({ ...p, ipva_paid: v }))} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Etapa 6 - Diagnóstico (ÔNIBUS) */}
+          {step === 6 && formData.vehicle_type === "onibus" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Diagnóstico Zé do Rolo - Ônibus</h2>
+                <p className="text-muted-foreground mt-1">Avalie cada item de 0 a 10 com total honestidade</p>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                {busDiagnosticItems.map((item) => (
+                  <DiagnosticSlider key={item.key} label={item.label} description={item.description} value={formData[item.key]} onChange={(v) => setFormData(p => ({ ...p, [item.key]: v }))} />
+                ))}
+              </div>
+
+              <div>
+                <Label className="text-base font-semibold">Observações e Problemas</Label>
+                <Textarea value={formData.diagnostic_notes} onChange={e => setFormData(p => ({ ...p, diagnostic_notes: e.target.value }))} placeholder="Ex: Ar condicionado precisando de manutenção na 3ª fileira..." rows={4} />
+              </div>
+            </div>
+          )}
+
+          {/* Etapa 7 - Negócio Ideal (ÔNIBUS) */}
+          {step === 7 && formData.vehicle_type === "onibus" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">O Negócio Ideal</h2>
+                <p className="text-muted-foreground mt-1">Configure suas preferências de troca</p>
+              </div>
+
+              <div className="p-4 border rounded-lg space-y-3">
+                <Label className="text-base font-semibold">Qual sua prioridade?</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  {tradePriorityOptions.map((opt) => (
+                    <button key={opt.value} type="button" onClick={() => setFormData(p => ({ ...p, trade_priority: opt.value }))} className={`p-4 rounded-lg border-2 text-center transition-all ${formData.trade_priority === opt.value ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}>
+                      <span className={`text-sm font-medium ${formData.trade_priority === opt.value ? "text-primary" : ""}`}>{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {formData.accepts_trade && (
+                <>
+                  <div className="p-4 border rounded-lg space-y-4">
+                    <Label className="text-base font-semibold">Valores de Volta (R$)</Label>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <Label>Valor mínimo</Label>
+                        <Input type="number" value={formData.min_cash_return} onChange={e => setFormData(p => ({ ...p, min_cash_return: e.target.value }))} placeholder="Ex: 50000" />
+                      </div>
+                      <div>
+                        <Label>Valor máximo</Label>
+                        <Input type="number" value={formData.max_cash_return} onChange={e => setFormData(p => ({ ...p, max_cash_return: e.target.value }))} placeholder="Ex: 200000" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-4">
+                    <Label className="text-base font-semibold">NÃO ACEITO DE JEITO NENHUM</Label>
+                    <TradeRestrictionsInput value={formData.trade_restrictions} onChange={(v) => setFormData(p => ({ ...p, trade_restrictions: v }))} />
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Etapa 8 - Fotos (ÔNIBUS) */}
+          {step === 8 && formData.vehicle_type === "onibus" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Galeria 360° - Ônibus</h2>
+                <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
+              </div>
+
+              <BusPhotoUploadGrid images={images} previews={imagePreviews} onUpload={handleImageUpload} onRemove={handleRemoveImage} />
+
+              <div>
+                <Label className="text-base font-semibold">Descrição do Anúncio</Label>
+                <Textarea value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Ex: Ônibus rodoviário bem conservado, ar funcionando perfeitamente..." rows={4} />
+              </div>
+            </div>
+          )}
+
           {/* Etapa 3 - Histórico (CARROS E MOTOS) */}
-          {step === 3 && formData.vehicle_type !== "caminhao" && (
+          {step === 3 && formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "onibus" && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Checklist e Histórico</h2>

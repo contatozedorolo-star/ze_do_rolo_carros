@@ -1,4 +1,4 @@
-import { Search, User, Menu, X, LogOut, Shield, UserCircle, Sparkles, Bot } from "lucide-react";
+import { Search, User, Menu, X, LogOut, Shield, UserCircle, Sparkles, Bot, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -41,13 +41,13 @@ const Header = () => {
     { href: "/veiculos", label: "Veículos", protected: true },
     { href: "/tabela-fipe", label: "Tabela FIPE" },
     { href: "/como-funciona", label: "Como Funciona" },
-    { href: "/assistente-ia", label: "Zé IA", isNew: true },
+    { href: "/assistente-ia", label: "Zé IA", isNew: true, protected: true },
   ];
 
   const handleNavClick = (e: React.MouseEvent, link: { href: string; protected?: boolean }) => {
     if (link.protected && !user) {
       e.preventDefault();
-      navigate("/auth");
+      navigate("/auth", { state: { from: link.href } });
     }
   };
 
@@ -97,6 +97,7 @@ const Header = () => {
               )}
             >
               {link.isNew && <Bot className="h-4 w-4" />}
+              {link.protected && !user && <Lock className="h-3 w-3 text-muted-foreground" />}
               {link.label}
               {link.isNew && (
                 <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-[#FF8C36] text-white rounded-full flex items-center gap-0.5">
@@ -187,7 +188,7 @@ const Header = () => {
                   onClick={(e) => {
                     if (link.protected && !user) {
                       e.preventDefault();
-                      navigate("/auth");
+                      navigate("/auth", { state: { from: link.href } });
                     }
                     setMobileMenuOpen(false);
                   }}
@@ -200,6 +201,7 @@ const Header = () => {
                   )}
                 >
                   {link.isNew && <Bot className="h-4 w-4" />}
+                  {link.protected && !user && <Lock className="h-3 w-3 text-muted-foreground" />}
                   {link.label}
                   {link.isNew && (
                     <span className="ml-auto px-1.5 py-0.5 text-[10px] font-bold bg-[#FF8C36] text-white rounded-full flex items-center gap-0.5">

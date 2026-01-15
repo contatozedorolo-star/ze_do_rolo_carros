@@ -282,6 +282,8 @@ export type Database = {
           body_type: string | null
           brake_type: string | null
           brand: string
+          bus_optionals: string[] | null
+          bus_subcategory: string | null
           city: string | null
           color: string
           created_at: string
@@ -361,6 +363,8 @@ export type Database = {
           body_type?: string | null
           brake_type?: string | null
           brand: string
+          bus_optionals?: string[] | null
+          bus_subcategory?: string | null
           city?: string | null
           color: string
           created_at?: string
@@ -440,6 +444,8 @@ export type Database = {
           body_type?: string | null
           brake_type?: string | null
           brand?: string
+          bus_optionals?: string[] | null
+          bus_subcategory?: string | null
           city?: string | null
           color?: string
           created_at?: string
@@ -579,7 +585,13 @@ export type Database = {
         | "bitruck"
         | "cavalo_mecanico"
         | "vuc"
-      vehicle_type: "carro" | "caminhao" | "moto" | "camionete" | "van"
+      vehicle_type:
+        | "carro"
+        | "caminhao"
+        | "moto"
+        | "camionete"
+        | "van"
+        | "onibus"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -762,7 +774,7 @@ export const Constants = {
         "cavalo_mecanico",
         "vuc",
       ],
-      vehicle_type: ["carro", "caminhao", "moto", "camionete", "van"],
+      vehicle_type: ["carro", "caminhao", "moto", "camionete", "van", "onibus"],
     },
   },
 } as const

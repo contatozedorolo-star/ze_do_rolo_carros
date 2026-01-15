@@ -13,9 +13,21 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -42,6 +54,8 @@ import {
   Car,
   MapPin,
   ExternalLink,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import {
   Tooltip,
@@ -100,6 +114,11 @@ const AdminUsers = () => {
   const [showCPF, setShowCPF] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+  
+  // Delete user state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<UserProfile | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -242,6 +261,51 @@ const AdminUsers = () => {
       description: "O email foi copiado para a área de transferência.",
     });
     setTimeout(() => setCopiedEmail(null), 2000);
+  };
+
+  const openDeleteDialog = (userItem: UserProfile, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setUserToDelete(userItem);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    setDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-delete-user', {
+        body: { user_id_to_delete: userToDelete.id }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      toast({
+        title: "Usuário excluído",
+        description: data?.message || `${userToDelete.full_name || 'Usuário'} foi removido com sucesso.`,
+      });
+
+      // Remove from local state
+      setUsers(prev => prev.filter(u => u.id !== userToDelete.id));
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      toast({
+        title: "Erro ao excluir",
+        description: error.message || "Não foi possível excluir o usuário.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (authLoading || loading) {
@@ -462,14 +526,40 @@ const AdminUsers = () => {
                           {new Date(userItem.created_at).toLocaleDateString("pt-BR")}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openUserDetails(userItem)}
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            Ver
-                          </Button>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openUserDetails(userItem)}
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              Ver
+                            </Button>
+                            
+                            {/* Delete button - disabled for self */}
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
+                                      onClick={(e) => openDeleteDialog(userItem, e)}
+                                      disabled={userItem.id === user?.id}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {userItem.id === user?.id 
+                                    ? "Você não pode excluir seu próprio perfil" 
+                                    : "Excluir usuário"}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -656,6 +746,49 @@ const AdminUsers = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-full bg-destructive/10">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+              </div>
+              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="text-left">
+              Tem certeza que deseja excluir permanentemente o perfil de{" "}
+              <strong className="text-foreground">{userToDelete?.full_name || "este usuário"}</strong>?
+              <br /><br />
+              <span className="text-destructive font-medium">
+                Esta ação não pode ser desfeita
+              </span>{" "}
+              e removerá todos os dados e veículos associados a este usuário.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteUser}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Excluindo...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Confirmar Exclusão
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Footer />
     </div>

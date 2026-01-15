@@ -5,11 +5,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car, Lock, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car, Lock, Sparkles, MapPin } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { isValidCPF, isValidPhone } from "@/lib/validators";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const BRAZILIAN_STATES = [
+  { value: "AC", label: "Acre" },
+  { value: "AL", label: "Alagoas" },
+  { value: "AP", label: "Amapá" },
+  { value: "AM", label: "Amazonas" },
+  { value: "BA", label: "Bahia" },
+  { value: "CE", label: "Ceará" },
+  { value: "DF", label: "Distrito Federal" },
+  { value: "ES", label: "Espírito Santo" },
+  { value: "GO", label: "Goiás" },
+  { value: "MA", label: "Maranhão" },
+  { value: "MT", label: "Mato Grosso" },
+  { value: "MS", label: "Mato Grosso do Sul" },
+  { value: "MG", label: "Minas Gerais" },
+  { value: "PA", label: "Pará" },
+  { value: "PB", label: "Paraíba" },
+  { value: "PR", label: "Paraná" },
+  { value: "PE", label: "Pernambuco" },
+  { value: "PI", label: "Piauí" },
+  { value: "RJ", label: "Rio de Janeiro" },
+  { value: "RN", label: "Rio Grande do Norte" },
+  { value: "RS", label: "Rio Grande do Sul" },
+  { value: "RO", label: "Rondônia" },
+  { value: "RR", label: "Roraima" },
+  { value: "SC", label: "Santa Catarina" },
+  { value: "SP", label: "São Paulo" },
+  { value: "SE", label: "Sergipe" },
+  { value: "TO", label: "Tocantins" },
+];
 
 const signUpSchema = z.object({
   full_name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres").max(100, "Nome muito longo"),
@@ -26,6 +63,7 @@ const signUpSchema = z.object({
     .refine((val) => isValidCPF(val), {
       message: "CPF inválido. Verifique os dígitos informados"
     }),
+  state: z.string().min(2, "Selecione seu estado"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   confirmPassword: z.string(),
   acceptedTerms: z.literal(true, {
@@ -67,6 +105,7 @@ const Auth = () => {
     email: "",
     phone: "",
     cpf: "",
+    state: "",
     password: "",
     confirmPassword: "",
     acceptedTerms: false,
@@ -144,6 +183,7 @@ const Auth = () => {
           full_name: formData.full_name,
           phone: formData.phone.replace(/\D/g, ''),
           cpf: formData.cpf.replace(/\D/g, ''),
+          state: formData.state,
         });
 
         if (error) {
@@ -395,6 +435,31 @@ const Auth = () => {
                     className={errors.phone ? "border-destructive" : ""}
                   />
                   {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="state">Estado</Label>
+                  <Select
+                    value={formData.state}
+                    onValueChange={(value) => {
+                      setFormData(prev => ({ ...prev, state: value }));
+                      if (errors.state) {
+                        setErrors(prev => ({ ...prev, state: "" }));
+                      }
+                    }}
+                  >
+                    <SelectTrigger className={errors.state ? "border-destructive" : ""}>
+                      <SelectValue placeholder="Selecione seu estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BRAZILIAN_STATES.map((state) => (
+                        <SelectItem key={state.value} value={state.value}>
+                          {state.label} ({state.value})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.state && <p className="text-xs text-destructive">{errors.state}</p>}
                 </div>
               </>
             )}

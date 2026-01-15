@@ -23,6 +23,7 @@ interface AuthContextType {
     full_name: string;
     phone?: string;
     cpf?: string;
+    state?: string;
   }) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -90,6 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     full_name: string;
     phone?: string;
     cpf?: string;
+    state?: string;
   }) => {
     // Usa a URL de produção para redirecionamentos
     const productionUrl = 'https://zedoscarros.lovable.app';

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
@@ -33,6 +33,7 @@ import {
   FileText,
   User,
   Loader2,
+  Users,
 } from "lucide-react";
 
 interface KYCVerification {
@@ -209,6 +210,20 @@ const AdminKYC = () => {
             <h1 className="text-3xl font-bold text-foreground">Painel KYC</h1>
           </div>
           <p className="text-muted-foreground">Gerencie verificações de identidade.</p>
+        </div>
+
+        {/* Admin Navigation */}
+        <div className="flex gap-2 mb-6">
+          <Button variant="default" disabled>
+            <Shield className="h-4 w-4 mr-2" />
+            KYC
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/admin/usuarios">
+              <Users className="h-4 w-4 mr-2" />
+              Usuários
+            </Link>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

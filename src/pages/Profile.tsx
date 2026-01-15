@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
@@ -16,12 +16,15 @@ import {
   User, 
   Car, 
   Settings, 
-  Shield, 
   CheckCircle, 
   AlertCircle,
   LogOut,
   Plus,
-  Edit
+  Edit,
+  Eye,
+  EyeOff,
+  Camera,
+  Loader2
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -35,14 +38,51 @@ interface Vehicle {
   created_at: string;
 }
 
+// Helper to mask CPF
+const maskCPF = (cpf: string) => {
+  if (!cpf) return null;
+  return "***.***.***-**";
+};
+
+// Helper to format CPF
+const formatCPF = (cpf: string) => {
+  if (!cpf) return null;
+  const cleaned = cpf.replace(/\D/g, '');
+  return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+};
+
+// Helper to mask Phone
+const maskPhone = (phone: string) => {
+  if (!phone) return null;
+  return "(**) *****-****";
+};
+
+// Helper to format Phone
+const formatPhone = (phone: string) => {
+  if (!phone) return null;
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 11) {
+    return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  }
+  return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+};
+
 const Profile = () => {
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loadingVehicles, setLoadingVehicles] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  
+  // Privacy toggles
+  const [showCPF, setShowCPF] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
+  
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",
@@ -93,6 +133,73 @@ const Profile = () => {
     fetchData();
   }, [user]);
 
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Arquivo inválido",
+        description: "Por favor, selecione uma imagem.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Arquivo muito grande",
+        description: "A imagem deve ter no máximo 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploadingAvatar(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${user.id}/avatar.${fileExt}`;
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update profile with avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Foto atualizada!",
+        description: "Sua foto de perfil foi salva com sucesso.",
+      });
+
+      refreshProfile();
+    } catch (error: any) {
+      toast({
+        title: "Erro ao enviar foto",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   const handleUpdateProfile = async () => {
     if (!user) return;
 
@@ -100,7 +207,7 @@ const Profile = () => {
       .from("profiles")
       .update({
         full_name: formData.full_name,
-        phone: formData.phone,
+        phone: formData.phone.replace(/\D/g, ''),
         cpf: formData.cpf.replace(/\D/g, ''),
       })
       .eq("id", user.id);
@@ -144,11 +251,44 @@ const Profile = () => {
         {/* Profile Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-20 h-20 rounded-full gradient-hero flex items-center justify-center">
-              <span className="text-3xl font-bold text-primary-foreground">
-                {profile.full_name?.charAt(0).toUpperCase() || 'U'}
-              </span>
+            {/* Avatar with upload */}
+            <div className="relative group">
+              <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                {profile.avatar_url ? (
+                  <img 
+                    src={profile.avatar_url} 
+                    alt="Avatar" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-3xl font-bold text-primary-foreground">
+                    {profile.full_name?.charAt(0).toUpperCase() || 'U'}
+                  </span>
+                )}
+              </div>
+              
+              {/* Upload overlay */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingAvatar}
+                className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+              >
+                {uploadingAvatar ? (
+                  <Loader2 className="h-6 w-6 text-white animate-spin" />
+                ) : (
+                  <Camera className="h-6 w-6 text-white" />
+                )}
+              </button>
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+              />
             </div>
+            
             <div>
               <h1 className="text-2xl font-bold text-foreground">{profile.full_name || 'Usuário'}</h1>
               <p className="text-muted-foreground">{user?.email}</p>
@@ -222,8 +362,12 @@ const Profile = () => {
                     <p className="text-foreground font-medium">{user?.email}</p>
                   </div>
 
+                  {/* CPF with privacy toggle */}
                   <div className="space-y-2">
-                    <Label>CPF</Label>
+                    <Label className="flex items-center gap-2">
+                      CPF
+                      <span className="text-xs text-muted-foreground">(Privado)</span>
+                    </Label>
                     {editMode ? (
                       <Input
                         value={formData.cpf}
@@ -239,21 +383,69 @@ const Profile = () => {
                         maxLength={14}
                       />
                     ) : (
-                      <p className="text-foreground font-medium">
-                        {profile.cpf ? profile.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : 'Não informado'}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-foreground font-medium">
+                          {profile.cpf 
+                            ? (showCPF ? formatCPF(profile.cpf) : maskCPF(profile.cpf))
+                            : 'Não informado'}
+                        </p>
+                        {profile.cpf && (
+                          <button
+                            onClick={() => setShowCPF(!showCPF)}
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            title={showCPF ? "Ocultar CPF" : "Mostrar CPF"}
+                          >
+                            {showCPF ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
 
+                  {/* Phone with privacy toggle */}
                   <div className="space-y-2">
-                    <Label>Telefone</Label>
+                    <Label className="flex items-center gap-2">
+                      Telefone
+                      <span className="text-xs text-muted-foreground">(Privado)</span>
+                    </Label>
                     {editMode ? (
                       <Input
                         value={formData.phone}
-                        onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '').slice(0, 11);
+                          const formatted = value
+                            .replace(/(\d{2})(\d)/, '($1) $2')
+                            .replace(/(\d{5})(\d)/, '$1-$2');
+                          setFormData(prev => ({ ...prev, phone: formatted }));
+                        }}
+                        placeholder="(11) 99999-9999"
+                        maxLength={15}
                       />
                     ) : (
-                      <p className="text-foreground font-medium">{profile.phone || 'Não informado'}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-foreground font-medium">
+                          {profile.phone 
+                            ? (showPhone ? formatPhone(profile.phone) : maskPhone(profile.phone))
+                            : 'Não informado'}
+                        </p>
+                        {profile.phone && (
+                          <button
+                            onClick={() => setShowPhone(!showPhone)}
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            title={showPhone ? "Ocultar Telefone" : "Mostrar Telefone"}
+                          >
+                            {showPhone ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

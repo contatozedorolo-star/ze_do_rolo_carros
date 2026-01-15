@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,7 +63,11 @@ const Auth = () => {
 
   const { user, signUp, signIn, resetPassword, updatePassword } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  
+  // Get the intended destination from state or default to dashboard
+  const from = (location.state as { from?: string })?.from || "/dashboard";
 
   useEffect(() => {
     // Check if we're in password reset mode from URL
@@ -75,9 +79,9 @@ const Auth = () => {
 
   useEffect(() => {
     if (user && mode !== 'reset') {
-      navigate("/dashboard");
+      navigate(from, { replace: true });
     }
-  }, [user, navigate, mode]);
+  }, [user, navigate, mode, from]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

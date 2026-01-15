@@ -38,7 +38,17 @@ import {
   Calendar,
   Shield,
   FileText,
+  Copy,
+  Car,
+  MapPin,
+  ExternalLink,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface UserProfile {
   id: string;
@@ -52,6 +62,7 @@ interface UserProfile {
   email?: string;
   is_verified?: boolean;
   vehicles_count?: number;
+  is_admin?: boolean;
 }
 
 // Helper functions
@@ -88,6 +99,7 @@ const AdminUsers = () => {
   // Privacy toggles for detail view
   const [showCPF, setShowCPF] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -134,7 +146,18 @@ const AdminUsers = () => {
 
       if (profilesError) throw profilesError;
 
-      // Fetch KYC verification status for each user
+      // Fetch user emails via admin edge function
+      let emailMap: Record<string, string> = {};
+      try {
+        const { data: emailData, error: emailError } = await supabase.functions.invoke('admin-get-users');
+        if (!emailError && emailData?.emails) {
+          emailMap = emailData.emails;
+        }
+      } catch (e) {
+        console.error('Error fetching emails:', e);
+      }
+
+      // Fetch KYC verification status and admin role for each user
       const usersWithDetails = await Promise.all(
         (profiles || []).map(async (profile) => {
           // Check if user is verified
@@ -151,10 +174,20 @@ const AdminUsers = () => {
             .select("*", { count: "exact", head: true })
             .eq("user_id", profile.id);
 
+          // Check if user is admin
+          const { data: adminData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", profile.id)
+            .eq("role", "admin")
+            .maybeSingle();
+
           return {
             ...profile,
+            email: emailMap[profile.id] || undefined,
             is_verified: !!kycData,
             vehicles_count: vehiclesCount || 0,
+            is_admin: !!adminData,
           } as UserProfile;
         })
       );
@@ -198,6 +231,17 @@ const AdminUsers = () => {
     setShowCPF(false);
     setShowPhone(false);
     setViewDialogOpen(true);
+  };
+
+  const handleCopyEmail = async (email: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    await navigator.clipboard.writeText(email);
+    setCopiedEmail(email);
+    toast({
+      title: "Email copiado!",
+      description: "O email foi copiado para a área de transferência.",
+    });
+    setTimeout(() => setCopiedEmail(null), 2000);
   };
 
   if (authLoading || loading) {
@@ -328,6 +372,7 @@ const AdminUsers = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Usuário</TableHead>
+                      <TableHead>Email</TableHead>
                       <TableHead>Localização</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Veículos</TableHead>
@@ -337,7 +382,7 @@ const AdminUsers = () => {
                   </TableHeader>
                   <TableBody>
                     {filteredUsers.map((userItem) => (
-                      <TableRow key={userItem.id}>
+                      <TableRow key={userItem.id} className="group">
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10">
@@ -347,11 +392,47 @@ const AdminUsers = () => {
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="font-medium">{userItem.full_name || "Sem nome"}</p>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => openUserDetails(userItem)}
+                                  className="font-medium hover:text-primary hover:underline transition-colors text-left"
+                                >
+                                  {userItem.full_name || "Sem nome"}
+                                </button>
+                                {userItem.is_admin && (
+                                  <Badge className="bg-[#142562] text-white text-[10px] px-1.5 py-0">
+                                    ADMIN
+                                  </Badge>
+                                )}
+                              </div>
                               <p className="text-sm text-muted-foreground">
                                 {userItem.cpf ? maskCPF() : "CPF não informado"}
                               </p>
                             </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground truncate max-w-[180px]">
+                              {userItem.email || "—"}
+                            </span>
+                            {userItem.email && (
+                              <TooltipProvider>
+                                <Tooltip open={copiedEmail === userItem.email ? true : undefined}>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={(e) => handleCopyEmail(userItem.email!, e)}
+                                      className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100"
+                                    >
+                                      <Copy className="h-3.5 w-3.5" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{copiedEmail === userItem.email ? "Copiado!" : "Copiar email"}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -418,20 +499,61 @@ const AdminUsers = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="text-lg font-semibold">{selectedUser.full_name || "Sem nome"}</h3>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold">{selectedUser.full_name || "Sem nome"}</h3>
+                    {selectedUser.is_admin && (
+                      <Badge className="bg-[#142562] text-white text-[10px] px-1.5">
+                        ADMIN
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
                     {selectedUser.is_verified ? (
                       <Badge className="bg-green-500">Verificado</Badge>
                     ) : (
                       <Badge variant="secondary">Não Verificado</Badge>
                     )}
-                    <Badge variant="outline">{selectedUser.vehicles_count || 0} veículo(s)</Badge>
+                    <Badge variant="outline">
+                      <Car className="w-3 h-3 mr-1" />
+                      {selectedUser.vehicles_count || 0} veículo(s)
+                    </Badge>
                   </div>
                 </div>
               </div>
 
               {/* User Info Grid */}
-              <div className="space-y-4">
+              <div className="space-y-3">
+                {/* Email with copy */}
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm text-muted-foreground">Email</p>
+                      <p className="font-medium truncate">
+                        {selectedUser.email || "Não disponível"}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedUser.email && (
+                    <TooltipProvider>
+                      <Tooltip open={copiedEmail === selectedUser.email ? true : undefined}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCopyEmail(selectedUser.email!)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{copiedEmail === selectedUser.email ? "Copiado!" : "Copiar email"}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
+
                 {/* CPF with toggle */}
                 <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3">
@@ -482,7 +604,7 @@ const AdminUsers = () => {
 
                 {/* Location */}
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <Mail className="h-5 w-5 text-muted-foreground" />
+                  <MapPin className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Localização</p>
                     <p className="font-medium">
@@ -508,6 +630,28 @@ const AdminUsers = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Quick Actions */}
+              {(selectedUser.vehicles_count || 0) > 0 && (
+                <div className="pt-2 border-t">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => {
+                      setViewDialogOpen(false);
+                      // Navigate to vehicles filtered by this user would require additional implementation
+                      toast({
+                        title: "Em breve",
+                        description: "Visualização de veículos por usuário em desenvolvimento.",
+                      });
+                    }}
+                  >
+                    <Car className="h-4 w-4 mr-2" />
+                    Ver Veículos Cadastrados
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

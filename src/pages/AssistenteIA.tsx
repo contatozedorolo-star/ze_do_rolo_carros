@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from "react";
-import { Send, Bot, Shield, ArrowLeft } from "lucide-react";
+import { useState, useRef, useEffect, Suspense, lazy } from "react";
+import { Send, Shield, ArrowLeft, Rocket, Clock, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
 import logoZe from "@/assets/logo-zedorolo.png";
+
+const Spline = lazy(() => import("@splinetool/react-spline"));
 
 type Message = {
   role: "user" | "assistant";
@@ -14,22 +16,28 @@ type Message = {
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ze-ia-chat`;
 
+const INITIAL_MESSAGE = "Olá! Sou o assistente do Zé. Estou visualizando todos os carros, motos, caminhões e vans do site agora. O que você quer negociar hoje?";
+
 const AssistenteIA = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "Olá! Eu sou o Consultor Zé IA. Tenho acesso a todo o banco de dados de veículos e propostas do site. Como posso te ajudar a encontrar o negócio perfeito hoje?"
-    }
+    { role: "assistant", content: INITIAL_MESSAGE }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hasStartedConversation, setHasStartedConversation] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (messages.length > 1) {
+      setHasStartedConversation(true);
     }
   }, [messages]);
 
@@ -132,106 +140,174 @@ const AssistenteIA = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#142562] flex flex-col">
+    <div className="min-h-screen bg-[#142562] flex flex-col overflow-hidden">
       {/* Security Badge */}
-      <div className="bg-[#29B765] text-white py-2 px-4 flex items-center justify-center gap-2 text-sm font-medium">
+      <div className="bg-[#29B765] text-white py-2 px-4 flex items-center justify-center gap-2 text-sm font-medium z-50">
         <Shield className="w-4 h-4" />
         🛡️ 100% Seguro e Verificado
       </div>
 
-      {/* Header */}
-      <div className="bg-[#1a3080] border-b border-white/10">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="text-white hover:bg-white/10"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          
-          <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden">
-            <img src={logoZe} alt="Consultor Zé" className="w-10 h-10 object-contain" />
-          </div>
-          
-          <div className="flex-1">
-            <h1 className="text-white font-semibold text-lg">Consultor Zé IA</h1>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#29B765] rounded-full animate-pulse" />
-              <span className="text-white/70 text-sm">Online - IA de Negócios</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Chat Area */}
-      <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-        <div className="max-w-4xl mx-auto space-y-4 pb-4">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[85%] md:max-w-[70%] p-4 rounded-2xl ${
-                  message.role === "user"
-                    ? "bg-[#29B765] text-white rounded-br-md"
-                    : "bg-white text-gray-800 rounded-bl-md shadow-md"
-                }`}
-              >
-                {message.role === "assistant" && (
-                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
-                    <Bot className="w-4 h-4 text-[#142562]" />
-                    <span className="text-sm font-medium text-[#142562]">Consultor Zé</span>
-                  </div>
-                )}
-                <p className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">
-                  {message.content}
-                </p>
+      {/* Main Content - Split Screen */}
+      <div className="flex-1 flex flex-col lg:flex-row relative">
+        {/* Left Side - Spline 3D Robot & Info */}
+        <div className="w-full lg:w-1/2 relative flex flex-col items-center justify-center p-6 lg:p-12">
+          {/* Spline 3D Scene */}
+          <div className="absolute inset-0 z-0">
+            <Suspense fallback={
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-16 h-16 border-4 border-[#FF8C36] border-t-transparent rounded-full animate-spin" />
               </div>
-            </div>
-          ))}
-          
-          {isLoading && messages[messages.length - 1]?.role === "user" && (
-            <div className="flex justify-start">
-              <div className="bg-white p-4 rounded-2xl rounded-bl-md shadow-md">
-                <div className="flex items-center gap-2">
-                  <Bot className="w-4 h-4 text-[#142562] animate-pulse" />
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-[#142562] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-2 h-2 bg-[#142562] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-2 h-2 bg-[#142562] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+            }>
+              <Spline 
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+              />
+            </Suspense>
+          </div>
+
+          {/* Headline & Benefits Overlay */}
+          <div className={`relative z-10 text-center lg:text-left max-w-lg transition-all duration-500 ${hasStartedConversation ? 'opacity-0 lg:opacity-100' : 'opacity-100'}`}>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+              Negocie com <span className="text-[#FF8C36]">Inteligência.</span>
+            </h1>
+            
+            {!hasStartedConversation && (
+              <div className="space-y-4 mt-8">
+                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <Rocket className="w-6 h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-white font-semibold text-sm">Match Perfeito</h3>
+                    <p className="text-white/70 text-sm">Analisamos milhares de veículos para achar a troca ideal.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <ShieldCheck className="w-6 h-6 text-[#29B765] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-white font-semibold text-sm">Segurança Total</h3>
+                    <p className="text-white/70 text-sm">Consultoria baseada apenas em veículos 100% verificados.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <Clock className="w-6 h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-white font-semibold text-sm">Rapidez</h3>
+                    <p className="text-white/70 text-sm">Tire dúvidas sobre FIPE, vistorias e propostas em segundos.</p>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </ScrollArea>
 
-      {/* Input Area */}
-      <div className="bg-[#1a3080] border-t border-white/10 p-4">
-        <div className="max-w-4xl mx-auto flex gap-3">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Digite sua mensagem..."
-            disabled={isLoading}
-            className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 rounded-full px-5 py-6 focus-visible:ring-[#FF8C36]"
-          />
-          <Button
-            onClick={handleSend}
-            disabled={!input.trim() || isLoading}
-            className="bg-[#FF8C36] hover:bg-[#e67d2e] text-white rounded-full w-12 h-12 p-0 flex items-center justify-center"
-          >
-            <Send className="w-5 h-5" />
-          </Button>
+        {/* Right Side - Chat Interface */}
+        <div className="w-full lg:w-1/2 flex flex-col h-[60vh] lg:h-auto relative z-10">
+          {/* Chat Container - Glassmorphism */}
+          <div className="flex-1 flex flex-col m-4 lg:m-8 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+            {/* Chat Header */}
+            <div className="bg-white/10 backdrop-blur-sm border-b border-white/10 px-6 py-4 flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="text-white hover:bg-white/10 lg:hidden"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-lg">
+                <img src={logoZe} alt="Consultor Zé" className="w-10 h-10 object-contain" />
+              </div>
+              
+              <div className="flex-1">
+                <h2 className="text-white font-semibold text-lg">Consultor Zé IA</h2>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-[#29B765] rounded-full animate-pulse" />
+                  <span className="text-white/70 text-sm">Online - IA de Negócios</span>
+                </div>
+              </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="text-white hover:bg-white/10 hidden lg:flex"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Messages Area */}
+            <ScrollArea className="flex-1 p-4 lg:p-6" ref={scrollRef}>
+              <div className="space-y-4">
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`max-w-[85%] p-4 rounded-2xl transition-all duration-300 ${
+                        message.role === "user"
+                          ? "bg-[#FF8C36] text-white rounded-br-md shadow-lg shadow-orange-500/20"
+                          : "bg-[#1a3080] text-white rounded-bl-md border border-white/20 shadow-lg"
+                      }`}
+                    >
+                      {message.role === "assistant" && (
+                        <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/20">
+                          <img src={logoZe} alt="Zé" className="w-5 h-5 rounded-full" />
+                          <span className="text-sm font-medium text-white/90">Consultor Zé</span>
+                        </div>
+                      )}
+                      <p className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">
+                        {message.content}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                
+                {isLoading && messages[messages.length - 1]?.role === "user" && (
+                  <div className="flex justify-start">
+                    <div className="bg-[#1a3080] p-4 rounded-2xl rounded-bl-md border border-white/20">
+                      <div className="flex items-center gap-3">
+                        <img src={logoZe} alt="Zé" className="w-5 h-5 rounded-full" />
+                        <div className="flex gap-1.5">
+                          <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                          <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                          <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+
+            {/* Input Area */}
+            <div className="p-4 lg:p-6 border-t border-white/10">
+              <div className="flex gap-3">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Digite sua mensagem..."
+                  disabled={isLoading}
+                  className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 rounded-full px-5 py-6 focus-visible:ring-[#FF8C36] focus-visible:ring-2"
+                />
+                <Button
+                  onClick={handleSend}
+                  disabled={!input.trim() || isLoading}
+                  className="bg-[#FF8C36] hover:bg-[#e67d2e] text-white rounded-full w-12 h-12 p-0 flex items-center justify-center shadow-lg shadow-orange-500/30 transition-all hover:scale-105"
+                >
+                  <Send className="w-5 h-5" />
+                </Button>
+              </div>
+              <p className="text-center text-white/40 text-xs mt-3">
+                Powered by Zé do Rolo IA • Acesso total ao banco de veículos
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-center text-white/40 text-xs mt-3 max-w-4xl mx-auto">
-          A IA tem acesso ao banco de veículos para te ajudar a encontrar o negócio perfeito
-        </p>
       </div>
     </div>
   );

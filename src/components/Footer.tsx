@@ -53,7 +53,14 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                <span>(11) 99999-9999</span>
+                <a 
+                  href="https://wa.me/5511983765437" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-secondary transition-colors"
+                >
+                  (11) 98376-5437
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />

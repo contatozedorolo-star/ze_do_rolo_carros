@@ -9,12 +9,23 @@ import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
+import { isValidCPF, isValidPhone } from "@/lib/validators";
 
 const signUpSchema = z.object({
-  full_name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
-  email: z.string().email("Email inválido"),
-  phone: z.string().min(10, "Telefone inválido"),
-  cpf: z.string().min(11, "CPF inválido").max(14, "CPF inválido"),
+  full_name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres").max(100, "Nome muito longo"),
+  email: z.string().email("Email inválido").max(255, "Email muito longo"),
+  phone: z.string()
+    .min(10, "Telefone inválido")
+    .max(15, "Telefone inválido")
+    .refine((val) => isValidPhone(val), {
+      message: "Telefone inválido. Use o formato (XX) XXXXX-XXXX"
+    }),
+  cpf: z.string()
+    .min(11, "CPF deve ter 11 dígitos")
+    .max(14, "CPF inválido")
+    .refine((val) => isValidCPF(val), {
+      message: "CPF inválido. Verifique os dígitos informados"
+    }),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   confirmPassword: z.string(),
   acceptedTerms: z.literal(true, {

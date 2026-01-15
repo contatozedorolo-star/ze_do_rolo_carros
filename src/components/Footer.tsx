@@ -1,6 +1,6 @@
 import { Shield, Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import logoFooter from "@/assets/logo-footer.png";
+import logoFooter from "@/assets/logo-zedorolo.jpeg";
 
 const Footer = () => {
   return (

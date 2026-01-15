@@ -222,10 +222,12 @@ export const truckTypes = [
   { value: "bitruck", label: "Bitruck" },
   { value: "cavalo_mecanico", label: "Cavalo Mecânico" },
   { value: "vuc", label: "VUC" },
+  { value: "fora_estrada", label: "Fora de Estrada" },
 ];
 
 export const truckTractions = [
   { value: "4x2", label: "4x2" },
+  { value: "4x4", label: "4x4" },
   { value: "6x2", label: "6x2" },
   { value: "6x4", label: "6x4" },
   { value: "8x2", label: "8x2" },
@@ -234,7 +236,7 @@ export const truckTractions = [
 
 export const truckBodies = [
   { value: "bau", label: "Baú" },
-  { value: "bau_refrigerado", label: "Baú Refrigerado" },
+  { value: "bau_refrigerado", label: "Baú Frigorífico" },
   { value: "graneleiro", label: "Graneleiro" },
   { value: "cacamba", label: "Caçamba" },
   { value: "carroceria", label: "Carroceria" },
@@ -242,12 +244,55 @@ export const truckBodies = [
   { value: "tanque", label: "Tanque" },
   { value: "plataforma", label: "Plataforma" },
   { value: "sider", label: "Sider" },
+  { value: "prancha", label: "Prancha" },
+  { value: "cegonheira", label: "Cegonheira" },
+  { value: "gaiola", label: "Gaiola Boiadeira" },
+  { value: "porta_container", label: "Porta-Container" },
+  { value: "guincho", label: "Guincho/Reboque" },
 ];
 
 export const truckCabins = [
-  { value: "simples", label: "Simples" },
-  { value: "leito", label: "Leito" },
-  { value: "dupla", label: "Cabine Dupla" },
+  { value: "simples", label: "Cabine Simples" },
+  { value: "leito", label: "Cabine Leito" },
+  { value: "leito_alto", label: "Leito Teto Alto" },
+  { value: "semi_leito", label: "Semi-Leito" },
+];
+
+// Opcionais específicos para Caminhões
+export const truckOptionals = [
+  { value: "ar_condicionado", label: "Ar Condicionado" },
+  { value: "direcao_hidraulica", label: "Direção Hidráulica" },
+  { value: "freio_motor", label: "Freio Motor" },
+  { value: "retarder", label: "Retarder" },
+  { value: "piloto_automatico", label: "Piloto Automático" },
+  { value: "vidro_eletrico", label: "Vidros Elétricos" },
+  { value: "trava_eletrica", label: "Travas Elétricas" },
+  { value: "suspensao_ar", label: "Suspensão a Ar" },
+  { value: "banco_pneumatico", label: "Banco Pneumático" },
+  { value: "ar_quente", label: "Ar Quente" },
+  { value: "som", label: "Som/Multimídia" },
+  { value: "gps", label: "GPS/Rastreador" },
+  { value: "camera_re", label: "Câmera de Ré" },
+  { value: "tomada_forca", label: "Tomada de Força" },
+];
+
+// Potência para Caminhões (em CV)
+export const truckPowerRanges = [
+  { value: "100-200", label: "100-200 CV" },
+  { value: "200-300", label: "200-300 CV" },
+  { value: "300-400", label: "300-400 CV" },
+  { value: "400-500", label: "400-500 CV" },
+  { value: "500-600", label: "500-600 CV" },
+  { value: "600+", label: "Acima de 600 CV" },
+];
+
+// Lugares/Ocupantes para Caminhões
+export const truckSeatOptions = [
+  { value: "1", label: "1 lugar" },
+  { value: "2", label: "2 lugares" },
+  { value: "3", label: "3 lugares" },
+  { value: "4", label: "4 lugares" },
+  { value: "6+", label: "6+ lugares (cabine estendida)" },
 ];
 
 // Filtros específicos para VANS

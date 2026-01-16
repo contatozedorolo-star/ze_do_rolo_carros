@@ -82,8 +82,6 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/10 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
-          <p>© {new Date().getFullYear()} Zé do Rolo. Todos os direitos reservados.</p>
-          
           {/* Social Media Icons */}
           <div className="flex items-center gap-2">
             <a 
@@ -114,6 +112,8 @@ const Footer = () => {
               <TikTokIcon className="h-5 w-5" />
             </a>
           </div>
+          
+          <p>© {new Date().getFullYear()} Zé do Rolo. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

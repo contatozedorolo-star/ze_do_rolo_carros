@@ -33,6 +33,7 @@ const AssistenteIA = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasStartedConversation, setHasStartedConversation] = useState(false);
+  const [sessionId, setSessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substring(7)}`);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Show modal if not logged in instead of redirecting
@@ -59,7 +60,8 @@ const AssistenteIA = () => {
       },
       body: JSON.stringify({ 
         messages: userMessages,
-        userId: user?.id 
+        userId: user?.id,
+        sessionId: sessionId
       }),
     });
 
@@ -152,6 +154,7 @@ const AssistenteIA = () => {
     setMessages([{ role: "assistant", content: INITIAL_MESSAGE }]);
     setHasStartedConversation(false);
     setInput("");
+    setSessionId(`session_${Date.now()}_${Math.random().toString(36).substring(7)}`);
   };
 
   return (

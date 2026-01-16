@@ -34,6 +34,9 @@ const AssistenteIA = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasStartedConversation, setHasStartedConversation] = useState(false);
   const [sessionId, setSessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substring(7)}`);
+  const [userEmail, setUserEmail] = useState<string | null>(user?.email || null);
+  const [isWaitingForEmail, setIsWaitingForEmail] = useState(false);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Show modal if not logged in instead of redirecting
@@ -51,7 +54,7 @@ const AssistenteIA = () => {
     }
   }, [messages]);
 
-  const streamChat = async (userMessages: Message[]) => {
+  const streamChat = async (userMessages: Message[], email?: string | null) => {
     const resp = await fetch(CHAT_URL, {
       method: "POST",
       headers: {
@@ -62,7 +65,8 @@ const AssistenteIA = () => {
         messages: userMessages,
         userId: user?.id,
         sessionId: sessionId,
-        userName: user?.email?.split('@')[0] || 'Visitante'
+        userName: user?.email?.split('@')[0] || email?.split('@')[0] || 'Visitante',
+        userEmail: email || userEmail || user?.email
       }),
     });
 
@@ -119,17 +123,99 @@ const AssistenteIA = () => {
     }
   };
 
+  // Simple email validation
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
-    const userMessage: Message = { role: "user", content: input.trim() };
+    const userInput = input.trim();
+    
+    // If waiting for email, validate and store it
+    if (isWaitingForEmail) {
+      if (isValidEmail(userInput)) {
+        setUserEmail(userInput);
+        setIsWaitingForEmail(false);
+        
+        // Add the email as user message
+        const emailMessage: Message = { role: "user", content: userInput };
+        setMessages(prev => [...prev, emailMessage]);
+        setInput("");
+        
+        // Add confirmation message
+        const confirmMessage: Message = { 
+          role: "assistant", 
+          content: `Perfeito! Email registrado: ${userInput} ✅\n\nAgora sim, como posso te ajudar? Me conta o que você está buscando ou o que tem para negociar!`
+        };
+        setMessages(prev => [...prev, confirmMessage]);
+        
+        // If there was a pending message, process it now
+        if (pendingMessage) {
+          const pendingUserMessage: Message = { role: "user", content: pendingMessage };
+          const newMessages = [...messages, emailMessage, confirmMessage, pendingUserMessage];
+          setMessages(prev => [...prev, pendingUserMessage]);
+          setPendingMessage(null);
+          setIsLoading(true);
+          
+          try {
+            await streamChat(newMessages, userInput);
+          } catch (error) {
+            console.error("Chat error:", error);
+            setMessages(prev => [
+              ...prev,
+              {
+                role: "assistant",
+                content: "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente."
+              }
+            ]);
+          } finally {
+            setIsLoading(false);
+          }
+        }
+        return;
+      } else {
+        // Invalid email, ask again
+        const userMessage: Message = { role: "user", content: userInput };
+        setMessages(prev => [...prev, userMessage]);
+        setInput("");
+        
+        const retryMessage: Message = { 
+          role: "assistant", 
+          content: "Hmm, esse email não parece válido. 🤔\n\nPor favor, digite um email válido para eu poder te atender melhor (exemplo: seuemail@email.com)"
+        };
+        setMessages(prev => [...prev, retryMessage]);
+        return;
+      }
+    }
+
+    // If no email yet (user not logged in), ask for email after first message
+    if (!userEmail && messages.length === 1) {
+      const userMessage: Message = { role: "user", content: userInput };
+      setMessages(prev => [...prev, userMessage]);
+      setInput("");
+      
+      // Store the user's first message to process after getting email
+      setPendingMessage(userInput);
+      setIsWaitingForEmail(true);
+      
+      const askEmailMessage: Message = { 
+        role: "assistant", 
+        content: "Opa, que bom ter você aqui! 🚗\n\nAntes de começarmos, preciso do seu email para poder te dar um atendimento personalizado e acompanhar nossa conversa.\n\n📧 Qual é o seu email?"
+      };
+      setMessages(prev => [...prev, askEmailMessage]);
+      return;
+    }
+
+    const userMessage: Message = { role: "user", content: userInput };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput("");
     setIsLoading(true);
 
     try {
-      await streamChat(newMessages);
+      await streamChat(newMessages, userEmail);
     } catch (error) {
       console.error("Chat error:", error);
       setMessages(prev => [
@@ -156,6 +242,12 @@ const AssistenteIA = () => {
     setHasStartedConversation(false);
     setInput("");
     setSessionId(`session_${Date.now()}_${Math.random().toString(36).substring(7)}`);
+    // Keep the email if user is logged in, reset otherwise
+    if (!user?.email) {
+      setUserEmail(null);
+      setIsWaitingForEmail(false);
+      setPendingMessage(null);
+    }
   };
 
   return (

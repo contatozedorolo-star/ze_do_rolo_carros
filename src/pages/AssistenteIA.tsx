@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, Suspense, lazy } from "react";
-import { Send, Shield, Rocket, Clock, ShieldCheck } from "lucide-react";
+import { Send, Shield, Rocket, Clock, ShieldCheck, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -148,6 +148,12 @@ const AssistenteIA = () => {
     }
   };
 
+  const handleClearConversation = () => {
+    setMessages([{ role: "assistant", content: INITIAL_MESSAGE }]);
+    setHasStartedConversation(false);
+    setInput("");
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
@@ -233,18 +239,30 @@ const AssistenteIA = () => {
           {/* Chat Container - Glassmorphism */}
           <div className="flex-1 flex flex-col m-4 lg:m-8 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
             {/* Chat Header */}
-            <div className="bg-white/10 backdrop-blur-sm border-b border-white/10 px-6 py-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-lg">
-                <img src={logoZe} alt="Consultor Zé" className="w-10 h-10 object-contain" />
+            <div className="bg-white/10 backdrop-blur-sm border-b border-white/10 px-4 sm:px-6 py-4 flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-lg flex-shrink-0">
+                <img src={logoZe} alt="Consultor Zé" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
               </div>
               
-              <div className="flex-1">
-                <h2 className="text-white font-semibold text-lg">Consultor Zé IA</h2>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-white font-semibold text-base sm:text-lg">Consultor Zé IA</h2>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-[#29B765] rounded-full animate-pulse" />
-                  <span className="text-white/70 text-sm">Online - IA de Negócios</span>
+                  <span className="text-white/70 text-xs sm:text-sm">Online - IA de Negócios</span>
                 </div>
               </div>
+
+              {/* Clear Conversation Button */}
+              <Button
+                onClick={handleClearConversation}
+                variant="ghost"
+                size="sm"
+                className="text-white/70 hover:text-white hover:bg-white/10 rounded-full p-2 sm:px-3 sm:py-2 flex items-center gap-2 transition-all"
+                title="Limpar conversa"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span className="hidden sm:inline text-xs">Nova conversa</span>
+              </Button>
             </div>
 
             {/* Messages Area */}

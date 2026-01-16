@@ -30,37 +30,6 @@ const Footer = () => {
               <Shield className="h-4 w-4" />
               <span>100% Seguro e Verificado</span>
             </div>
-            
-            {/* Social Media Icons */}
-            <div className="flex items-center gap-2 pt-2">
-              <a 
-                href="https://instagram.com/zedorolo" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a 
-                href="https://facebook.com/zedorolo" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a 
-                href="https://tiktok.com/@zedorolo" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
-                aria-label="TikTok"
-              >
-                <TikTokIcon className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
           {/* Links */}
@@ -112,8 +81,39 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-primary-foreground/10 mt-8 pt-8 text-center text-sm text-primary-foreground/50">
+        <div className="border-t border-primary-foreground/10 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
           <p>© {new Date().getFullYear()} Zé do Rolo. Todos os direitos reservados.</p>
+          
+          {/* Social Media Icons */}
+          <div className="flex items-center gap-2">
+            <a 
+              href="https://instagram.com/zedorolo" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
+              aria-label="Instagram"
+            >
+              <Instagram className="h-5 w-5" />
+            </a>
+            <a 
+              href="https://facebook.com/zedorolo" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
+              aria-label="Facebook"
+            >
+              <Facebook className="h-5 w-5" />
+            </a>
+            <a 
+              href="https://tiktok.com/@zedorolo" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
+              aria-label="TikTok"
+            >
+              <TikTokIcon className="h-5 w-5" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>

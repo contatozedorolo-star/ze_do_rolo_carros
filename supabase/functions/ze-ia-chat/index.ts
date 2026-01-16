@@ -8,6 +8,44 @@ const corsHeaders = {
 const N8N_WEBHOOK_URL = "https://n8n.autoia.store/webhook/ze_do_rolo";
 const CHATWOOT_BASE_URL = "https://chatwootapp.autoia.store";
 
+// Helper function to update contact with email
+async function updateChatwootContactEmail(
+  accountId: string,
+  apiToken: string,
+  contactId: number,
+  email: string,
+  name?: string
+): Promise<boolean> {
+  try {
+    const updateResponse = await fetch(
+      `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/${contactId}`,
+      {
+        method: "PUT",
+        headers: {
+          "api_access_token": apiToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          name: name || email.split('@')[0],
+        }),
+      }
+    );
+
+    if (!updateResponse.ok) {
+      const errorText = await updateResponse.text();
+      console.error("Failed to update contact email:", errorText);
+      return false;
+    }
+
+    console.log("Successfully updated contact email:", email);
+    return true;
+  } catch (error) {
+    console.error("Error updating contact email:", error);
+    return false;
+  }
+}
+
 // Helper function to get or create a Chatwoot contact
 async function getOrCreateChatwootContact(
   accountId: string,
@@ -18,57 +56,90 @@ async function getOrCreateChatwootContact(
   email?: string
 ): Promise<{ contactId: number; conversationId: number } | null> {
   try {
-    // First, try to find existing contact by identifier (email or sessionId)
-    const searchQuery = email || identifier;
-    const searchResponse = await fetch(
-      `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/search?q=${encodeURIComponent(searchQuery)}`,
-      {
-        headers: {
-          "api_access_token": apiToken,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    // First, try to find existing contact by email (priority) or identifier
+    let contactId: number | null = null;
+    let existingContact: { id: number; email?: string } | null = null;
 
-    let contactId: number;
-
-    if (searchResponse.ok) {
-      const searchData = await searchResponse.json();
-      if (searchData.payload && searchData.payload.length > 0) {
-        contactId = searchData.payload[0].id;
-        console.log("Found existing contact:", contactId);
-      } else {
-        // Create new contact
-        const createContactResponse = await fetch(
-          `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts`,
-          {
-            method: "POST",
-            headers: {
-              "api_access_token": apiToken,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              inbox_id: inboxId,
-              name: name || (email ? email.split('@')[0] : `Usuário ${identifier.slice(-6)}`),
-              identifier: identifier,
-              email: email || undefined,
-            }),
-          }
-        );
-
-        if (!createContactResponse.ok) {
-          const errorText = await createContactResponse.text();
-          console.error("Failed to create contact:", errorText);
-          return null;
+    // Search by email first if available
+    if (email) {
+      const emailSearchResponse = await fetch(
+        `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/search?q=${encodeURIComponent(email)}`,
+        {
+          headers: {
+            "api_access_token": apiToken,
+            "Content-Type": "application/json",
+          },
         }
+      );
 
-        const contactData = await createContactResponse.json();
-        contactId = contactData.payload.contact.id;
-        console.log("Created new contact:", contactId);
+      if (emailSearchResponse.ok) {
+        const emailSearchData = await emailSearchResponse.json();
+        if (emailSearchData.payload && emailSearchData.payload.length > 0) {
+          const foundContact = emailSearchData.payload[0];
+          existingContact = foundContact;
+          contactId = foundContact.id;
+          console.log("Found existing contact by email:", contactId);
+        }
       }
-    } else {
-      console.error("Failed to search contacts");
-      return null;
+    }
+
+    // If not found by email, search by identifier
+    if (!contactId) {
+      const searchResponse = await fetch(
+        `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/search?q=${encodeURIComponent(identifier)}`,
+        {
+          headers: {
+            "api_access_token": apiToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (searchResponse.ok) {
+        const searchData = await searchResponse.json();
+        if (searchData.payload && searchData.payload.length > 0) {
+          const foundContact = searchData.payload[0];
+          existingContact = foundContact;
+          contactId = foundContact.id;
+          console.log("Found existing contact by identifier:", contactId);
+
+          // Update contact with email if we have one and the contact doesn't have it
+          if (email && contactId && (!foundContact.email || foundContact.email !== email)) {
+            console.log("Updating contact with new email:", email);
+            await updateChatwootContactEmail(accountId, apiToken, contactId, email, name);
+          }
+        }
+      }
+    }
+
+    // Create new contact if not found
+    if (!contactId) {
+      const createContactResponse = await fetch(
+        `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts`,
+        {
+          method: "POST",
+          headers: {
+            "api_access_token": apiToken,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            inbox_id: inboxId,
+            name: name || (email ? email.split('@')[0] : `Usuário ${identifier.slice(-6)}`),
+            identifier: identifier,
+            email: email || undefined,
+          }),
+        }
+      );
+
+      if (!createContactResponse.ok) {
+        const errorText = await createContactResponse.text();
+        console.error("Failed to create contact:", errorText);
+        return null;
+      }
+
+      const contactData = await createContactResponse.json();
+      contactId = contactData.payload.contact.id;
+      console.log("Created new contact with email:", contactId, email);
     }
 
     // Get or create conversation for this contact
@@ -128,7 +199,7 @@ async function getOrCreateChatwootContact(
       return null;
     }
 
-    return { contactId, conversationId };
+    return { contactId: contactId!, conversationId };
   } catch (error) {
     console.error("Error in getOrCreateChatwootContact:", error);
     return null;

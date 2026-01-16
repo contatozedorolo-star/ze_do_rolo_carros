@@ -14,12 +14,14 @@ async function getOrCreateChatwootContact(
   inboxId: string,
   apiToken: string,
   identifier: string,
-  name?: string
+  name?: string,
+  email?: string
 ): Promise<{ contactId: number; conversationId: number } | null> {
   try {
-    // First, try to find existing contact by identifier
+    // First, try to find existing contact by identifier (email or sessionId)
+    const searchQuery = email || identifier;
     const searchResponse = await fetch(
-      `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/search?q=${identifier}`,
+      `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/search?q=${encodeURIComponent(searchQuery)}`,
       {
         headers: {
           "api_access_token": apiToken,
@@ -47,8 +49,9 @@ async function getOrCreateChatwootContact(
             },
             body: JSON.stringify({
               inbox_id: inboxId,
-              name: name || `Usuário ${identifier.slice(-6)}`,
+              name: name || (email ? email.split('@')[0] : `Usuário ${identifier.slice(-6)}`),
               identifier: identifier,
+              email: email || undefined,
             }),
           }
         );
@@ -177,7 +180,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, userId, sessionId: providedSessionId, userName } = await req.json();
+    const { messages, userId, sessionId: providedSessionId, userName, userEmail } = await req.json();
     
     // Get the last user message
     const lastUserMessage = messages
@@ -191,12 +194,16 @@ serve(async (req) => {
       );
     }
 
-    // Generate or use provided sessionId
+    // Generate or use provided sessionId - prefer email as identifier if available
+    const contactIdentifier = userEmail || providedSessionId || `session_${Date.now()}_${userId || 'anonymous'}`;
     const sessionId = providedSessionId || `session_${Date.now()}_${userId || 'anonymous'}`;
 
-    console.log("Sending message to n8n webhook:", {
+    console.log("Processing message:", {
       mensagem: lastUserMessage.content,
-      sessionId
+      sessionId,
+      contactIdentifier,
+      userEmail,
+      userName
     });
 
     // Get Chatwoot credentials
@@ -214,8 +221,9 @@ serve(async (req) => {
         chatwootAccountId,
         chatwootInboxId,
         chatwootApiToken,
-        sessionId,
-        userName
+        contactIdentifier,
+        userName || (userEmail ? userEmail.split('@')[0] : undefined),
+        userEmail
       );
 
       if (contactResult) {

@@ -61,7 +61,8 @@ const AssistenteIA = () => {
       body: JSON.stringify({ 
         messages: userMessages,
         userId: user?.id,
-        sessionId: sessionId
+        sessionId: sessionId,
+        userName: user?.email?.split('@')[0] || 'Visitante'
       }),
     });
 

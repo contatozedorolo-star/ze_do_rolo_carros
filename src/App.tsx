@@ -22,6 +22,7 @@ import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
 import AssistenteIA from "./pages/AssistenteIA";
 import NotFound from "./pages/NotFound";
 import FloatingAssistantButton from "./components/FloatingAssistantButton";
+import ChatwootWidget from "./components/ChatwootWidget";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <FloatingAssistantButton />
+          <ChatwootWidget />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

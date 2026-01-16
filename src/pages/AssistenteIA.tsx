@@ -160,9 +160,9 @@ const AssistenteIA = () => {
 
       {/* Top Banner - Breathing Space */}
       <div className="bg-white py-4 md:py-6 px-4 flex flex-col items-center justify-center shadow-sm border-b border-border">
-        <div className="flex items-center gap-2 text-[#142562] mb-2">
+        <div className="flex items-center justify-center gap-2 text-[#142562] mb-2 flex-wrap">
           <Shield className="w-5 h-5 md:w-6 md:h-6 text-[#29B765]" />
-          <span className="text-sm md:text-base font-semibold">
+          <span className="text-sm md:text-base font-semibold text-center">
             🛡️ Central de Inteligência Zé do Rolo — Versão Beta 2.0
           </span>
         </div>

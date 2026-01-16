@@ -190,11 +190,11 @@ const AssistenteIA = () => {
           </div>
 
           {/* Headline & Benefits Overlay */}
-          <div className={`relative z-10 text-center lg:text-left max-w-lg transition-all duration-500 ${hasStartedConversation ? 'opacity-0 lg:opacity-100' : 'opacity-100'}`}>
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 leading-tight">
+          <div className="relative z-10 text-center max-w-lg px-4">
+            <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-4 md:mb-6 leading-tight">
               Seu Próximo Negócio <span className="text-[#FF8C36]">Começa Aqui.</span>
             </h1>
-            <p className="text-white/80 text-sm md:text-base mb-6 hidden md:block">
+            <p className="text-white/80 text-xs sm:text-sm md:text-base mb-4 md:mb-6">
               O futuro das trocas é inteligente. Deixe a IA trabalhar por você.
             </p>
             

@@ -185,23 +185,3 @@ a[href*="lovable.dev"], iframe[src*="lovable.dev"], div[style*="Edit with Lovabl
   position: absolute !important;
   z-index: -9999 !important;
 }
-
-/* Chatwoot Widget Positioning - Left side to avoid overlap with Zé IA button */
-.woot-widget-holder {
-  left: 16px !important;
-  right: auto !important;
-  z-index: 40 !important;
-}
-
-.woot-widget-bubble {
-  left: 16px !important;
-  right: auto !important;
-  bottom: 24px !important;
-  z-index: 40 !important;
-}
-
-/* Ensure Zé IA button stays on top */
-.woot--bubble-holder {
-  left: 16px !important;
-  right: auto !important;
-}

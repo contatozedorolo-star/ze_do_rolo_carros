@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const N8N_WEBHOOK_URL = "https://n8n.autoia.store/webhook-test/ze_do_rolo";
+const N8N_WEBHOOK_URL = "https://n8n.autoia.store/webhook/ze_do_rolo";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

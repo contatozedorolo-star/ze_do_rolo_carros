@@ -229,7 +229,7 @@ const AssistenteIA = () => {
         </div>
 
         {/* Right Side - Chat Interface */}
-        <div className="w-full lg:w-1/2 flex flex-col h-[60vh] lg:h-auto relative z-10">
+        <div className="w-full lg:w-1/2 flex flex-col h-[75vh] lg:h-auto relative z-10">
           {/* Chat Container - Glassmorphism */}
           <div className="flex-1 flex flex-col m-4 lg:m-8 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
             {/* Chat Header */}

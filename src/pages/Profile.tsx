@@ -97,9 +97,12 @@ const Profile = () => {
     full_name: "",
     phone: "",
     cpf: "",
+    cep: "",
     city: "",
     state: "",
   });
+  const [loadingCep, setLoadingCep] = useState(false);
+  const [cepError, setCepError] = useState("");
 
   useEffect(() => {
     if (!loading && !user) {
@@ -113,11 +116,57 @@ const Profile = () => {
         full_name: profile.full_name || "",
         phone: profile.phone || "",
         cpf: profile.cpf || "",
+        cep: "",
         city: profile.city || "",
         state: profile.state || "",
       });
     }
   }, [profile]);
+
+  const handleCepSearch = async (cep: string) => {
+    const cleanedCep = cep.replace(/\D/g, '');
+    
+    if (cleanedCep.length !== 8) {
+      setCepError("");
+      return;
+    }
+
+    setLoadingCep(true);
+    setCepError("");
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cleanedCep}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        setCepError("CEP não encontrado");
+        return;
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        city: data.localidade || "",
+        state: data.uf || "",
+      }));
+
+      toast({
+        title: "Localização encontrada!",
+        description: `${data.localidade}, ${data.uf}`,
+      });
+    } catch (error) {
+      setCepError("Erro ao buscar CEP");
+    } finally {
+      setLoadingCep(false);
+    }
+  };
+
+  const formatCep = (value: string) => {
+    const cleaned = value.replace(/\D/g, '').slice(0, 8);
+    if (cleaned.length > 5) {
+      return cleaned.replace(/(\d{5})(\d)/, '$1-$2');
+    }
+    return cleaned;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -520,60 +569,95 @@ const Profile = () => {
               </div>
 
               {/* Location Fields */}
-              <div className="grid gap-4 md:grid-cols-2 pt-4 border-t border-border">
-                <div className="space-y-2">
-                  <Label>Estado</Label>
-                  {editMode ? (
-                    <select
-                      value={formData.state}
-                      onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value, city: "" }))}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      <option value="">Selecione o estado</option>
-                      <option value="AC">Acre</option>
-                      <option value="AL">Alagoas</option>
-                      <option value="AP">Amapá</option>
-                      <option value="AM">Amazonas</option>
-                      <option value="BA">Bahia</option>
-                      <option value="CE">Ceará</option>
-                      <option value="DF">Distrito Federal</option>
-                      <option value="ES">Espírito Santo</option>
-                      <option value="GO">Goiás</option>
-                      <option value="MA">Maranhão</option>
-                      <option value="MT">Mato Grosso</option>
-                      <option value="MS">Mato Grosso do Sul</option>
-                      <option value="MG">Minas Gerais</option>
-                      <option value="PA">Pará</option>
-                      <option value="PB">Paraíba</option>
-                      <option value="PR">Paraná</option>
-                      <option value="PE">Pernambuco</option>
-                      <option value="PI">Piauí</option>
-                      <option value="RJ">Rio de Janeiro</option>
-                      <option value="RN">Rio Grande do Norte</option>
-                      <option value="RS">Rio Grande do Sul</option>
-                      <option value="RO">Rondônia</option>
-                      <option value="RR">Roraima</option>
-                      <option value="SC">Santa Catarina</option>
-                      <option value="SP">São Paulo</option>
-                      <option value="SE">Sergipe</option>
-                      <option value="TO">Tocantins</option>
-                    </select>
-                  ) : (
-                    <p className="text-foreground font-medium">{profile.state || 'Não informado'}</p>
-                  )}
-                </div>
+              <div className="space-y-4 pt-4 border-t border-border">
+                {/* CEP Field with auto-search */}
+                {editMode && (
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      CEP
+                      <span className="text-xs text-muted-foreground">(Preencha para buscar automaticamente)</span>
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        value={formData.cep}
+                        onChange={(e) => {
+                          const formatted = formatCep(e.target.value);
+                          setFormData(prev => ({ ...prev, cep: formatted }));
+                          if (formatted.replace(/\D/g, '').length === 8) {
+                            handleCepSearch(formatted);
+                          }
+                        }}
+                        placeholder="00000-000"
+                        maxLength={9}
+                        className={cepError ? "border-destructive" : ""}
+                      />
+                      {loadingCep && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                    {cepError && (
+                      <p className="text-sm text-destructive">{cepError}</p>
+                    )}
+                  </div>
+                )}
 
-                <div className="space-y-2">
-                  <Label>Cidade</Label>
-                  {editMode ? (
-                    <Input
-                      value={formData.city}
-                      onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                      placeholder="Digite sua cidade"
-                    />
-                  ) : (
-                    <p className="text-foreground font-medium">{profile.city || 'Não informado'}</p>
-                  )}
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>Estado</Label>
+                    {editMode ? (
+                      <select
+                        value={formData.state}
+                        onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value, city: "" }))}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      >
+                        <option value="">Selecione o estado</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goiás</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                      </select>
+                    ) : (
+                      <p className="text-foreground font-medium">{profile.state || 'Não informado'}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Cidade</Label>
+                    {editMode ? (
+                      <Input
+                        value={formData.city}
+                        onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                        placeholder="Digite sua cidade"
+                      />
+                    ) : (
+                      <p className="text-foreground font-medium">{profile.city || 'Não informado'}</p>
+                    )}
+                  </div>
                 </div>
               </div>
 

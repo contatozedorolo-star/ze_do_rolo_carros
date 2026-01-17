@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { vehicles as mockVehicles } from "@/data/mockProducts";
 import { extractIdFromSlug } from "@/lib/slugify";
+import { formatCurrencyShort } from "@/lib/formatters";
 import { 
   MapPin, 
   CheckCircle, 
@@ -290,7 +291,7 @@ const ProductDetail = () => {
           console.log("FIPE lookup failed or no price:", response.data);
           // Fallback: estimate based on vehicle price
           setFipeData({
-            price: `R$ ${Math.round(vehicle.price * 1.05).toLocaleString("pt-BR")}`,
+            price: formatCurrencyShort(Math.round(vehicle.price * 1.05)),
             priceNumber: Math.round(vehicle.price * 1.05),
             note: "Estimativa baseada no mercado (FIPE indisponível para este modelo)",
           });
@@ -299,7 +300,7 @@ const ProductDetail = () => {
         console.error("Error fetching FIPE:", error);
         // Fallback
         setFipeData({
-          price: `R$ ${Math.round(vehicle.price * 1.05).toLocaleString("pt-BR")}`,
+          price: formatCurrencyShort(Math.round(vehicle.price * 1.05)),
           priceNumber: Math.round(vehicle.price * 1.05),
           note: "Estimativa baseada no mercado",
         });
@@ -626,7 +627,7 @@ const ProductDetail = () => {
                         <div className="flex items-center justify-between p-4 bg-white/20 rounded-xl">
                           <span>Valor aceito em troca:</span>
                           <span className="font-bold text-lg">
-                            Até R$ {vehicle.trade_value_accepted.toLocaleString("pt-BR")}
+                            Até {formatCurrencyShort(vehicle.trade_value_accepted)}
                           </span>
                         </div>
                       )}
@@ -635,7 +636,7 @@ const ProductDetail = () => {
                         <div className="flex items-center justify-between p-4 bg-white/20 rounded-xl">
                           <span>Mínimo de volta em dinheiro:</span>
                           <span className="font-bold text-lg">
-                            R$ {vehicle.min_cash_return.toLocaleString("pt-BR")}
+                            {formatCurrencyShort(vehicle.min_cash_return)}
                           </span>
                         </div>
                       )}
@@ -700,7 +701,7 @@ const ProductDetail = () => {
                     {/* Price */}
                     <div className="mb-6">
                       <span className="text-4xl font-bold text-[#142562]">
-                        R$ {vehicle.price.toLocaleString("pt-BR")}
+                        {formatCurrencyShort(vehicle.price)}
                       </span>
                     </div>
 
@@ -764,7 +765,7 @@ const ProductDetail = () => {
                       <div className="flex justify-between items-center p-3 bg-[#29B765]/10 rounded-lg">
                         <span className="text-sm text-slate-600">Preço Zé do Rolo</span>
                         <span className="font-bold text-[#29B765]">
-                          R$ {vehicle.price.toLocaleString("pt-BR")}
+                          {formatCurrencyShort(vehicle.price)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">

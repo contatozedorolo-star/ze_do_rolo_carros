@@ -116,36 +116,26 @@ const ProductDetail = () => {
     const fetchVehicle = async () => {
       if (!id) return;
 
-      // Try to find by full UUID first
-      let vehicleData = null;
-      let vehicleError = null;
-
       // Check if id is a valid UUID (36 chars with dashes)
-      const isFullUUID = id.length === 36 && id.includes("-");
+      const isFullUUID = id.length === 36 && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
       
-      if (isFullUUID) {
-        const result = await supabase
-          .from("vehicles")
-          .select("*")
-          .eq("id", id)
-          .single();
-        vehicleData = result.data;
-        vehicleError = result.error;
-      } else {
-        // Search by partial ID (slug format - first 8 chars)
-        // Use filter with ilike on id cast to text for UUID partial match
-        const result = await supabase
-          .from("vehicles")
-          .select("*")
-          .filter("id::text", "ilike", `${id}%`)
-          .limit(1);
-        
-        if (result.data && result.data.length > 0) {
-          vehicleData = result.data[0];
+      if (!isFullUUID) {
+        // ID is not valid, try to find in mock data
+        const mock = mockVehicles.find((v) => v.id === id);
+        if (mock) {
+          // Handle mock data (existing code below will handle this)
         } else {
-          vehicleError = result.error || { message: "Vehicle not found" };
+          setLoading(false);
+          return;
         }
       }
+
+      // Fetch vehicle from Supabase using full UUID
+      const { data: vehicleData, error: vehicleError } = await supabase
+        .from("vehicles")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
 
       // Fallback: veículos fictícios (mock) para visual da Home
       if (vehicleError || !vehicleData) {

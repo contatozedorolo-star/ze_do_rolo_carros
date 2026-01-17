@@ -46,6 +46,70 @@ async function updateChatwootContactEmail(
   }
 }
 
+// Helper function to get contact inbox source_id for sending user messages
+async function getContactInboxSourceId(
+  accountId: string,
+  inboxId: string,
+  apiToken: string,
+  contactId: number
+): Promise<string | null> {
+  try {
+    // Get contact inboxes
+    const response = await fetch(
+      `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/${contactId}/contact_inboxes`,
+      {
+        headers: {
+          "api_access_token": apiToken,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      // Find the contact inbox for our target inbox
+      const contactInbox = data.payload?.find(
+        (ci: { inbox: { id: number }; source_id: string }) => 
+          ci.inbox?.id === parseInt(inboxId)
+      );
+      
+      if (contactInbox) {
+        console.log("Found contact inbox source_id:", contactInbox.source_id);
+        return contactInbox.source_id;
+      }
+    }
+
+    // If not found, create a contact inbox
+    const createResponse = await fetch(
+      `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/${contactId}/contact_inboxes`,
+      {
+        method: "POST",
+        headers: {
+          "api_access_token": apiToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inbox_id: parseInt(inboxId),
+        }),
+      }
+    );
+
+    if (createResponse.ok) {
+      const createData = await createResponse.json();
+      console.log("Created contact inbox, source_id:", createData.source_id);
+      return createData.source_id;
+    } else {
+      const errorText = await createResponse.text();
+      console.error("Failed to create contact inbox:", errorText);
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error getting contact inbox source_id:", error);
+    return null;
+  }
+}
+
 // Helper function to get or create a Chatwoot contact
 async function getOrCreateChatwootContact(
   accountId: string,
@@ -54,7 +118,7 @@ async function getOrCreateChatwootContact(
   identifier: string,
   name?: string,
   email?: string
-): Promise<{ contactId: number; conversationId: number } | null> {
+): Promise<{ contactId: number; conversationId: number; sourceId: string | null } | null> {
   try {
     // First, try to find existing contact by email (priority) or identifier
     let contactId: number | null = null;
@@ -142,6 +206,9 @@ async function getOrCreateChatwootContact(
       console.log("Created new contact with email:", contactId, email);
     }
 
+    // Get contact inbox source_id for sending user messages
+    const sourceId = await getContactInboxSourceId(accountId, inboxId, apiToken, contactId!);
+
     // Get or create conversation for this contact
     const conversationsResponse = await fetch(
       `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/contacts/${contactId}/conversations`,
@@ -199,10 +266,45 @@ async function getOrCreateChatwootContact(
       return null;
     }
 
-    return { contactId: contactId!, conversationId };
+    return { contactId: contactId!, conversationId, sourceId };
   } catch (error) {
     console.error("Error in getOrCreateChatwootContact:", error);
     return null;
+  }
+}
+
+// Helper function to send user message via Client API (works for any inbox type)
+async function sendUserMessageViaPubAPI(
+  inboxId: string,
+  sourceId: string,
+  content: string
+): Promise<boolean> {
+  try {
+    // Use the public client API endpoint that works for all inbox types
+    const response = await fetch(
+      `${CHATWOOT_BASE_URL}/public/api/v1/inboxes/${inboxId}/contacts/${sourceId}/conversations/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: content,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Failed to send user message via public API:", errorText);
+      return false;
+    }
+
+    console.log("Successfully sent user message via public API");
+    return true;
+  } catch (error) {
+    console.error("Error sending user message via public API:", error);
+    return false;
   }
 }
 
@@ -212,9 +314,21 @@ async function sendMessageToChatwoot(
   conversationId: number,
   apiToken: string,
   content: string,
-  messageType: "incoming" | "outgoing"
+  messageType: "incoming" | "outgoing",
+  inboxId?: string,
+  sourceId?: string | null
 ): Promise<boolean> {
   try {
+    // For incoming (user) messages, try the public API first if we have sourceId
+    if (messageType === "incoming" && sourceId && inboxId) {
+      const pubSuccess = await sendUserMessageViaPubAPI(inboxId, sourceId, content);
+      if (pubSuccess) {
+        return true;
+      }
+      console.log("Public API failed, falling back to admin API...");
+    }
+
+    // Use admin API for outgoing messages or as fallback
     const response = await fetch(
       `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/conversations/${conversationId}/messages`,
       {
@@ -283,6 +397,7 @@ serve(async (req) => {
     const chatwootInboxId = Deno.env.get("CHATWOOT_INBOX_ID");
 
     let chatwootConversationId: number | null = null;
+    let chatwootSourceId: string | null = null;
 
     // Sync with Chatwoot if credentials are available
     if (chatwootApiToken && chatwootAccountId && chatwootInboxId) {
@@ -299,6 +414,7 @@ serve(async (req) => {
 
       if (contactResult) {
         chatwootConversationId = contactResult.conversationId;
+        chatwootSourceId = contactResult.sourceId;
         
         // Send user message to Chatwoot (incoming = from user)
         await sendMessageToChatwoot(
@@ -306,7 +422,9 @@ serve(async (req) => {
           chatwootConversationId,
           chatwootApiToken,
           lastUserMessage.content,
-          "incoming"
+          "incoming",
+          chatwootInboxId,
+          chatwootSourceId
         );
       }
     } else {
@@ -357,7 +475,9 @@ serve(async (req) => {
         chatwootConversationId,
         chatwootApiToken,
         assistantMessage,
-        "outgoing"
+        "outgoing",
+        chatwootInboxId,
+        chatwootSourceId
       );
     }
 

@@ -18,6 +18,7 @@ interface VehicleCardProps {
   verified?: boolean;
   certified?: boolean;
   acceptsTrade?: boolean;
+  requiresAuth?: boolean;
 }
 
 const sellerLevelConfig = {
@@ -40,11 +41,16 @@ const VehicleCard = ({
   verified,
   certified,
   acceptsTrade,
+  requiresAuth = false,
 }: VehicleCardProps) => {
   const navigate = useNavigate();
 
   const goToDetail = () => {
-    navigate(`/product/${id}`);
+    if (requiresAuth) {
+      navigate("/auth", { state: { from: `/product/${id}` } });
+    } else {
+      navigate(`/product/${id}`);
+    }
   };
 
   return (

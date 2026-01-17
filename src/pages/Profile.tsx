@@ -97,6 +97,8 @@ const Profile = () => {
     full_name: "",
     phone: "",
     cpf: "",
+    city: "",
+    state: "",
   });
 
   useEffect(() => {
@@ -111,6 +113,8 @@ const Profile = () => {
         full_name: profile.full_name || "",
         phone: profile.phone || "",
         cpf: profile.cpf || "",
+        city: profile.city || "",
+        state: profile.state || "",
       });
     }
   }, [profile]);
@@ -226,6 +230,8 @@ const Profile = () => {
         full_name: formData.full_name,
         phone: formData.phone.replace(/\D/g, ''),
         cpf: formData.cpf.replace(/\D/g, ''),
+        city: formData.city || null,
+        state: formData.state || null,
       })
       .eq("id", user.id);
 
@@ -510,17 +516,75 @@ const Profile = () => {
                         )}
                       </div>
                     )}
-                  </div>
+                </div>
+              </div>
+
+              {/* Location Fields */}
+              <div className="grid gap-4 md:grid-cols-2 pt-4 border-t border-border">
+                <div className="space-y-2">
+                  <Label>Estado</Label>
+                  {editMode ? (
+                    <select
+                      value={formData.state}
+                      onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value, city: "" }))}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    >
+                      <option value="">Selecione o estado</option>
+                      <option value="AC">Acre</option>
+                      <option value="AL">Alagoas</option>
+                      <option value="AP">Amapá</option>
+                      <option value="AM">Amazonas</option>
+                      <option value="BA">Bahia</option>
+                      <option value="CE">Ceará</option>
+                      <option value="DF">Distrito Federal</option>
+                      <option value="ES">Espírito Santo</option>
+                      <option value="GO">Goiás</option>
+                      <option value="MA">Maranhão</option>
+                      <option value="MT">Mato Grosso</option>
+                      <option value="MS">Mato Grosso do Sul</option>
+                      <option value="MG">Minas Gerais</option>
+                      <option value="PA">Pará</option>
+                      <option value="PB">Paraíba</option>
+                      <option value="PR">Paraná</option>
+                      <option value="PE">Pernambuco</option>
+                      <option value="PI">Piauí</option>
+                      <option value="RJ">Rio de Janeiro</option>
+                      <option value="RN">Rio Grande do Norte</option>
+                      <option value="RS">Rio Grande do Sul</option>
+                      <option value="RO">Rondônia</option>
+                      <option value="RR">Roraima</option>
+                      <option value="SC">Santa Catarina</option>
+                      <option value="SP">São Paulo</option>
+                      <option value="SE">Sergipe</option>
+                      <option value="TO">Tocantins</option>
+                    </select>
+                  ) : (
+                    <p className="text-foreground font-medium">{profile.state || 'Não informado'}</p>
+                  )}
                 </div>
 
-                {editMode && (
-                  <Button variant="cta" onClick={handleUpdateProfile} className="mt-4">
-                    Salvar Alterações
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                <div className="space-y-2">
+                  <Label>Cidade</Label>
+                  {editMode ? (
+                    <Input
+                      value={formData.city}
+                      onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                      placeholder="Digite sua cidade"
+                    />
+                  ) : (
+                    <p className="text-foreground font-medium">{profile.city || 'Não informado'}</p>
+                  )}
+                </div>
+              </div>
+
+              {editMode && (
+                <Button variant="cta" onClick={handleUpdateProfile} className="mt-4">
+                  Salvar Alterações
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
           {/* Vehicles Tab */}
           <TabsContent value="vehicles">

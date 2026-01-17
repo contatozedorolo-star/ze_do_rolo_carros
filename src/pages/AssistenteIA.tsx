@@ -273,9 +273,9 @@ const AssistenteIA = () => {
       </div>
 
       {/* Main Content - Split Screen */}
-      <div className="flex-1 flex flex-col lg:flex-row bg-[#142562] min-h-[70vh]">
-        {/* Left Side - Spline 3D Robot & Info */}
-        <div className="w-full lg:w-1/2 relative flex flex-col items-center justify-center p-4 md:p-6 lg:p-12 min-h-[40vh] lg:min-h-0">
+      <div className="flex-1 flex flex-col lg:flex-row bg-[#142562] min-h-[80vh]">
+        {/* Left Side - Spline 3D Robot & Info - Expanded */}
+        <div className="w-full lg:w-3/5 xl:w-2/3 relative flex flex-col items-center justify-center p-4 md:p-6 lg:p-12 min-h-[40vh] lg:min-h-0">
           {/* Spline 3D Scene */}
           <div className="absolute inset-0 z-0">
             <Suspense fallback={
@@ -329,10 +329,10 @@ const AssistenteIA = () => {
           </div>
         </div>
 
-        {/* Right Side - Chat Interface */}
-        <div className="w-full lg:w-1/2 flex flex-col h-[75vh] lg:h-auto relative z-10">
-          {/* Chat Container - Glassmorphism */}
-          <div className="flex-1 flex flex-col m-4 lg:m-8 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+        {/* Right Side - Chat Interface - Narrower & Taller */}
+        <div className="w-full lg:w-2/5 xl:w-1/3 flex flex-col items-center lg:items-end justify-center h-[80vh] lg:h-auto py-4 lg:py-8 px-4 lg:pr-8 relative z-10">
+          {/* Chat Container - Glassmorphism - Constrained width, full height */}
+          <div className="w-full max-w-[400px] h-full flex flex-col bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
             {/* Chat Header */}
             <div className="bg-white/10 backdrop-blur-sm border-b border-white/10 px-4 sm:px-6 py-4 flex items-center gap-3 sm:gap-4">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-lg flex-shrink-0">

@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { Send, Shield, Rocket, Clock, ShieldCheck, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -361,50 +360,55 @@ const AssistenteIA = () => {
               </Button>
             </div>
 
-            {/* Messages Area */}
-            <ScrollArea className="flex-1 p-4 lg:p-6" ref={scrollRef}>
-              <div className="space-y-4">
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                  >
+            {/* Messages Area - Fixed height with scroll like WhatsApp */}
+            <div className="flex-1 overflow-hidden relative">
+              <div 
+                ref={scrollRef}
+                className="absolute inset-0 overflow-y-auto p-4 lg:p-6 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+              >
+                <div className="space-y-4">
+                  {messages.map((message, index) => (
                     <div
-                      className={`max-w-[85%] p-4 rounded-2xl transition-all duration-300 ${
-                        message.role === "user"
-                          ? "bg-[#FF8C36] text-white rounded-br-md shadow-lg shadow-orange-500/20"
-                          : "bg-[#1a3080] text-white rounded-bl-md border border-white/20 shadow-lg"
-                      }`}
+                      key={index}
+                      className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                     >
-                      {message.role === "assistant" && (
-                        <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/20">
-                          <img src={logoZe} alt="Zé" className="w-5 h-5 rounded-full" />
-                          <span className="text-sm font-medium text-white/90">Consultor Zé</span>
-                        </div>
-                      )}
-                      <p className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">
-                        {message.content}
-                      </p>
+                      <div
+                        className={`max-w-[85%] p-4 rounded-2xl transition-all duration-300 ${
+                          message.role === "user"
+                            ? "bg-[#FF8C36] text-white rounded-br-md shadow-lg shadow-orange-500/20"
+                            : "bg-[#1a3080] text-white rounded-bl-md border border-white/20 shadow-lg"
+                        }`}
+                      >
+                        {message.role === "assistant" && (
+                          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/20">
+                            <img src={logoZe} alt="Zé" className="w-5 h-5 rounded-full" />
+                            <span className="text-sm font-medium text-white/90">Consultor Zé</span>
+                          </div>
+                        )}
+                        <p className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">
+                          {message.content}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-                
-                {isLoading && messages[messages.length - 1]?.role === "user" && (
-                  <div className="flex justify-start">
-                    <div className="bg-[#1a3080] p-4 rounded-2xl rounded-bl-md border border-white/20">
-                      <div className="flex items-center gap-3">
-                        <img src={logoZe} alt="Zé" className="w-5 h-5 rounded-full" />
-                        <div className="flex gap-1.5">
-                          <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                          <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                          <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  ))}
+                  
+                  {isLoading && messages[messages.length - 1]?.role === "user" && (
+                    <div className="flex justify-start">
+                      <div className="bg-[#1a3080] p-4 rounded-2xl rounded-bl-md border border-white/20">
+                        <div className="flex items-center gap-3">
+                          <img src={logoZe} alt="Zé" className="w-5 h-5 rounded-full" />
+                          <div className="flex gap-1.5">
+                            <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                            <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                            <span className="w-2 h-2 bg-[#FF8C36] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </ScrollArea>
+            </div>
 
             {/* Input Area */}
             <div className="p-4 lg:p-6 border-t border-white/10">

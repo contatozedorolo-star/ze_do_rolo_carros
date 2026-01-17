@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { vehicles as mockVehicles } from "@/data/mockProducts";
 import { extractIdFromSlug } from "@/lib/slugify";
 import { formatCurrencyShort } from "@/lib/formatters";
+import { useTrackVehicleView, useVehicleViewCount } from "@/hooks/useVehicleViews";
 import { 
   MapPin, 
   CheckCircle, 
@@ -103,6 +104,12 @@ const ProductDetail = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Track vehicle view
+  useTrackVehicleView(vehicle?.id);
+  
+  // Get view count
+  const { data: viewCount } = useVehicleViewCount(vehicle?.id);
+
   // FIPE data
   const [fipeData, setFipeData] = useState<{
     price: string;
@@ -156,7 +163,7 @@ const ProductDetail = () => {
 
           const mockVehicle: Vehicle = {
             id: mock.id,
-            // uuid “válido” para não quebrar fluxos que esperam uuid
+            // uuid "válido" para não quebrar fluxos que esperam uuid
             user_id: "00000000-0000-0000-0000-000000000000",
             title: mock.title,
             description: "Veículo fictício para demonstração do layout da página de vendas.",
@@ -699,11 +706,19 @@ const ProductDetail = () => {
                     </p>
 
                     {/* Price */}
-                    <div className="mb-6">
+                    <div className="mb-4">
                       <span className="text-4xl font-bold text-[#142562]">
                         {formatCurrencyShort(vehicle.price)}
                       </span>
                     </div>
+
+                    {/* View Counter */}
+                    {viewCount !== undefined && viewCount > 0 && (
+                      <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
+                        <Eye className="h-4 w-4" />
+                        <span>{viewCount} visualiza{viewCount === 1 ? 'ção' : 'ções'}</span>
+                      </div>
+                    )}
 
                     {/* Quick Info */}
                     <div className="grid grid-cols-2 gap-3 mb-6 p-4 bg-slate-50 rounded-xl">

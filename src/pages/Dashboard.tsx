@@ -7,6 +7,7 @@ import ProposalsList from "@/components/ProposalsList";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserStats } from "@/hooks/useVehicleViews";
 import { 
   Car, 
   Plus, 
@@ -15,19 +16,18 @@ import {
   Shield, 
   Star,
   ArrowRight,
-  Eye
+  Eye,
+  CheckCircle
 } from "lucide-react";
 
 const Dashboard = () => {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   
-  const [stats, setStats] = useState({
-    vehicles: 0,
-    receivedProposals: 0,
-    sentProposals: 0,
-  });
   const [isVerified, setIsVerified] = useState(false);
+  
+  // Use the new stats hook
+  const { data: userStats, isLoading: statsLoading } = useUserStats(user?.id);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -36,26 +36,20 @@ const Dashboard = () => {
   }, [user, loading, navigate]);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchVerificationStatus = async () => {
       if (!user) return;
 
-      const [vehiclesRes, receivedRes, sentRes, kycRes] = await Promise.all([
-        supabase.from("vehicles").select("id", { count: "exact" }).eq("user_id", user.id),
-        supabase.from("proposals").select("id", { count: "exact" }).eq("seller_id", user.id).eq("status", "pending"),
-        supabase.from("proposals").select("id", { count: "exact" }).eq("proposer_id", user.id),
-        supabase.from("kyc_verifications").select("status").eq("user_id", user.id).eq("status", "approved").maybeSingle(),
-      ]);
-
-      setStats({
-        vehicles: vehiclesRes.count || 0,
-        receivedProposals: receivedRes.count || 0,
-        sentProposals: sentRes.count || 0,
-      });
+      const { data: kycRes } = await supabase
+        .from("kyc_verifications")
+        .select("status")
+        .eq("user_id", user.id)
+        .eq("status", "approved")
+        .maybeSingle();
       
-      setIsVerified(!!kycRes.data);
+      setIsVerified(!!kycRes);
     };
 
-    fetchStats();
+    fetchVerificationStatus();
   }, [user]);
 
   if (loading) {
@@ -106,9 +100,34 @@ const Dashboard = () => {
   ];
 
   const statsCards = [
-    { label: "Veículos Cadastrados", value: stats.vehicles.toString(), icon: Car },
-    { label: "Propostas Pendentes", value: stats.receivedProposals.toString(), icon: MessageSquare },
-    { label: "Propostas Enviadas", value: stats.sentProposals.toString(), icon: TrendingUp },
+    { 
+      label: "Total de Visualizações", 
+      value: statsLoading ? "..." : (userStats?.totalViews || 0).toString(), 
+      icon: Eye,
+      color: "text-primary",
+      bgColor: "bg-primary/10",
+    },
+    { 
+      label: "Propostas Recebidas", 
+      value: statsLoading ? "..." : (userStats?.proposalsReceived || 0).toString(), 
+      icon: MessageSquare,
+      color: "text-secondary",
+      bgColor: "bg-secondary/10",
+    },
+    { 
+      label: "Veículos Vendidos", 
+      value: statsLoading ? "..." : (userStats?.vehiclesSold || 0).toString(), 
+      icon: CheckCircle,
+      color: "text-green-600",
+      bgColor: "bg-green-100",
+    },
+    { 
+      label: "Veículos Cadastrados", 
+      value: statsLoading ? "..." : (userStats?.totalVehicles || 0).toString(), 
+      icon: Car,
+      color: "text-accent",
+      bgColor: "bg-accent/10",
+    },
   ];
 
   return (
@@ -140,15 +159,15 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {statsCards.map((stat, index) => (
             <Card key={index} className="bg-card border-border">
               <CardContent className="flex items-center gap-4 p-6">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <stat.icon className="h-6 w-6 text-primary" />
+                <div className={`w-12 h-12 rounded-xl ${stat.bgColor} flex items-center justify-center`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                  <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>
                 </div>
               </CardContent>

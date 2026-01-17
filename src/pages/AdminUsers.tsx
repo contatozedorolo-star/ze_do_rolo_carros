@@ -62,6 +62,8 @@ import {
   DollarSign,
   ArrowRight,
   X,
+  MessageSquare,
+  TrendingUp,
 } from "lucide-react";
 import {
   Tooltip,
@@ -85,6 +87,10 @@ interface UserProfile {
   is_verified?: boolean;
   vehicles_count?: number;
   is_admin?: boolean;
+  // User statistics
+  total_views?: number;
+  proposals_received?: number;
+  vehicles_sold?: number;
 }
 
 interface UserVehicle {
@@ -210,7 +216,7 @@ const AdminUsers = () => {
         console.error('Error fetching emails:', e);
       }
 
-      // Fetch KYC verification status and admin role for each user
+      // Fetch KYC verification status, admin role, and stats for each user
       const usersWithDetails = await Promise.all(
         (profiles || []).map(async (profile) => {
           // Check if user is verified
@@ -221,11 +227,30 @@ const AdminUsers = () => {
             .eq("status", "approved")
             .maybeSingle();
 
-          // Count user's vehicles
-          const { count: vehiclesCount } = await supabase
+          // Get user's vehicles
+          const { data: vehiclesData } = await supabase
             .from("vehicles")
-            .select("*", { count: "exact", head: true })
+            .select("id, is_sold")
             .eq("user_id", profile.id);
+
+          const vehicleIds = vehiclesData?.map(v => v.id) || [];
+          const vehiclesSold = vehiclesData?.filter(v => v.is_sold).length || 0;
+
+          // Get total views for all user's vehicles
+          let totalViews = 0;
+          if (vehicleIds.length > 0) {
+            const { count: viewsCount } = await supabase
+              .from("vehicle_views")
+              .select("*", { count: "exact", head: true })
+              .in("vehicle_id", vehicleIds);
+            totalViews = viewsCount || 0;
+          }
+
+          // Get proposals received (as seller)
+          const { count: proposalsReceived } = await supabase
+            .from("proposals")
+            .select("*", { count: "exact", head: true })
+            .eq("seller_id", profile.id);
 
           // Check if user is admin
           const { data: adminData } = await supabase
@@ -239,8 +264,11 @@ const AdminUsers = () => {
             ...profile,
             email: emailMap[profile.id] || undefined,
             is_verified: !!kycData,
-            vehicles_count: vehiclesCount || 0,
+            vehicles_count: vehicleIds.length,
             is_admin: !!adminData,
+            total_views: totalViews,
+            proposals_received: proposalsReceived || 0,
+            vehicles_sold: vehiclesSold,
           } as UserProfile;
         })
       );
@@ -548,6 +576,7 @@ const AdminUsers = () => {
                       <TableHead>Localização</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Veículos</TableHead>
+                      <TableHead>Estatísticas</TableHead>
                       <TableHead>Cadastro</TableHead>
                       <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
@@ -639,6 +668,35 @@ const AdminUsers = () => {
                           <Badge variant="outline">{userItem.vehicles_count || 0}</Badge>
                         </TableCell>
                         <TableCell>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                    <Eye className="h-3 w-3" />
+                                    <span>{userItem.total_views || 0}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                    <MessageSquare className="h-3 w-3" />
+                                    <span>{userItem.proposals_received || 0}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-xs text-green-600">
+                                    <TrendingUp className="h-3 w-3" />
+                                    <span>{userItem.vehicles_sold || 0}</span>
+                                  </div>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <div className="text-xs space-y-1">
+                                  <p><Eye className="h-3 w-3 inline mr-1" /> Visualizações: {userItem.total_views || 0}</p>
+                                  <p><MessageSquare className="h-3 w-3 inline mr-1" /> Propostas recebidas: {userItem.proposals_received || 0}</p>
+                                  <p><TrendingUp className="h-3 w-3 inline mr-1" /> Veículos vendidos: {userItem.vehicles_sold || 0}</p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </TableCell>
+                        <TableCell>
                           {new Date(userItem.created_at).toLocaleDateString("pt-BR")}
                         </TableCell>
                         <TableCell className="text-right">
@@ -724,6 +782,25 @@ const AdminUsers = () => {
                       {selectedUser.vehicles_count || 0} veículo(s)
                     </Badge>
                   </div>
+                </div>
+              </div>
+
+              {/* User Statistics */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center p-3 bg-primary/5 rounded-lg border border-primary/10">
+                  <Eye className="h-5 w-5 mx-auto text-primary mb-1" />
+                  <p className="text-xl font-bold text-primary">{selectedUser.total_views || 0}</p>
+                  <p className="text-xs text-muted-foreground">Visualizações</p>
+                </div>
+                <div className="text-center p-3 bg-secondary/5 rounded-lg border border-secondary/10">
+                  <MessageSquare className="h-5 w-5 mx-auto text-secondary mb-1" />
+                  <p className="text-xl font-bold text-secondary">{selectedUser.proposals_received || 0}</p>
+                  <p className="text-xs text-muted-foreground">Propostas</p>
+                </div>
+                <div className="text-center p-3 bg-green-50 rounded-lg border border-green-100">
+                  <TrendingUp className="h-5 w-5 mx-auto text-green-600 mb-1" />
+                  <p className="text-xl font-bold text-green-600">{selectedUser.vehicles_sold || 0}</p>
+                  <p className="text-xs text-muted-foreground">Vendidos</p>
                 </div>
               </div>
 

@@ -275,6 +275,41 @@ export type Database = {
           },
         ]
       }
+      vehicle_views: {
+        Row: {
+          created_at: string
+          id: string
+          ip_hash: string | null
+          vehicle_id: string
+          viewed_at: string
+          viewer_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_hash?: string | null
+          vehicle_id: string
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_hash?: string | null
+          vehicle_id?: string
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_views_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicles: {
         Row: {
           accepts_trade: boolean

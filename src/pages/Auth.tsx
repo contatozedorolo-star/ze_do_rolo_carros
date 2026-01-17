@@ -585,7 +585,7 @@ const Auth = () => {
                   className="w-full"
                   onClick={async () => {
                     setLoading(true);
-                    const { error } = await signInWithGoogle();
+                    const { error } = await signInWithGoogle(from);
                     if (error) {
                       toast({
                         title: "Erro ao entrar com Google",

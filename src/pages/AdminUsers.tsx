@@ -57,6 +57,11 @@ import {
   Trash2,
   AlertTriangle,
   BarChart3,
+  Gauge,
+  Fuel,
+  DollarSign,
+  ArrowRight,
+  X,
 } from "lucide-react";
 import {
   Tooltip,
@@ -64,6 +69,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { formatCurrencyShort } from "@/lib/formatters";
+import { generateVehicleSlugWithId } from "@/lib/slugify";
 
 interface UserProfile {
   id: string;
@@ -78,6 +85,26 @@ interface UserProfile {
   is_verified?: boolean;
   vehicles_count?: number;
   is_admin?: boolean;
+}
+
+interface UserVehicle {
+  id: string;
+  title: string;
+  brand: string;
+  model: string;
+  year_model: number;
+  year_manufacture: number;
+  km: number;
+  price: number;
+  fuel: string;
+  transmission: string;
+  is_active: boolean;
+  is_sold: boolean;
+  created_at: string;
+  city: string | null;
+  state: string | null;
+  version: string | null;
+  primary_image?: string;
 }
 
 // Helper functions
@@ -120,6 +147,12 @@ const AdminUsers = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<UserProfile | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  // User vehicles state
+  const [vehiclesDialogOpen, setVehiclesDialogOpen] = useState(false);
+  const [userVehicles, setUserVehicles] = useState<UserVehicle[]>([]);
+  const [loadingVehicles, setLoadingVehicles] = useState(false);
+  const [vehiclesOwner, setVehiclesOwner] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -307,6 +340,74 @@ const AdminUsers = () => {
     } finally {
       setDeleting(false);
     }
+  };
+
+  // Fetch vehicles for a specific user
+  const fetchUserVehicles = async (userItem: UserProfile) => {
+    setLoadingVehicles(true);
+    setVehiclesOwner(userItem);
+    setVehiclesDialogOpen(true);
+    setUserVehicles([]);
+
+    try {
+      // Fetch vehicles with their primary images
+      const { data: vehiclesData, error: vehiclesError } = await supabase
+        .from("vehicles")
+        .select("*")
+        .eq("user_id", userItem.id)
+        .order("created_at", { ascending: false });
+
+      if (vehiclesError) throw vehiclesError;
+
+      // Fetch primary images for each vehicle
+      const vehiclesWithImages = await Promise.all(
+        (vehiclesData || []).map(async (vehicle) => {
+          const { data: imageData } = await supabase
+            .from("vehicle_images")
+            .select("image_url")
+            .eq("vehicle_id", vehicle.id)
+            .eq("is_primary", true)
+            .maybeSingle();
+
+          return {
+            ...vehicle,
+            primary_image: imageData?.image_url || null,
+          } as UserVehicle;
+        })
+      );
+
+      setUserVehicles(vehiclesWithImages);
+    } catch (error) {
+      console.error("Error fetching user vehicles:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os veículos do usuário.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingVehicles(false);
+    }
+  };
+
+  const navigateToVehicle = (vehicle: UserVehicle) => {
+    const slug = generateVehicleSlugWithId(
+      vehicle.id,
+      vehicle.brand,
+      vehicle.model,
+      vehicle.year_model,
+      vehicle.version
+    );
+    navigate(`/veiculo/${slug}`);
+  };
+
+  const fuelLabels: Record<string, string> = {
+    gasolina: "Gasolina",
+    etanol: "Etanol",
+    flex: "Flex",
+    diesel: "Diesel",
+    eletrico: "Elétrico",
+    hibrido: "Híbrido",
+    gnv: "GNV",
   };
 
   if (authLoading || loading) {
@@ -742,16 +843,12 @@ const AdminUsers = () => {
               {(selectedUser.vehicles_count || 0) > 0 && (
                 <div className="pt-2 border-t">
                   <Button
-                    variant="outline"
+                    variant="cta"
                     size="sm"
                     className="w-full"
                     onClick={() => {
                       setViewDialogOpen(false);
-                      // Navigate to vehicles filtered by this user would require additional implementation
-                      toast({
-                        title: "Em breve",
-                        description: "Visualização de veículos por usuário em desenvolvimento.",
-                      });
+                      fetchUserVehicles(selectedUser);
                     }}
                   >
                     <Car className="h-4 w-4 mr-2" />
@@ -806,6 +903,126 @@ const AdminUsers = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* User Vehicles Dialog */}
+      <Dialog open={vehiclesDialogOpen} onOpenChange={setVehiclesDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Car className="h-5 w-5 text-primary" />
+              Veículos de {vehiclesOwner?.full_name || "Usuário"}
+            </DialogTitle>
+            <DialogDescription>
+              {loadingVehicles 
+                ? "Carregando veículos..." 
+                : `${userVehicles.length} veículo(s) cadastrado(s)`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {loadingVehicles ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : userVehicles.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <Car className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Nenhum veículo cadastrado.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {userVehicles.map((vehicle) => (
+                <div
+                  key={vehicle.id}
+                  className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  {/* Vehicle Image */}
+                  <div className="relative w-full sm:w-40 h-32 rounded-lg overflow-hidden bg-muted shrink-0">
+                    {vehicle.primary_image ? (
+                      <img
+                        src={vehicle.primary_image}
+                        alt={vehicle.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Car className="h-10 w-10 text-muted-foreground" />
+                      </div>
+                    )}
+                    
+                    {/* Status Badges */}
+                    <div className="absolute top-2 left-2 flex gap-1">
+                      {vehicle.is_sold && (
+                        <Badge className="bg-red-500 text-white text-xs">Vendido</Badge>
+                      )}
+                      {!vehicle.is_active && !vehicle.is_sold && (
+                        <Badge variant="secondary" className="text-xs">Inativo</Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Vehicle Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h4 className="font-semibold text-foreground line-clamp-1">
+                          {vehicle.title}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {vehicle.brand} {vehicle.model} {vehicle.version || ""}
+                        </p>
+                      </div>
+                      <p className="text-lg font-bold text-primary shrink-0">
+                        {formatCurrencyShort(vehicle.price)}
+                      </p>
+                    </div>
+
+                    {/* Specs */}
+                    <div className="flex flex-wrap gap-3 mt-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span>
+                          {vehicle.year_manufacture === vehicle.year_model 
+                            ? vehicle.year_model 
+                            : `${vehicle.year_manufacture}/${vehicle.year_model}`}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Gauge className="h-3.5 w-3.5" />
+                        <span>{vehicle.km.toLocaleString("pt-BR")} km</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Fuel className="h-3.5 w-3.5" />
+                        <span>{fuelLabels[vehicle.fuel] || vehicle.fuel}</span>
+                      </div>
+                      {vehicle.city && vehicle.state && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3.5 w-3.5" />
+                          <span>{vehicle.city}, {vehicle.state}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Created Date & Action */}
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t">
+                      <p className="text-xs text-muted-foreground">
+                        Cadastrado em {new Date(vehicle.created_at).toLocaleDateString("pt-BR")}
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigateToVehicle(vehicle)}
+                      >
+                        Ver Anúncio
+                        <ArrowRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

@@ -79,6 +79,7 @@ interface UserProfile {
   full_name: string | null;
   phone: string | null;
   cpf: string | null;
+  cep: string | null;
   avatar_url: string | null;
   city: string | null;
   state: string | null;
@@ -883,6 +884,19 @@ const AdminUsers = () => {
                       </Tooltip>
                     </TooltipProvider>
                   )}
+                </div>
+
+                {/* CEP */}
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                  <MapPin className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">CEP</p>
+                    <p className="font-medium">
+                      {selectedUser.cep 
+                        ? selectedUser.cep.replace(/(\d{5})(\d{3})/, '$1-$2')
+                        : "Não informado"}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Location */}

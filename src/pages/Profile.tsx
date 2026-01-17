@@ -104,6 +104,14 @@ const Profile = () => {
   const [loadingCep, setLoadingCep] = useState(false);
   const [cepError, setCepError] = useState("");
 
+  const formatCep = (value: string) => {
+    const cleaned = value.replace(/\D/g, '').slice(0, 8);
+    if (cleaned.length > 5) {
+      return cleaned.replace(/(\d{5})(\d)/, '$1-$2');
+    }
+    return cleaned;
+  };
+
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
@@ -112,11 +120,12 @@ const Profile = () => {
 
   useEffect(() => {
     if (profile) {
+      const savedCep = (profile as any).cep || "";
       setFormData({
         full_name: profile.full_name || "",
         phone: profile.phone || "",
         cpf: profile.cpf || "",
-        cep: "",
+        cep: savedCep ? formatCep(savedCep) : "",
         city: profile.city || "",
         state: profile.state || "",
       });
@@ -158,14 +167,6 @@ const Profile = () => {
     } finally {
       setLoadingCep(false);
     }
-  };
-
-  const formatCep = (value: string) => {
-    const cleaned = value.replace(/\D/g, '').slice(0, 8);
-    if (cleaned.length > 5) {
-      return cleaned.replace(/(\d{5})(\d)/, '$1-$2');
-    }
-    return cleaned;
   };
 
   useEffect(() => {
@@ -279,6 +280,7 @@ const Profile = () => {
         full_name: formData.full_name,
         phone: formData.phone.replace(/\D/g, ''),
         cpf: formData.cpf.replace(/\D/g, ''),
+        cep: formData.cep.replace(/\D/g, '') || null,
         city: formData.city || null,
         state: formData.state || null,
       })

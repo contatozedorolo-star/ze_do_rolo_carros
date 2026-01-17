@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { VehicleWithImages } from "@/hooks/useVehicles";
 import { generateVehicleSlugWithId } from "@/lib/slugify";
+import { formatCurrencyShort } from "@/lib/formatters";
 
 interface VehicleCardSupabaseProps {
   vehicle: VehicleWithImages;
@@ -125,7 +126,7 @@ const VehicleCardSupabase = ({ vehicle }: VehicleCardSupabaseProps) => {
 
         <div className="flex items-center justify-between pt-3 border-t border-border">
           <p className="text-lg font-bold text-primary">
-            R$ {vehicle.price.toLocaleString("pt-BR")}
+            {formatCurrencyShort(vehicle.price)}
           </p>
         </div>
 

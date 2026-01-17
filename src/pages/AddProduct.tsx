@@ -35,6 +35,7 @@ import VanTypeSelector from "@/components/add-product/VanTypeSelector";
 import VanPhotoUploadGrid, { vanPhotoCategories } from "@/components/add-product/VanPhotoUploadGrid";
 import BusTypeSelector from "@/components/add-product/BusTypeSelector";
 import BusPhotoUploadGrid, { busPhotoCategories } from "@/components/add-product/BusPhotoUploadGrid";
+import { formatPriceInput, parsePriceInput } from "@/lib/formatters";
 
 const vehicleTypes = [
   { value: "carro", label: "Carro", icon: Car },
@@ -421,7 +422,7 @@ const AddProduct = () => {
         fuel: formData.fuel,
         doors: formData.doors ? parseInt(formData.doors) : null,
         engine: formData.engine_liters || null,
-        price: parseFloat(formData.price), 
+        price: parsePriceInput(formData.price), 
         accepts_trade: formData.accepts_trade,
         city: formData.city || null, 
         state: formData.state || null,
@@ -456,8 +457,8 @@ const AddProduct = () => {
         
         // Trade info
         ideal_trade_description: formData.ideal_trade_description || null,
-        trade_value_accepted: formData.max_cash_return ? parseFloat(formData.max_cash_return) : null,
-        min_cash_return: formData.min_cash_return ? parseFloat(formData.min_cash_return) : null,
+        trade_value_accepted: formData.max_cash_return ? parsePriceInput(formData.max_cash_return) : null,
+        min_cash_return: formData.min_cash_return ? parsePriceInput(formData.min_cash_return) : null,
         ownership_time: formData.ownership_time || null,
         
         // History
@@ -474,7 +475,7 @@ const AddProduct = () => {
         insurance_covers_100: formData.insurance_covers_100 || null,
         insurance_coverage_percent: formData.insurance_coverage_percent ? parseInt(formData.insurance_coverage_percent) : null,
         trade_priority: formData.trade_priority,
-        max_cash_return: formData.max_cash_return ? parseInt(formData.max_cash_return) : null,
+        max_cash_return: formData.max_cash_return ? parsePriceInput(formData.max_cash_return) : null,
         trade_restrictions: formData.trade_restrictions.length > 0 ? formData.trade_restrictions : null,
       };
 
@@ -718,7 +719,13 @@ const AddProduct = () => {
               <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label>Preço (R$) *</Label>
-                  <Input type="number" value={formData.price} onChange={e => setFormData(p => ({ ...p, price: e.target.value }))} placeholder="Ex: 85000" />
+                  <Input 
+                    type="text" 
+                    inputMode="numeric"
+                    value={formData.price} 
+                    onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))} 
+                    placeholder="Ex: 85.000" 
+                  />
                 </div>
                 {formData.vehicle_type !== "moto" && (
                   <div>
@@ -1238,19 +1245,21 @@ const AddProduct = () => {
                     <div>
                       <Label>Valor mínimo de volta</Label>
                       <Input 
-                        type="number" 
+                        type="text" 
+                        inputMode="numeric"
                         value={formData.min_cash_return} 
-                        onChange={e => setFormData(p => ({ ...p, min_cash_return: e.target.value }))} 
-                        placeholder="Ex: 50000"
+                        onChange={e => setFormData(p => ({ ...p, min_cash_return: formatPriceInput(e.target.value) }))} 
+                        placeholder="Ex: 50.000"
                       />
                     </div>
                     <div>
                       <Label>Valor máximo de volta</Label>
                       <Input 
-                        type="number" 
+                        type="text" 
+                        inputMode="numeric"
                         value={formData.max_cash_return} 
-                        onChange={e => setFormData(p => ({ ...p, max_cash_return: e.target.value }))} 
-                        placeholder="Ex: 200000"
+                        onChange={e => setFormData(p => ({ ...p, max_cash_return: formatPriceInput(e.target.value) }))} 
+                        placeholder="Ex: 200.000"
                       />
                     </div>
                   </div>

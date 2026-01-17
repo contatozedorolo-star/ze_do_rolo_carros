@@ -26,8 +26,8 @@ export function generateVehicleSlug(
 }
 
 /**
- * Creates a full slug with ID for unique identification
- * Example: "honda-hrv-2021-exl-abc123"
+ * Creates a full slug with complete ID for unique identification
+ * Example: "honda-hrv-2021-exl-44cf97bb-5b10-4b14-a60b-41219e24936a"
  */
 export function generateVehicleSlugWithId(
   id: string,
@@ -37,15 +37,22 @@ export function generateVehicleSlugWithId(
   version?: string | null
 ): string {
   const slug = generateVehicleSlug(brand, model, yearModel, version);
-  const shortId = id.slice(0, 8);
-  return `${slug}-${shortId}`;
+  return `${slug}-${id}`;
 }
 
 /**
  * Extracts the vehicle ID from a slug
- * Example: "honda-hrv-2021-exl-abc123" -> "abc123"
+ * Supports both full UUID and partial ID formats
+ * Example: "honda-hrv-2021-exl-44cf97bb-5b10-4b14-a60b-41219e24936a" -> "44cf97bb-5b10-4b14-a60b-41219e24936a"
  */
 export function extractIdFromSlug(slug: string): string {
+  // Try to extract full UUID (36 chars with format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+  const uuidMatch = slug.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
+  if (uuidMatch) {
+    return uuidMatch[1];
+  }
+  
+  // Fallback: get last part after last dash (for legacy short IDs)
   const parts = slug.split("-");
   return parts[parts.length - 1] || slug;
 }

@@ -133,14 +133,18 @@ const ProductDetail = () => {
         vehicleError = result.error;
       } else {
         // Search by partial ID (slug format - first 8 chars)
+        // Use filter with ilike on id cast to text for UUID partial match
         const result = await supabase
           .from("vehicles")
           .select("*")
-          .ilike("id", `${id}%`)
-          .limit(1)
-          .single();
-        vehicleData = result.data;
-        vehicleError = result.error;
+          .filter("id::text", "ilike", `${id}%`)
+          .limit(1);
+        
+        if (result.data && result.data.length > 0) {
+          vehicleData = result.data[0];
+        } else {
+          vehicleError = result.error || { message: "Vehicle not found" };
+        }
       }
 
       // Fallback: veículos fictícios (mock) para visual da Home
@@ -224,10 +228,11 @@ const ProductDetail = () => {
 
       setVehicle(vehicleData);
 
+      // Use the full vehicle ID from the fetched data for related queries
       const { data: imagesData } = await supabase
         .from("vehicle_images")
         .select("*")
-        .eq("vehicle_id", id);
+        .eq("vehicle_id", vehicleData.id);
 
       if (imagesData) {
         setImages(imagesData);

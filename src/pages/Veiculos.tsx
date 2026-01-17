@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { SlidersHorizontal, Grid3X3, List, ChevronDown, MapPin, Search } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
@@ -6,13 +6,16 @@ import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
 import { AdvancedVehicleFilters } from "@/components/filters";
 import VehicleCard from "@/components/VehicleCard";
+import VehicleCardSupabase from "@/components/VehicleCardSupabase";
 import RestrictedAccessModal from "@/components/RestrictedAccessModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { vehicles } from "@/data/mockProducts";
+import { Skeleton } from "@/components/ui/skeleton";
+import { vehicles as mockVehicles } from "@/data/mockProducts";
 import { sortOptions, brazilianStates } from "@/components/filters/FilterData";
 import { useAuth } from "@/hooks/useAuth";
+import { useVehicles, useVehicleCount, VehicleFilters, VehicleType } from "@/hooks/useVehicles";
 import heroBackground from "@/assets/vehicles-hero-bg.jpg";
 import {
   DropdownMenu,
@@ -35,42 +38,90 @@ const vehicleTypes = [
   { value: "caminhao", label: "Caminhões" },
   { value: "van", label: "Vans" },
   { value: "camionete", label: "Picapes" },
-  { value: "trator", label: "Tratores" },
-  { value: "implemento", label: "Implementos" },
+  { value: "onibus", label: "Ônibus" },
 ];
+
+type SortOption = "relevance" | "price_asc" | "price_desc" | "year_desc" | "km_asc";
 
 const Veiculos = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [selectedSort, setSelectedSort] = useState("relevance");
-  const [filters, setFilters] = useState<any>({});
+  const [selectedSort, setSelectedSort] = useState<SortOption>("relevance");
+  const [filters, setFilters] = useState<VehicleFilters>({});
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
   
   // Get category from URL parameter
-  const urlCategory = searchParams.get("tipo") || "";
+  const urlCategory = searchParams.get("tipo") as VehicleType | null;
   
   // Quick search state
   const [quickSearch, setQuickSearch] = useState({
-    category: urlCategory,
+    category: urlCategory || "",
     searchTerm: "",
     state: "",
   });
 
+  // Build filters for Supabase query
+  const supabaseFilters = useMemo<VehicleFilters>(() => {
+    const category = (filters.category || urlCategory) as VehicleType | undefined;
+    return {
+      ...filters,
+      category: category || undefined,
+      searchTerm: quickSearch.searchTerm || undefined,
+      state: filters.state || quickSearch.state || undefined,
+    };
+  }, [filters, urlCategory, quickSearch.searchTerm, quickSearch.state]);
+
+  // Determine sort parameters
+  const sortConfig = useMemo(() => {
+    switch (selectedSort) {
+      case "price_asc":
+        return { sortBy: "price" as const, sortOrder: "asc" as const };
+      case "price_desc":
+        return { sortBy: "price" as const, sortOrder: "desc" as const };
+      case "year_desc":
+        return { sortBy: "year_model" as const, sortOrder: "desc" as const };
+      case "km_asc":
+        return { sortBy: "km" as const, sortOrder: "asc" as const };
+      default:
+        return { sortBy: "created_at" as const, sortOrder: "desc" as const };
+    }
+  }, [selectedSort]);
+
+  // Fetch vehicles from Supabase
+  const { 
+    data: supabaseVehicles = [], 
+    isLoading: vehiclesLoading,
+    error: vehiclesError
+  } = useVehicles({
+    filters: supabaseFilters,
+    ...sortConfig,
+    limit: 50,
+  });
+
+  // Get count
+  const { data: vehicleCount = 0 } = useVehicleCount(supabaseFilters);
+
   // Initialize filters from URL parameter
   useEffect(() => {
     if (urlCategory) {
-      setFilters(prev => ({ ...prev, category: urlCategory }));
+      setFilters(prev => ({ ...prev, category: urlCategory as VehicleType }));
       setQuickSearch(prev => ({ ...prev, category: urlCategory }));
     }
   }, [urlCategory]);
 
-  // Show modal if not logged in instead of redirecting
-  const showRestrictedModal = !loading && !user;
+  // Show modal if not logged in
+  const showRestrictedModal = !authLoading && !user;
 
   const handleFiltersChange = (newFilters: any) => {
-    setFilters(newFilters);
+    // Convert to typed filters
+    const typedFilters: VehicleFilters = {
+      ...newFilters,
+      category: newFilters.category as VehicleType | undefined,
+    };
+    setFilters(typedFilters);
+    
     // Count active filters
     let count = 0;
     Object.keys(newFilters).forEach((key) => {
@@ -88,7 +139,7 @@ const Veiculos = () => {
     const newFilters = { ...filters };
     
     if (quickSearch.category) {
-      newFilters.category = quickSearch.category;
+      newFilters.category = quickSearch.category as VehicleType;
     }
     if (quickSearch.state) {
       newFilters.state = quickSearch.state;
@@ -100,7 +151,7 @@ const Veiculos = () => {
   // Update quick search when category changes and sync
   const handleCategoryChange = (value: string) => {
     setQuickSearch(prev => ({ ...prev, category: value }));
-    handleFiltersChange({ ...filters, category: value });
+    handleFiltersChange({ ...filters, category: value as VehicleType });
   };
 
   const handleStateChange = (value: string) => {
@@ -110,8 +161,25 @@ const Veiculos = () => {
 
   const selectedSortLabel = sortOptions.find(s => s.value === selectedSort)?.label || "Mais relevantes";
 
+  // Combine Supabase vehicles with mock data for demonstration
+  const hasSupabaseVehicles = supabaseVehicles.length > 0;
+  
+  // Filter mock vehicles based on current filters
+  const filteredMockVehicles = mockVehicles.filter(vehicle => {
+    const activeCategory = filters.category || urlCategory;
+    if (activeCategory) {
+      return vehicle.type === activeCategory;
+    }
+    return true;
+  }).filter(vehicle => {
+    if (quickSearch.searchTerm && quickSearch.searchTerm !== "") {
+      return vehicle.title.toLowerCase().includes(quickSearch.searchTerm.toLowerCase());
+    }
+    return true;
+  });
+
   // Show loading while checking auth
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -228,10 +296,12 @@ const Veiculos = () => {
           <span className="hover:text-primary cursor-pointer">Home</span>
           <span className="mx-2">&gt;</span>
           <span className="text-foreground font-medium">Veículos</span>
-          {filters.category && filters.category !== "carro" && (
+          {(filters.category || urlCategory) && (
             <>
               <span className="mx-2">&gt;</span>
-              <span className="text-foreground font-medium capitalize">{filters.category}s</span>
+              <span className="text-foreground font-medium capitalize">
+                {vehicleTypes.find(t => t.value === (filters.category || urlCategory))?.label}
+              </span>
             </>
           )}
         </nav>
@@ -249,18 +319,12 @@ const Veiculos = () => {
           </h2>
           <p className="text-muted-foreground mt-1 flex items-center gap-2">
             <span>
-              {vehicles
-                .filter(v => {
-                  const activeCategory = filters.category || urlCategory;
-                  return !activeCategory || v.type === activeCategory;
-                })
-                .filter(v => !quickSearch.searchTerm || v.title.toLowerCase().includes(quickSearch.searchTerm.toLowerCase()))
-                .length.toLocaleString("pt-BR")} anúncios encontrados
+              {(hasSupabaseVehicles ? vehicleCount : filteredMockVehicles.length).toLocaleString("pt-BR")} anúncios encontrados
             </span>
-            {filters.state && (
+            {(filters.state || quickSearch.state) && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <MapPin className="h-3 w-3" />
-                {filters.state}
+                {filters.state || quickSearch.state}
               </Badge>
             )}
           </p>
@@ -274,17 +338,17 @@ const Veiculos = () => {
                 {brand}
               </Badge>
             ))}
-            {filters.accepts_trade && (
+            {filters.acceptsTrade && (
               <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30">
                 Aceita Troca
               </Badge>
             )}
-            {filters.ipva_paid && (
+            {filters.ipvaPaid && (
               <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30">
                 IPVA Pago
               </Badge>
             )}
-            {filters.is_single_owner && (
+            {filters.singleOwner && (
               <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30">
                 Único Dono
               </Badge>
@@ -340,7 +404,7 @@ const Veiculos = () => {
                   {sortOptions.map((option) => (
                     <DropdownMenuItem 
                       key={option.value}
-                      onClick={() => setSelectedSort(option.value)}
+                      onClick={() => setSelectedSort(option.value as SortOption)}
                       className={selectedSort === option.value ? "bg-primary/10 text-primary" : ""}
                     >
                       {option.label}
@@ -370,39 +434,71 @@ const Veiculos = () => {
               </div>
             </div>
 
-            {/* Vehicle Grid */}
-            <div className={
-              viewMode === "grid"
-                ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
-                : "flex flex-col gap-4"
-            }>
-              {vehicles
-                .filter(vehicle => {
-                  // Filtrar por categoria (URL ou filtro selecionado)
-                  const activeCategory = filters.category || urlCategory;
-                  if (activeCategory && activeCategory !== "") {
-                    return vehicle.type === activeCategory;
-                  }
-                  return true;
-                })
-                .filter(vehicle => {
-                  // Filtrar por termo de busca
-                  if (quickSearch.searchTerm && quickSearch.searchTerm !== "") {
-                    return vehicle.title.toLowerCase().includes(quickSearch.searchTerm.toLowerCase());
-                  }
-                  return true;
-                })
-                .map((vehicle) => (
+            {/* Loading State */}
+            {vehiclesLoading && (
+              <div className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
+                  : "flex flex-col gap-4"
+              }>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="bg-card rounded-xl overflow-hidden border border-border">
+                    <Skeleton className="aspect-[16/10] w-full" />
+                    <div className="p-4 space-y-3">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-4 w-1/3" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Vehicle Grid - Supabase vehicles first, then mock */}
+            {!vehiclesLoading && (
+              <div className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
+                  : "flex flex-col gap-4"
+              }>
+                {/* Real vehicles from Supabase */}
+                {supabaseVehicles.map((vehicle) => (
+                  <VehicleCardSupabase key={vehicle.id} vehicle={vehicle} />
+                ))}
+                
+                {/* Mock vehicles for demonstration */}
+                {filteredMockVehicles.map((vehicle) => (
                   <VehicleCard key={vehicle.id} {...vehicle} />
                 ))}
-            </div>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!vehiclesLoading && supabaseVehicles.length === 0 && filteredMockVehicles.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Nenhum veículo encontrado com os filtros selecionados.</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4"
+                  onClick={() => {
+                    setFilters({});
+                    setQuickSearch({ category: "", searchTerm: "", state: "" });
+                  }}
+                >
+                  Limpar filtros
+                </Button>
+              </div>
+            )}
 
             {/* Load More */}
-            <div className="flex justify-center mt-8">
-              <Button variant="outline" size="lg">
-                Carregar mais veículos
-              </Button>
-            </div>
+            {(supabaseVehicles.length > 0 || filteredMockVehicles.length > 0) && (
+              <div className="flex justify-center mt-8">
+                <Button variant="outline" size="lg">
+                  Carregar mais veículos
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </main>

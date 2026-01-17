@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { vehicles as mockVehicles } from "@/data/mockProducts";
+import { extractIdFromSlug } from "@/lib/slugify";
 import { 
   MapPin, 
   CheckCircle, 
@@ -90,7 +91,10 @@ interface SellerProfile {
 }
 
 const ProductDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id: rawId, slug } = useParams<{ id?: string; slug?: string }>();
+  
+  // Extract ID from slug if using slug route, otherwise use direct ID
+  const id = slug ? extractIdFromSlug(slug) : rawId;
   
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [images, setImages] = useState<VehicleImage[]>([]);
@@ -112,11 +116,32 @@ const ProductDetail = () => {
     const fetchVehicle = async () => {
       if (!id) return;
 
-      const { data: vehicleData, error: vehicleError } = await supabase
-        .from("vehicles")
-        .select("*")
-        .eq("id", id)
-        .single();
+      // Try to find by full UUID first
+      let vehicleData = null;
+      let vehicleError = null;
+
+      // Check if id is a valid UUID (36 chars with dashes)
+      const isFullUUID = id.length === 36 && id.includes("-");
+      
+      if (isFullUUID) {
+        const result = await supabase
+          .from("vehicles")
+          .select("*")
+          .eq("id", id)
+          .single();
+        vehicleData = result.data;
+        vehicleError = result.error;
+      } else {
+        // Search by partial ID (slug format - first 8 chars)
+        const result = await supabase
+          .from("vehicles")
+          .select("*")
+          .ilike("id", `${id}%`)
+          .limit(1)
+          .single();
+        vehicleData = result.data;
+        vehicleError = result.error;
+      }
 
       // Fallback: veículos fictícios (mock) para visual da Home
       if (vehicleError || !vehicleData) {

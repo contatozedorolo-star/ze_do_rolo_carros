@@ -60,6 +60,67 @@ export function isValidCPF(cpf: string): boolean {
 }
 
 /**
+ * Validates a Brazilian CNPJ number using the official digit verification algorithm.
+ * @param cnpj - The CNPJ string (can include formatting like dots, slashes and dashes)
+ * @returns true if the CNPJ is valid, false otherwise
+ */
+export function isValidCNPJ(cnpj: string): boolean {
+  // Remove non-numeric characters
+  const cleaned = cnpj.replace(/\D/g, '');
+  
+  // CNPJ must have exactly 14 digits
+  if (cleaned.length !== 14) {
+    return false;
+  }
+  
+  // Check for known invalid patterns (all same digits)
+  const invalidPatterns = [
+    '00000000000000',
+    '11111111111111',
+    '22222222222222',
+    '33333333333333',
+    '44444444444444',
+    '55555555555555',
+    '66666666666666',
+    '77777777777777',
+    '88888888888888',
+    '99999999999999',
+  ];
+  
+  if (invalidPatterns.includes(cleaned)) {
+    return false;
+  }
+  
+  // Calculate first verification digit
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(cleaned.charAt(i)) * weights1[i];
+  }
+  let remainder = sum % 11;
+  const digit1 = remainder < 2 ? 0 : 11 - remainder;
+  
+  if (digit1 !== parseInt(cleaned.charAt(12))) {
+    return false;
+  }
+  
+  // Calculate second verification digit
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0;
+  for (let i = 0; i < 13; i++) {
+    sum += parseInt(cleaned.charAt(i)) * weights2[i];
+  }
+  remainder = sum % 11;
+  const digit2 = remainder < 2 ? 0 : 11 - remainder;
+  
+  if (digit2 !== parseInt(cleaned.charAt(13))) {
+    return false;
+  }
+  
+  return true;
+}
+
+/**
  * Validates a Brazilian phone number.
  * @param phone - The phone string (can include formatting)
  * @returns true if the phone is valid, false otherwise
@@ -95,4 +156,19 @@ export function formatPhone(value: string): string {
     .replace(/(\d{2})(\d)/, '($1) $2')
     .replace(/(\d{5})(\d)/, '$1-$2')
     .replace(/(-\d{4})\d+?$/, '$1');
+}
+
+/**
+ * Formats a CNPJ string to the standard format XX.XXX.XXX/XXXX-XX
+ * @param cnpj - The CNPJ string
+ * @returns Formatted CNPJ
+ */
+export function formatCNPJ(value: string): string {
+  const numbers = value.replace(/\D/g, '');
+  return numbers
+    .replace(/(\d{2})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1/$2')
+    .replace(/(\d{4})(\d{1,2})/, '$1-$2')
+    .replace(/(-\d{2})\d+?$/, '$1');
 }

@@ -138,18 +138,22 @@ const Veiculos = () => {
     setActiveFiltersCount(count);
   };
 
-  // Sync quick search with sidebar filters
+  // Navigate to search page with all filters
   const handleQuickSearch = () => {
-    const newFilters = { ...filters };
+    const params = new URLSearchParams();
     
+    if (quickSearch.searchTerm.trim()) {
+      params.set("q", quickSearch.searchTerm.trim());
+    }
     if (quickSearch.category) {
-      newFilters.category = quickSearch.category as VehicleType;
+      params.set("tipo", quickSearch.category);
     }
     if (quickSearch.state) {
-      newFilters.state = quickSearch.state;
+      params.set("estado", quickSearch.state);
     }
     
-    handleFiltersChange(newFilters);
+    const queryString = params.toString();
+    navigate(`/busca${queryString ? `?${queryString}` : ''}`);
   };
 
   // Update quick search when category changes and sync

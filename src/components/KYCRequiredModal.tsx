@@ -18,7 +18,7 @@ const KYCRequiredModal = ({ isOpen, onClose, kycStatus }: KYCRequiredModalProps)
 
   const handleGoToProfile = () => {
     onClose();
-    navigate("/profile", { state: { scrollToKYC: true } });
+    navigate("/profile?tab=identity");
   };
 
   // Content based on KYC status

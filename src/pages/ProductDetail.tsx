@@ -101,6 +101,7 @@ const ProductDetail = () => {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [images, setImages] = useState<VehicleImage[]>([]);
   const [seller, setSeller] = useState<SellerProfile | null>(null);
+  const [sellerKYCApproved, setSellerKYCApproved] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -245,6 +246,16 @@ const ProductDetail = () => {
       if (sellerData) {
         setSeller(sellerData);
       }
+
+      // Check if seller has approved KYC
+      const { data: kycData } = await supabase
+        .from("kyc_verifications")
+        .select("status")
+        .eq("user_id", vehicleData.user_id)
+        .eq("status", "approved")
+        .maybeSingle();
+
+      setSellerKYCApproved(!!kycData);
 
       setLoading(false);
     };
@@ -821,13 +832,28 @@ const ProductDetail = () => {
                 <Card className="bg-white shadow-sm border-0">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-[#142562] rounded-full flex items-center justify-center text-white font-bold text-lg">
-                        {seller?.full_name?.charAt(0) || "V"}
+                      <div className="relative">
+                        <div className="w-12 h-12 bg-[#142562] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                          {seller?.full_name?.charAt(0) || "V"}
+                        </div>
+                        {sellerKYCApproved && (
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#29B765] rounded-full flex items-center justify-center border-2 border-white">
+                            <CheckCircle className="h-3 w-3 text-white" />
+                          </div>
+                        )}
                       </div>
-                      <div>
-                        <p className="font-semibold text-[#142562]">
-                          {seller?.full_name || "Vendedor"}
-                        </p>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-[#142562]">
+                            {seller?.full_name || "Vendedor"}
+                          </p>
+                          {sellerKYCApproved && (
+                            <Badge className="bg-[#29B765]/10 text-[#29B765] border-0 text-xs px-2 py-0.5">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Verificado
+                            </Badge>
+                          )}
+                        </div>
                         {(vehicle.city || vehicle.state) && (
                           <p className="text-sm text-slate-500 flex items-center gap-1">
                             <MapPin className="h-3 w-3" />

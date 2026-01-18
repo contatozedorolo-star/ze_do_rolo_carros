@@ -188,6 +188,10 @@ const Auth = () => {
             title: "Cadastro realizado!",
             description: "Verifique seu email para confirmar a conta.",
           });
+          // Automatically switch to login mode after successful signup
+          setMode('signin');
+          // Clear password fields for security
+          setFormData(prev => ({ ...prev, password: "", confirmPassword: "" }));
         }
       } else if (mode === 'signin') {
         const result = signInSchema.safeParse(formData);

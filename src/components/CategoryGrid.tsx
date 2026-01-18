@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -56,6 +56,84 @@ const vehicleCategories = [
     href: "/veiculos?tipo=implemento" 
   },
 ];
+
+// Memoized category card for better performance
+const CategoryCard = memo(({ category, index }: { category: typeof vehicleCategories[0], index: number }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  return (
+    <Link
+      key={category.id}
+      to={category.href}
+      className={cn(
+        "group relative overflow-hidden rounded-xl flex-shrink-0",
+        "w-40 md:w-48 lg:w-52 aspect-[3/4]",
+        "shadow-lg hover:shadow-xl",
+        "transition-all duration-300 ease-out",
+        "hover:scale-[1.03]",
+        "ring-2 ring-transparent hover:ring-[#FF8C36]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8C36]",
+        "bg-muted"
+      )}
+    >
+      {/* Loading placeholder */}
+      {!imageLoaded && (
+        <div className="absolute inset-0 bg-muted animate-pulse" />
+      )}
+      
+      {/* Background Image */}
+      <img
+        src={category.image}
+        alt={category.name}
+        loading={index < 4 ? "eager" : "lazy"}
+        decoding="async"
+        onLoad={() => setImageLoaded(true)}
+        className={cn(
+          "absolute inset-0 w-full h-full object-cover",
+          "transition-all duration-500 ease-out",
+          "group-hover:scale-110",
+          imageLoaded ? "opacity-100" : "opacity-0"
+        )}
+      />
+      
+      {/* Gradient Overlay */}
+      <div 
+        className={cn(
+          "absolute inset-0",
+          "bg-gradient-to-t from-[#142562]/90 via-[#142562]/40 to-transparent",
+          "transition-opacity duration-300",
+          "group-hover:from-[#142562]/95 group-hover:via-[#142562]/50"
+        )}
+      />
+      
+      {/* Orange glow effect on hover */}
+      <div 
+        className={cn(
+          "absolute inset-0 opacity-0 group-hover:opacity-100",
+          "transition-opacity duration-300",
+          "shadow-[inset_0_0_30px_rgba(255,140,54,0.3)]",
+          "pointer-events-none"
+        )}
+      />
+      
+      {/* Category Name */}
+      <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-center">
+        <span 
+          className={cn(
+            "text-lg md:text-xl font-bold tracking-wide",
+            "text-white drop-shadow-lg",
+            "transition-transform duration-300",
+            "group-hover:translate-y-[-4px]"
+          )}
+        >
+          {category.name}
+        </span>
+      </div>
+    </Link>
+  );
+});
+
+CategoryCard.displayName = "CategoryCard";
 
 const CategoryGrid = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -136,65 +214,8 @@ const CategoryGrid = () => {
           onScroll={checkScrollPosition}
           className="flex gap-4 md:gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
         >
-          {vehicleCategories.map((category) => (
-            <Link
-              key={category.id}
-              to={category.href}
-              className={cn(
-                "group relative overflow-hidden rounded-xl flex-shrink-0",
-                "w-40 md:w-48 lg:w-52 aspect-[3/4]",
-                "shadow-lg hover:shadow-xl",
-                "transition-all duration-300 ease-out",
-                "hover:scale-[1.03]",
-                "ring-2 ring-transparent hover:ring-[#FF8C36]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8C36]"
-              )}
-            >
-              {/* Background Image */}
-              <img
-                src={category.image}
-                alt={category.name}
-                className={cn(
-                  "absolute inset-0 w-full h-full object-cover",
-                  "transition-transform duration-500 ease-out",
-                  "group-hover:scale-110"
-                )}
-              />
-              
-              {/* Gradient Overlay */}
-              <div 
-                className={cn(
-                  "absolute inset-0",
-                  "bg-gradient-to-t from-[#142562]/90 via-[#142562]/40 to-transparent",
-                  "transition-opacity duration-300",
-                  "group-hover:from-[#142562]/95 group-hover:via-[#142562]/50"
-                )}
-              />
-              
-              {/* Orange glow effect on hover */}
-              <div 
-                className={cn(
-                  "absolute inset-0 opacity-0 group-hover:opacity-100",
-                  "transition-opacity duration-300",
-                  "shadow-[inset_0_0_30px_rgba(255,140,54,0.3)]",
-                  "pointer-events-none"
-                )}
-              />
-              
-              {/* Category Name */}
-              <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-center">
-                <span 
-                  className={cn(
-                    "text-lg md:text-xl font-bold tracking-wide",
-                    "text-white drop-shadow-lg",
-                    "transition-transform duration-300",
-                    "group-hover:translate-y-[-4px]"
-                  )}
-                >
-                  {category.name}
-                </span>
-              </div>
-            </Link>
+          {vehicleCategories.map((category, index) => (
+            <CategoryCard key={category.id} category={category} index={index} />
           ))}
         </div>
       </div>

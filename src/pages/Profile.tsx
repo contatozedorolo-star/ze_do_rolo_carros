@@ -15,7 +15,6 @@ import KYCVerificationForm from "@/components/KYCVerificationForm";
 import { 
   User, 
   Car, 
-  Settings, 
   CheckCircle, 
   AlertCircle,
   LogOut,
@@ -450,13 +449,13 @@ const Profile = () => {
               <User className="h-4 w-4" />
               <span className="hidden sm:inline">Meu Perfil</span>
             </TabsTrigger>
+            <TabsTrigger value="identity" className="gap-2">
+              <Shield className="h-4 w-4" />
+              <span className="hidden sm:inline">Verificar Identidade</span>
+            </TabsTrigger>
             <TabsTrigger value="vehicles" className="gap-2">
               <Car className="h-4 w-4" />
               <span className="hidden sm:inline">Meus Veículos</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-2">
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Configurações</span>
             </TabsTrigger>
           </TabsList>
 
@@ -770,8 +769,8 @@ const Profile = () => {
             </Card>
           </TabsContent>
 
-          {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
+          {/* Identity Verification Tab */}
+          <TabsContent value="identity" className="space-y-6">
             <KYCVerificationForm />
 
             <Card>

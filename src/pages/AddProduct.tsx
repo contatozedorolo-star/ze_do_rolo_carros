@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useKYCStatus } from "@/hooks/useKYCStatus";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ import VanPhotoUploadGrid, { vanPhotoCategories } from "@/components/add-product
 import BusTypeSelector from "@/components/add-product/BusTypeSelector";
 import BusPhotoUploadGrid, { busPhotoCategories } from "@/components/add-product/BusPhotoUploadGrid";
 import { formatPriceInput, parsePriceInput } from "@/lib/formatters";
+import KYCRequiredModal from "@/components/KYCRequiredModal";
 
 const vehicleTypes = [
   { value: "carro", label: "Carro", icon: Car },
@@ -157,12 +159,14 @@ const brazilianStates = [
 
 const AddProduct = () => {
   const { user, loading } = useAuth();
+  const { isVerified, kycStatus, loading: kycLoading } = useKYCStatus();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [images, setImages] = useState<{ [key: string]: File | null }>({});
   const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({});
+  const [showKYCModal, setShowKYCModal] = useState(false);
 
   const [formData, setFormData] = useState<Record<string, any>>({
     // Etapa 1 - Identificação
@@ -237,6 +241,13 @@ const AddProduct = () => {
   useEffect(() => {
     if (!loading && !user) navigate("/auth");
   }, [user, loading, navigate]);
+
+  // Show KYC modal if user is not verified
+  useEffect(() => {
+    if (!loading && !kycLoading && user && !isVerified) {
+      setShowKYCModal(true);
+    }
+  }, [loading, kycLoading, user, isVerified]);
 
   const handleImageUpload = (photoId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -517,11 +528,18 @@ const AddProduct = () => {
 
   const currentBrands = brands[formData.vehicle_type as keyof typeof brands] || brands.carro;
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
+  if (loading || kycLoading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      
+      {/* KYC Required Modal */}
+      <KYCRequiredModal 
+        isOpen={showKYCModal} 
+        onClose={() => setShowKYCModal(false)} 
+        kycStatus={kycStatus}
+      />
       <main className="container py-8 max-w-5xl">
         {/* Step Indicator */}
         <StepIndicator 

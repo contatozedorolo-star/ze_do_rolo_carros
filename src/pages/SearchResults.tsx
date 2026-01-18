@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { Search, Grid3X3, List, ChevronDown, ArrowLeft, SlidersHorizontal, X } from "lucide-react";
+import { Search, Grid3X3, List, ChevronDown, ArrowLeft, MapPin, X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VehicleCardSupabase from "@/components/VehicleCardSupabase";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { vehicles as mockVehicles } from "@/data/mockProducts";
-import { sortOptions } from "@/components/filters/FilterData";
+import { sortOptions, brazilianStates } from "@/components/filters/FilterData";
 import { useAuth } from "@/hooks/useAuth";
 import { useVehicles, useVehicleCount, VehicleFilters } from "@/hooks/useVehicles";
 import {
@@ -44,24 +44,30 @@ const SearchResults = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   
-  // Get search query from URL
+  // Get filters from URL
   const searchQuery = searchParams.get("q") || "";
   const categoryFilter = searchParams.get("tipo") || "";
+  const stateFilter = searchParams.get("estado") || "";
   
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedSort, setSelectedSort] = useState<SortOption>("relevance");
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+  const [localCategory, setLocalCategory] = useState(categoryFilter);
+  const [localState, setLocalState] = useState(stateFilter);
 
-  // Update local search when URL changes
+  // Update local state when URL changes
   useEffect(() => {
     setLocalSearchQuery(searchQuery);
-  }, [searchQuery]);
+    setLocalCategory(categoryFilter);
+    setLocalState(stateFilter);
+  }, [searchQuery, categoryFilter, stateFilter]);
 
   // Build filters for Supabase query
   const supabaseFilters = useMemo<VehicleFilters>(() => ({
     searchTerm: searchQuery || undefined,
     category: categoryFilter as any || undefined,
-  }), [searchQuery, categoryFilter]);
+    state: stateFilter || undefined,
+  }), [searchQuery, categoryFilter, stateFilter]);
 
   // Determine sort parameters
   const sortConfig = useMemo(() => {
@@ -97,29 +103,54 @@ const SearchResults = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    const params = new URLSearchParams();
+    
     if (localSearchQuery.trim()) {
-      setSearchParams({ q: localSearchQuery.trim() });
+      params.set("q", localSearchQuery.trim());
     }
+    if (localCategory && localCategory !== "all") {
+      params.set("tipo", localCategory);
+    }
+    if (localState && localState !== "all") {
+      params.set("estado", localState);
+    }
+    
+    setSearchParams(params);
   };
 
   const handleCategoryChange = (value: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (value && value !== "all") {
-      newParams.set("tipo", value);
-    } else {
-      newParams.delete("tipo");
-    }
-    setSearchParams(newParams);
+    setLocalCategory(value === "all" ? "" : value);
+  };
+
+  const handleStateChange = (value: string) => {
+    setLocalState(value === "all" ? "" : value);
   };
 
   const clearSearch = () => {
     setLocalSearchQuery("");
+    setLocalCategory("");
+    setLocalState("");
     navigate("/veiculos");
+  };
+  
+  const removeFilter = (filterType: "query" | "category" | "state") => {
+    const params = new URLSearchParams(searchParams);
+    if (filterType === "query") {
+      params.delete("q");
+      setLocalSearchQuery("");
+    } else if (filterType === "category") {
+      params.delete("tipo");
+      setLocalCategory("");
+    } else if (filterType === "state") {
+      params.delete("estado");
+      setLocalState("");
+    }
+    setSearchParams(params);
   };
 
   const selectedSortLabel = sortOptions.find(s => s.value === selectedSort)?.label || "Mais relevantes";
 
-  // Filter mock vehicles based on search query
+  // Filter mock vehicles based on search query and filters
   const filteredMockVehicles = mockVehicles.filter(vehicle => {
     const query = searchQuery.toLowerCase();
     const matchesSearch = !query || 
@@ -127,7 +158,11 @@ const SearchResults = () => {
     
     const matchesCategory = !categoryFilter || vehicle.type === categoryFilter;
     
-    return matchesSearch && matchesCategory;
+    // Mock vehicles have location like "São Paulo, SP" - extract state
+    const vehicleState = vehicle.location?.split(", ").pop() || "";
+    const matchesState = !stateFilter || vehicleState === stateFilter;
+    
+    return matchesSearch && matchesCategory && matchesState;
   });
 
   // Combine results
@@ -207,7 +242,7 @@ const SearchResults = () => {
               </div>
 
               {/* Category Filter */}
-              <Select value={categoryFilter || "all"} onValueChange={handleCategoryChange}>
+              <Select value={localCategory || "all"} onValueChange={handleCategoryChange}>
                 <SelectTrigger className="h-12 w-full sm:w-40 border-0 bg-muted/50 focus:ring-0 focus:ring-offset-0">
                   <SelectValue placeholder="Categoria" />
                 </SelectTrigger>
@@ -222,6 +257,22 @@ const SearchResults = () => {
                 </SelectContent>
               </Select>
 
+              {/* State Filter */}
+              <Select value={localState || "all"} onValueChange={handleStateChange}>
+                <SelectTrigger className="h-12 w-full sm:w-32 border-0 bg-muted/50 focus:ring-0 focus:ring-offset-0">
+                  <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
+                  <SelectValue placeholder="Estado" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-border z-50 max-h-60">
+                  <SelectItem value="all">Todos</SelectItem>
+                  {brazilianStates.map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               <Button 
                 type="submit"
                 className="h-12 px-6 bg-secondary hover:bg-secondary/90 text-white font-semibold"
@@ -233,11 +284,11 @@ const SearchResults = () => {
           </form>
 
           {/* Active Filters */}
-          {(searchQuery || categoryFilter) && (
+          {(searchQuery || categoryFilter || stateFilter) && (
             <div className="flex flex-wrap items-center gap-2 mt-4">
               <span className="text-white/60 text-sm">Filtros ativos:</span>
               {searchQuery && (
-                <Badge className="bg-white/20 text-white hover:bg-white/30 cursor-pointer" onClick={clearSearch}>
+                <Badge className="bg-white/20 text-white hover:bg-white/30 cursor-pointer" onClick={() => removeFilter("query")}>
                   "{searchQuery}"
                   <X className="h-3 w-3 ml-1" />
                 </Badge>
@@ -245,9 +296,19 @@ const SearchResults = () => {
               {categoryFilter && (
                 <Badge 
                   className="bg-white/20 text-white hover:bg-white/30 cursor-pointer"
-                  onClick={() => handleCategoryChange("all")}
+                  onClick={() => removeFilter("category")}
                 >
                   {vehicleTypeLabels[categoryFilter] || categoryFilter}
+                  <X className="h-3 w-3 ml-1" />
+                </Badge>
+              )}
+              {stateFilter && (
+                <Badge 
+                  className="bg-white/20 text-white hover:bg-white/30 cursor-pointer flex items-center gap-1"
+                  onClick={() => removeFilter("state")}
+                >
+                  <MapPin className="h-3 w-3" />
+                  {stateFilter}
                   <X className="h-3 w-3 ml-1" />
                 </Badge>
               )}

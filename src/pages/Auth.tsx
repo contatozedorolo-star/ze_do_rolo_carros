@@ -9,7 +9,7 @@ import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car, Lock, Sparkles, MapPi
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
-import { isValidCPF, isValidPhone } from "@/lib/validators";
+import { isValidPhone } from "@/lib/validators";
 import {
   Select,
   SelectContent,
@@ -57,12 +57,6 @@ const signUpSchema = z.object({
     .refine((val) => isValidPhone(val), {
       message: "Telefone inválido. Use o formato (XX) XXXXX-XXXX"
     }),
-  cpf: z.string()
-    .min(11, "CPF deve ter 11 dígitos")
-    .max(14, "CPF inválido")
-    .refine((val) => isValidCPF(val), {
-      message: "CPF inválido. Verifique os dígitos informados"
-    }),
   state: z.string().min(2, "Selecione seu estado"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   confirmPassword: z.string(),
@@ -104,7 +98,6 @@ const Auth = () => {
     full_name: "",
     email: "",
     phone: "",
-    cpf: "",
     state: "",
     password: "",
     confirmPassword: "",
@@ -142,15 +135,6 @@ const Auth = () => {
     }
   };
 
-  const formatCPF = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    return numbers
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-      .replace(/(-\d{2})\d+?$/, '$1');
-  };
-
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, '');
     return numbers
@@ -182,7 +166,6 @@ const Auth = () => {
         const { error } = await signUp(formData.email, formData.password, {
           full_name: formData.full_name,
           phone: formData.phone.replace(/\D/g, ''),
-          cpf: formData.cpf.replace(/\D/g, ''),
           state: formData.state,
         });
 
@@ -401,23 +384,6 @@ const Auth = () => {
                     className={errors.full_name ? "border-destructive" : ""}
                   />
                   {errors.full_name && <p className="text-xs text-destructive">{errors.full_name}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="cpf">CPF</Label>
-                  <Input
-                    id="cpf"
-                    name="cpf"
-                    placeholder="000.000.000-00"
-                    value={formData.cpf}
-                    onChange={(e) => {
-                      e.target.value = formatCPF(e.target.value);
-                      handleChange(e);
-                    }}
-                    maxLength={14}
-                    className={errors.cpf ? "border-destructive" : ""}
-                  />
-                  {errors.cpf && <p className="text-xs text-destructive">{errors.cpf}</p>}
                 </div>
 
                 <div className="space-y-2">

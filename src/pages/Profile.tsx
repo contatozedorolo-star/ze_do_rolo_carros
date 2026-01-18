@@ -59,6 +59,19 @@ const formatCPF = (cpf: string) => {
   return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 };
 
+// Helper to mask CNPJ
+const maskCNPJ = (cnpj: string) => {
+  if (!cnpj) return null;
+  return "**.***.***/****-**";
+};
+
+// Helper to format CNPJ
+const formatCNPJ = (cnpj: string) => {
+  if (!cnpj) return null;
+  const cleaned = cnpj.replace(/\D/g, '');
+  return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+};
+
 // Helper to mask Phone
 const maskPhone = (phone: string) => {
   if (!phone) return null;
@@ -89,6 +102,7 @@ const Profile = () => {
   
   // Privacy toggles
   const [showCPF, setShowCPF] = useState(false);
+  const [showCNPJ, setShowCNPJ] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
@@ -525,6 +539,32 @@ const Profile = () => {
                       </div>
                     )}
                   </div>
+
+                  {/* CNPJ with privacy toggle - only show if filled */}
+                  {(profile as any).cnpj && (
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        CNPJ
+                        <span className="text-xs text-muted-foreground">(Pessoa Jurídica)</span>
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <p className="text-foreground font-medium">
+                          {showCNPJ ? formatCNPJ((profile as any).cnpj) : maskCNPJ((profile as any).cnpj)}
+                        </p>
+                        <button
+                          onClick={() => setShowCNPJ(!showCNPJ)}
+                          className="text-muted-foreground hover:text-foreground transition-colors"
+                          title={showCNPJ ? "Ocultar CNPJ" : "Mostrar CNPJ"}
+                        >
+                          {showCNPJ ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Phone with privacy toggle */}
                   <div className="space-y-2">

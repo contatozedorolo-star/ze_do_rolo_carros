@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileCheck, Clock, CheckCircle, XCircle, Camera, CreditCard, Loader2, User } from "lucide-react";
-import { isValidCPF } from "@/lib/validators";
+import { Upload, FileCheck, Clock, CheckCircle, XCircle, Camera, CreditCard, Loader2, User, Building2 } from "lucide-react";
+import { isValidCPF, isValidCNPJ } from "@/lib/validators";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface KYCVerification {
   id: string;
@@ -60,8 +61,9 @@ const KYCVerificationForm = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [kycVerification, setKycVerification] = useState<KYCVerification | null>(null);
-  const [cpf, setCpf] = useState("");
-  const [cpfError, setCpfError] = useState("");
+  const [personType, setPersonType] = useState<"fisica" | "juridica">("fisica");
+  const [cpfCnpj, setCpfCnpj] = useState("");
+  const [cpfCnpjError, setCpfCnpjError] = useState("");
   const [documentType, setDocumentType] = useState("");
   const [documentNumber, setDocumentNumber] = useState("");
   const [documentFront, setDocumentFront] = useState<File | null>(null);
@@ -74,6 +76,16 @@ const KYCVerificationForm = () => {
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .replace(/(-\d{2})\d+?$/, '$1');
+  };
+
+  const formatCNPJ = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers
+      .replace(/(\d{2})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1/$2')
+      .replace(/(\d{4})(\d{1,2})/, '$1-$2')
       .replace(/(-\d{2})\d+?$/, '$1');
   };
 
@@ -112,18 +124,31 @@ const KYCVerificationForm = () => {
   };
 
   const handleSubmit = async () => {
-    // Validate CPF
-    const cleanCpf = cpf.replace(/\D/g, '');
-    if (!cleanCpf || !isValidCPF(cleanCpf)) {
-      setCpfError("CPF inválido. Verifique os dígitos informados.");
-      toast({
-        title: "CPF inválido",
-        description: "Por favor, informe um CPF válido.",
-        variant: "destructive",
-      });
-      return;
+    // Validate CPF or CNPJ based on person type
+    const cleanValue = cpfCnpj.replace(/\D/g, '');
+    
+    if (personType === "fisica") {
+      if (!cleanValue || !isValidCPF(cleanValue)) {
+        setCpfCnpjError("CPF inválido. Verifique os dígitos informados.");
+        toast({
+          title: "CPF inválido",
+          description: "Por favor, informe um CPF válido.",
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      if (!cleanValue || !isValidCNPJ(cleanValue)) {
+        setCpfCnpjError("CNPJ inválido. Verifique os dígitos informados.");
+        toast({
+          title: "CNPJ inválido",
+          description: "Por favor, informe um CNPJ válido.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
-    setCpfError("");
+    setCpfCnpjError("");
 
     if (!user || !documentType || !documentNumber || !documentFront || !selfie) {
       toast({
@@ -138,7 +163,7 @@ const KYCVerificationForm = () => {
 
     try {
       const timestamp = Date.now();
-      const cleanCpf = cpf.replace(/\D/g, '');
+      const cleanValue = cpfCnpj.replace(/\D/g, '');
       
       // Upload files
       const frontPath = await uploadFile(documentFront, `${user.id}/doc_front_${timestamp}.${documentFront.name.split('.').pop()}`);
@@ -149,14 +174,16 @@ const KYCVerificationForm = () => {
         throw new Error("Erro ao fazer upload dos arquivos");
       }
 
-      // Update CPF in profile
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({ cpf: cleanCpf })
-        .eq("id", user.id);
+      // Update CPF/CNPJ in profile (only CPF field for now, CNPJ would need a separate field)
+      if (personType === "fisica") {
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .update({ cpf: cleanValue })
+          .eq("id", user.id);
 
-      if (profileError) {
-        console.error("Error updating CPF in profile:", profileError);
+        if (profileError) {
+          console.error("Error updating CPF in profile:", profileError);
+        }
       }
 
       // Create or update KYC verification
@@ -289,26 +316,59 @@ const KYCVerificationForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* CPF Field */}
+        {/* Person Type Selection */}
+        <div className="space-y-3">
+          <Label>Tipo de Pessoa *</Label>
+          <RadioGroup 
+            value={personType} 
+            onValueChange={(value: "fisica" | "juridica") => {
+              setPersonType(value);
+              setCpfCnpj("");
+              setCpfCnpjError("");
+            }}
+            className="flex gap-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="fisica" id="fisica" />
+              <Label htmlFor="fisica" className="flex items-center gap-2 cursor-pointer">
+                <User className="h-4 w-4" />
+                Pessoa Física (CPF)
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="juridica" id="juridica" />
+              <Label htmlFor="juridica" className="flex items-center gap-2 cursor-pointer">
+                <Building2 className="h-4 w-4" />
+                Pessoa Jurídica (CNPJ)
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* CPF/CNPJ Field */}
         <div className="space-y-2">
           <Label className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            CPF *
+            {personType === "fisica" ? <User className="h-4 w-4" /> : <Building2 className="h-4 w-4" />}
+            {personType === "fisica" ? "CPF *" : "CNPJ *"}
           </Label>
           <Input
-            placeholder="000.000.000-00"
-            value={cpf}
+            placeholder={personType === "fisica" ? "000.000.000-00" : "00.000.000/0000-00"}
+            value={cpfCnpj}
             onChange={(e) => {
-              const formatted = formatCPF(e.target.value);
-              setCpf(formatted);
-              if (cpfError) setCpfError("");
+              const formatted = personType === "fisica" 
+                ? formatCPF(e.target.value) 
+                : formatCNPJ(e.target.value);
+              setCpfCnpj(formatted);
+              if (cpfCnpjError) setCpfCnpjError("");
             }}
-            maxLength={14}
-            className={cpfError ? "border-destructive" : ""}
+            maxLength={personType === "fisica" ? 14 : 18}
+            className={cpfCnpjError ? "border-destructive" : ""}
           />
-          {cpfError && <p className="text-xs text-destructive">{cpfError}</p>}
+          {cpfCnpjError && <p className="text-xs text-destructive">{cpfCnpjError}</p>}
           <p className="text-xs text-muted-foreground">
-            Seu CPF será usado para validar sua identidade.
+            {personType === "fisica" 
+              ? "Seu CPF será usado para validar sua identidade." 
+              : "O CNPJ será usado para validar sua empresa."}
           </p>
         </div>
 
@@ -437,7 +497,7 @@ const KYCVerificationForm = () => {
           variant="cta" 
           className="w-full" 
           onClick={handleSubmit}
-          disabled={uploading || !cpf || !documentType || !documentNumber || !documentFront || !selfie}
+          disabled={uploading || !cpfCnpj || !documentType || !documentNumber || !documentFront || !selfie}
         >
           {uploading ? (
             <>

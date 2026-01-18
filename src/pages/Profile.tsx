@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -90,8 +90,13 @@ const formatPhone = (phone: string) => {
 const Profile = () => {
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Get initial tab from URL params
+  const initialTab = searchParams.get("tab") || "profile";
+  const [activeTab, setActiveTab] = useState(initialTab);
   
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loadingVehicles, setLoadingVehicles] = useState(true);
@@ -443,7 +448,7 @@ const Profile = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="profile" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 max-w-md">
             <TabsTrigger value="profile" className="gap-2">
               <User className="h-4 w-4" />

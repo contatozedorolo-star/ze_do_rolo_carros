@@ -20,7 +20,7 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/veiculos?search=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/busca?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
       setMobileMenuOpen(false);
     }

@@ -52,13 +52,14 @@ const Veiculos = () => {
   const [filters, setFilters] = useState<VehicleFilters>({});
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
   
-  // Get category from URL parameter
+  // Get category and search from URL parameters
   const urlCategory = searchParams.get("tipo") as VehicleType | null;
+  const urlSearch = searchParams.get("search");
   
   // Quick search state
   const [quickSearch, setQuickSearch] = useState({
     category: urlCategory || "",
-    searchTerm: "",
+    searchTerm: urlSearch || "",
     state: "",
   });
 
@@ -103,13 +104,16 @@ const Veiculos = () => {
   // Get count
   const { data: vehicleCount = 0 } = useVehicleCount(supabaseFilters);
 
-  // Initialize filters from URL parameter
+  // Initialize filters from URL parameters
   useEffect(() => {
     if (urlCategory) {
       setFilters(prev => ({ ...prev, category: urlCategory as VehicleType }));
       setQuickSearch(prev => ({ ...prev, category: urlCategory }));
     }
-  }, [urlCategory]);
+    if (urlSearch) {
+      setQuickSearch(prev => ({ ...prev, searchTerm: urlSearch }));
+    }
+  }, [urlCategory, urlSearch]);
 
   // Show modal if not logged in
   const showRestrictedModal = !authLoading && !user;

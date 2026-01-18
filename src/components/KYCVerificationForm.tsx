@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileCheck, Clock, CheckCircle, XCircle, Camera, CreditCard, Loader2 } from "lucide-react";
+import { Upload, FileCheck, Clock, CheckCircle, XCircle, Camera, CreditCard, Loader2, User } from "lucide-react";
+import { isValidCPF } from "@/lib/validators";
 
 interface KYCVerification {
   id: string;
@@ -22,8 +23,8 @@ interface KYCVerification {
 }
 
 const documentTypes = [
-  { value: "cpf", label: "CPF" },
-  { value: "cnpj", label: "CNPJ" },
+  { value: "rg", label: "RG" },
+  { value: "cnh", label: "CNH" },
 ];
 
 const statusInfo = {
@@ -59,11 +60,22 @@ const KYCVerificationForm = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [kycVerification, setKycVerification] = useState<KYCVerification | null>(null);
+  const [cpf, setCpf] = useState("");
+  const [cpfError, setCpfError] = useState("");
   const [documentType, setDocumentType] = useState("");
   const [documentNumber, setDocumentNumber] = useState("");
   const [documentFront, setDocumentFront] = useState<File | null>(null);
   const [documentBack, setDocumentBack] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
+
+  const formatCPF = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .replace(/(-\d{2})\d+?$/, '$1');
+  };
 
   useEffect(() => {
     fetchKYCVerification();
@@ -100,6 +112,19 @@ const KYCVerificationForm = () => {
   };
 
   const handleSubmit = async () => {
+    // Validate CPF
+    const cleanCpf = cpf.replace(/\D/g, '');
+    if (!cleanCpf || !isValidCPF(cleanCpf)) {
+      setCpfError("CPF inválido. Verifique os dígitos informados.");
+      toast({
+        title: "CPF inválido",
+        description: "Por favor, informe um CPF válido.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setCpfError("");
+
     if (!user || !documentType || !documentNumber || !documentFront || !selfie) {
       toast({
         title: "Campos obrigatórios",
@@ -113,6 +138,7 @@ const KYCVerificationForm = () => {
 
     try {
       const timestamp = Date.now();
+      const cleanCpf = cpf.replace(/\D/g, '');
       
       // Upload files
       const frontPath = await uploadFile(documentFront, `${user.id}/doc_front_${timestamp}.${documentFront.name.split('.').pop()}`);
@@ -121,6 +147,16 @@ const KYCVerificationForm = () => {
 
       if (!frontPath || !selfiePath) {
         throw new Error("Erro ao fazer upload dos arquivos");
+      }
+
+      // Update CPF in profile
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ cpf: cleanCpf })
+        .eq("id", user.id);
+
+      if (profileError) {
+        console.error("Error updating CPF in profile:", profileError);
       }
 
       // Create or update KYC verification
@@ -253,9 +289,32 @@ const KYCVerificationForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* CPF Field */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2">
+            <User className="h-4 w-4" />
+            CPF *
+          </Label>
+          <Input
+            placeholder="000.000.000-00"
+            value={cpf}
+            onChange={(e) => {
+              const formatted = formatCPF(e.target.value);
+              setCpf(formatted);
+              if (cpfError) setCpfError("");
+            }}
+            maxLength={14}
+            className={cpfError ? "border-destructive" : ""}
+          />
+          {cpfError && <p className="text-xs text-destructive">{cpfError}</p>}
+          <p className="text-xs text-muted-foreground">
+            Seu CPF será usado para validar sua identidade.
+          </p>
+        </div>
+
         {/* Document Type Selection */}
         <div className="space-y-2">
-          <Label>Tipo de Documento</Label>
+          <Label>Tipo de Documento de Identificação *</Label>
           <Select value={documentType} onValueChange={setDocumentType}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione o tipo de documento" />
@@ -274,7 +333,7 @@ const KYCVerificationForm = () => {
         <div className="space-y-2">
           <Label>Número do Documento *</Label>
           <Input
-            placeholder={documentType === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'}
+            placeholder="Número do RG ou CNH"
             value={documentNumber}
             onChange={(e) => setDocumentNumber(e.target.value)}
           />
@@ -378,7 +437,7 @@ const KYCVerificationForm = () => {
           variant="cta" 
           className="w-full" 
           onClick={handleSubmit}
-          disabled={uploading || !documentType || !documentNumber || !documentFront || !selfie}
+          disabled={uploading || !cpf || !documentType || !documentNumber || !documentFront || !selfie}
         >
           {uploading ? (
             <>

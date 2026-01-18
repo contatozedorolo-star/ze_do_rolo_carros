@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MapPin, Star, CheckCircle, Award, ArrowRightLeft, Calendar, Gauge, Fuel } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +45,7 @@ const VehicleCard = ({
   requiresAuth = false,
 }: VehicleCardProps) => {
   const navigate = useNavigate();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const goToDetail = () => {
     if (requiresAuth) {
@@ -69,10 +71,20 @@ const VehicleCard = ({
     >
       {/* Image Container */}
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+        {/* Loading placeholder */}
+        {!imageLoaded && (
+          <div className="absolute inset-0 bg-muted animate-pulse" />
+        )}
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setImageLoaded(true)}
+          className={cn(
+            "w-full h-full object-cover transition-all duration-300 group-hover:scale-105",
+            imageLoaded ? "opacity-100" : "opacity-0"
+          )}
         />
 
         {/* Badges Overlay */}

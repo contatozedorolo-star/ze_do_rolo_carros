@@ -174,7 +174,7 @@ const KYCVerificationForm = () => {
         throw new Error("Erro ao fazer upload dos arquivos");
       }
 
-      // Update CPF/CNPJ in profile (only CPF field for now, CNPJ would need a separate field)
+      // Update CPF or CNPJ in profile based on person type
       if (personType === "fisica") {
         const { error: profileError } = await supabase
           .from("profiles")
@@ -183,6 +183,15 @@ const KYCVerificationForm = () => {
 
         if (profileError) {
           console.error("Error updating CPF in profile:", profileError);
+        }
+      } else {
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .update({ cnpj: cleanValue })
+          .eq("id", user.id);
+
+        if (profileError) {
+          console.error("Error updating CNPJ in profile:", profileError);
         }
       }
 

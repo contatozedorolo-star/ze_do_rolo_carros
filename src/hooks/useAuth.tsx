@@ -94,9 +94,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     cpf?: string;
     state?: string;
   }) => {
-    // Usa a URL de produção para redirecionamentos
-    const productionUrl = 'https://zedoscarros.lovable.app';
-    const redirectUrl = `${productionUrl}/`;
+    // Usa a URL dinâmica para redirecionamentos
+    const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -120,13 +119,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signInWithGoogle = async (redirectPath?: string) => {
-    const productionUrl = 'https://zedoscarros.lovable.app';
     const finalRedirect = redirectPath || '/dashboard';
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${productionUrl}${finalRedirect}`,
+        redirectTo: `${window.location.origin}${finalRedirect}`,
       }
     });
     
@@ -141,9 +139,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetPassword = async (email: string) => {
-    // Usa a URL de produção para redirecionamentos
-    const productionUrl = 'https://zedoscarros.lovable.app';
-    const redirectUrl = `${productionUrl}/auth?mode=reset`;
+    // Usa a URL dinâmica para redirecionamentos
+    const redirectUrl = `${window.location.origin}/auth?mode=reset`;
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl

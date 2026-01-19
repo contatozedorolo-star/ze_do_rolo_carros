@@ -168,6 +168,12 @@ const AddProduct = () => {
   const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({});
   const [showKYCModal, setShowKYCModal] = useState(false);
 
+  // Handle KYC modal close - redirect user away since they can't access this page
+  const handleKYCModalClose = () => {
+    setShowKYCModal(false);
+    navigate("/");
+  };
+
   const [formData, setFormData] = useState<Record<string, any>>({
     // Etapa 1 - Identificação
     vehicle_type: "carro",
@@ -537,7 +543,7 @@ const AddProduct = () => {
       {/* KYC Required Modal */}
       <KYCRequiredModal 
         isOpen={showKYCModal} 
-        onClose={() => setShowKYCModal(false)} 
+        onClose={handleKYCModalClose} 
         kycStatus={kycStatus}
       />
       <main className="container py-8 max-w-5xl">

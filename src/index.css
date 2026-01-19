@@ -154,6 +154,21 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .animate-fade-slide-in {
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Custom scrollbar */

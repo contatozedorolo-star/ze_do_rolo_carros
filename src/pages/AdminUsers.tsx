@@ -86,6 +86,7 @@ interface UserProfile {
   created_at: string;
   email?: string;
   is_verified?: boolean;
+  kyc_status?: 'pending' | 'under_review' | 'approved' | 'rejected' | null;
   vehicles_count?: number;
   is_admin?: boolean;
   // User statistics
@@ -220,12 +221,13 @@ const AdminUsers = () => {
       // Fetch KYC verification status, admin role, and stats for each user
       const usersWithDetails = await Promise.all(
         (profiles || []).map(async (profile) => {
-          // Check if user is verified
+          // Check KYC status - get the most recent verification record
           const { data: kycData } = await supabase
             .from("kyc_verifications")
             .select("status")
             .eq("user_id", profile.id)
-            .eq("status", "approved")
+            .order("created_at", { ascending: false })
+            .limit(1)
             .maybeSingle();
 
           // Get user's vehicles
@@ -261,10 +263,13 @@ const AdminUsers = () => {
             .eq("role", "admin")
             .maybeSingle();
 
+          const kycStatus = kycData?.status as 'pending' | 'under_review' | 'approved' | 'rejected' | undefined;
+
           return {
             ...profile,
             email: emailMap[profile.id] || undefined,
-            is_verified: !!kycData,
+            is_verified: kycStatus === 'approved',
+            kyc_status: kycStatus || null,
             vehicles_count: vehicleIds.length,
             is_admin: !!adminData,
             total_views: totalViews,
@@ -449,7 +454,9 @@ const AdminUsers = () => {
 
   if (!isAdmin) return null;
 
-  const verifiedCount = users.filter((u) => u.is_verified).length;
+  const verifiedCount = users.filter((u) => u.kyc_status === 'approved').length;
+  const underReviewCount = users.filter((u) => u.kyc_status === 'under_review' || u.kyc_status === 'pending').length;
+  const pendingCount = users.filter((u) => !u.kyc_status).length;
   const withVehiclesCount = users.filter((u) => (u.vehicles_count || 0) > 0).length;
 
   return (
@@ -514,10 +521,21 @@ const AdminUsers = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Não Verificados</p>
-                  <p className="text-2xl font-bold text-amber-500">{users.length - verifiedCount}</p>
+                  <p className="text-sm text-muted-foreground">Em Análise</p>
+                  <p className="text-2xl font-bold text-amber-500">{underReviewCount}</p>
                 </div>
-                <UserX className="h-8 w-8 text-amber-500" />
+                <Shield className="h-8 w-8 text-amber-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-gray-400/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Pendentes</p>
+                  <p className="text-2xl font-bold text-gray-500">{pendingCount}</p>
+                </div>
+                <UserX className="h-8 w-8 text-gray-400" />
               </div>
             </CardContent>
           </Card>
@@ -653,10 +671,15 @@ const AdminUsers = () => {
                           )}
                         </TableCell>
                         <TableCell>
-                          {userItem.is_verified ? (
+                          {userItem.kyc_status === 'approved' ? (
                             <Badge className="bg-green-500">
                               <UserCheck className="w-3 h-3 mr-1" />
                               Verificado
+                            </Badge>
+                          ) : userItem.kyc_status === 'under_review' || userItem.kyc_status === 'pending' ? (
+                            <Badge className="bg-amber-500 text-white">
+                              <Shield className="w-3 h-3 mr-1" />
+                              Em Análise
                             </Badge>
                           ) : (
                             <Badge variant="secondary">
@@ -773,10 +796,12 @@ const AdminUsers = () => {
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    {selectedUser.is_verified ? (
+                    {selectedUser.kyc_status === 'approved' ? (
                       <Badge className="bg-green-500">Verificado</Badge>
+                    ) : selectedUser.kyc_status === 'under_review' || selectedUser.kyc_status === 'pending' ? (
+                      <Badge className="bg-amber-500 text-white">Em Análise</Badge>
                     ) : (
-                      <Badge variant="secondary">Não Verificado</Badge>
+                      <Badge variant="secondary">Pendente</Badge>
                     )}
                     <Badge variant="outline">
                       <Car className="w-3 h-3 mr-1" />

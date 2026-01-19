@@ -297,9 +297,11 @@ const Auth = () => {
           {/* Logo */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="w-12 h-12 rounded-xl gradient-success flex items-center justify-center">
-                <span className="text-accent-foreground font-bold text-xl">Z</span>
-              </div>
+              <img 
+                src="/logo-zedorolo.png" 
+                alt="Zé do Rolo" 
+                className="w-16 h-16 object-contain"
+              />
             </div>
             <h1 className="text-2xl font-bold text-foreground">{getTitle()}</h1>
             <p className="text-muted-foreground mt-2">{getSubtitle()}</p>

@@ -21,7 +21,6 @@ const carBodyTypes = [
   { value: "pickup", label: "Picape", image: bodyPickup, icon: null },
   { value: "sedan", label: "Sedan", image: bodySedan, icon: null },
   { value: "suv", label: "SUV", image: bodySuv, icon: null },
-  { value: "van", label: "Van", image: bodyMinivan, icon: null },
 ];
 
 interface CarBodyTypeSelectorProps {

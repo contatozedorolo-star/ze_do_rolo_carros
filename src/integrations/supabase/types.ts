@@ -634,6 +634,8 @@ export type Database = {
         | "camionete"
         | "van"
         | "onibus"
+        | "trator"
+        | "implemento"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -816,7 +818,16 @@ export const Constants = {
         "cavalo_mecanico",
         "vuc",
       ],
-      vehicle_type: ["carro", "caminhao", "moto", "camionete", "van", "onibus"],
+      vehicle_type: [
+        "carro",
+        "caminhao",
+        "moto",
+        "camionete",
+        "van",
+        "onibus",
+        "trator",
+        "implemento",
+      ],
     },
   },
 } as const

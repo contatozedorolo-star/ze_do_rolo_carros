@@ -8,10 +8,11 @@ import bodyWagon from "@/assets/body-wagon.png";
 import bodyPickup from "@/assets/body-pickup.png";
 import bodyMinivan from "@/assets/body-minivan.png";
 import bodyCoupe from "@/assets/body-coupe.png";
+import bodyConversivel from "@/assets/body-conversivel.png";
 
 const carBodyTypes = [
   { value: "buggy", label: "Buggy", image: null, icon: "🏎️" },
-  { value: "conversivel", label: "Conversível", image: bodyCoupe, icon: null },
+  { value: "conversivel", label: "Conversível", image: bodyConversivel, icon: null },
   { value: "coupe", label: "Coupe", image: bodyCoupe, icon: null },
   { value: "hatch", label: "Hatch", image: bodyHatch, icon: null },
   { value: "minivan", label: "Minivan", image: bodyMinivan, icon: null },

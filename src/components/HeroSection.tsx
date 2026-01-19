@@ -1,10 +1,14 @@
 import { Shield, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { BeamsBackground } from "@/components/ui/beams-background";
 
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden gradient-hero">
+      {/* Animated Beams Background */}
+      <BeamsBackground className="absolute inset-0" intensity="medium" />
+      
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-64 h-64 bg-secondary rounded-full blur-3xl" />

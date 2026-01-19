@@ -527,14 +527,14 @@ const AdminUsers = () => {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-gray-400/50">
+          <Card className="border-red-400/50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Pendentes</p>
-                  <p className="text-2xl font-bold text-gray-500">{users.length - verifiedCount - underReviewCount}</p>
+                  <p className="text-2xl font-bold text-red-400">{users.length - verifiedCount - underReviewCount}</p>
                 </div>
-                <UserX className="h-8 w-8 text-gray-400" />
+                <UserX className="h-8 w-8 text-red-400" />
               </div>
             </CardContent>
           </Card>
@@ -681,7 +681,7 @@ const AdminUsers = () => {
                               Análise
                             </Badge>
                           ) : (
-                            <Badge variant="secondary">
+                            <Badge className="bg-red-400 text-white">
                               <UserX className="w-3 h-3 mr-1" />
                               Pendente
                             </Badge>
@@ -800,7 +800,7 @@ const AdminUsers = () => {
                     ) : selectedUser.kyc_status === 'under_review' || selectedUser.kyc_status === 'pending' ? (
                       <Badge className="bg-orange-500 text-white">Análise</Badge>
                     ) : (
-                      <Badge variant="secondary">Pendente</Badge>
+                      <Badge className="bg-red-400 text-white">Pendente</Badge>
                     )}
                     <Badge variant="outline">
                       <Car className="w-3 h-3 mr-1" />

@@ -161,7 +161,7 @@ const Header = () => {
                 <Link to="/auth">Entrar</Link>
               </Button>
               <Button variant="cta" size="sm" className="hidden sm:flex" asChild>
-                <Link to="/auth">Cadastre-se Grátis</Link>
+                <Link to="/auth?mode=signup">Cadastre-se Grátis</Link>
               </Button>
             </>
           )}
@@ -263,7 +263,7 @@ const Header = () => {
               </div>
             ) : (
               <Button variant="cta" className="w-full" asChild>
-                <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>Cadastre-se Grátis</Link>
+                <Link to="/auth?mode=signup" onClick={() => setMobileMenuOpen(false)}>Cadastre-se Grátis</Link>
               </Button>
             )}
           </div>

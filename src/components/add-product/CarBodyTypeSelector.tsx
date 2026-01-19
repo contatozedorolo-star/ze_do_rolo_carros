@@ -9,7 +9,7 @@ import bodyPickup from "@/assets/body-pickup.png";
 import bodyMinivan from "@/assets/body-minivan.png";
 import bodyCoupe from "@/assets/body-coupe.png";
 import bodyConversivel from "@/assets/body-conversivel.png";
-import bodyBuggy from "@/assets/body-buggy.jpg";
+import bodyBuggy from "@/assets/body-buggy.png";
 
 const carBodyTypes = [
   { value: "buggy", label: "Buggy", image: bodyBuggy, icon: null },

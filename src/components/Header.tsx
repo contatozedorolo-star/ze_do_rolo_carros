@@ -51,6 +51,7 @@ const Header = () => {
     { href: "/veiculos", label: "Veículos", protected: true },
     { href: "/tabela-fipe", label: "Tabela FIPE" },
     { href: "/como-funciona", label: "Como Funciona" },
+    { href: "/blog", label: "Blog" },
     { href: "/assistente-ia", label: "Zé IA", isNew: true, protected: true },
   ];
 

@@ -5,13 +5,37 @@ import { Link } from "react-router-dom";
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden gradient-hero">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-secondary rounded-full blur-3xl" />
-        <div className="absolute bottom-10 right-20 w-96 h-96 bg-accent rounded-full blur-3xl" />
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Floating orbs with animation */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-float-medium" />
+        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-secondary/15 rounded-full blur-3xl animate-float-fast" />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-accent/10 rounded-full blur-3xl animate-float-slow-reverse" />
+        
+        {/* Gradient waves */}
+        <div className="absolute inset-0">
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-primary/30 to-transparent animate-pulse-slow" />
+          <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-primary/20 to-transparent" />
+        </div>
+        
+        {/* Moving particles */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-[10%] left-[10%] w-2 h-2 bg-secondary rounded-full animate-particle-1" />
+          <div className="absolute top-[20%] left-[80%] w-1.5 h-1.5 bg-accent rounded-full animate-particle-2" />
+          <div className="absolute top-[60%] left-[20%] w-2 h-2 bg-secondary rounded-full animate-particle-3" />
+          <div className="absolute top-[40%] left-[70%] w-1.5 h-1.5 bg-accent rounded-full animate-particle-4" />
+          <div className="absolute top-[80%] left-[50%] w-2 h-2 bg-secondary rounded-full animate-particle-5" />
+          <div className="absolute top-[30%] left-[40%] w-1 h-1 bg-white rounded-full animate-particle-1" />
+          <div className="absolute top-[70%] left-[85%] w-1.5 h-1.5 bg-white rounded-full animate-particle-2" />
+          <div className="absolute top-[50%] left-[15%] w-1 h-1 bg-white rounded-full animate-particle-3" />
+        </div>
+
+        {/* Mesh gradient overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,hsl(var(--primary))_70%)] opacity-60" />
       </div>
 
-      <div className="container relative py-16 md:py-24">
+      <div className="container relative py-16 md:py-24 z-10">
         <div className="max-w-3xl mx-auto text-center space-y-8">
           {/* Trust Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/30 animate-fade-in">
@@ -72,7 +96,7 @@ const HeroSection = () => {
       </div>
 
       {/* Wave Divider */}
-      <div className="absolute bottom-0 left-0 right-0">
+      <div className="absolute bottom-0 left-0 right-0 z-10">
         <svg
           viewBox="0 0 1440 100"
           fill="none"

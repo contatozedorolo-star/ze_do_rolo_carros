@@ -748,13 +748,13 @@ const AdminUsers = () => {
 
       {/* User Details Dialog */}
       <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
+        <DialogContent className="max-w-lg max-h-[85vh] flex flex-col">
+          <DialogHeader className="shrink-0">
             <DialogTitle>Detalhes do Usuário</DialogTitle>
           </DialogHeader>
 
           {selectedUser && (
-            <div className="space-y-6">
+            <div className="space-y-6 overflow-y-auto flex-1 pr-2">
               {/* User Header */}
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">

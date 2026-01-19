@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import CategoryGrid from "@/components/CategoryGrid";
 import Footer from "@/components/Footer";
 import VehicleCard from "@/components/VehicleCard";
+import BlogSection from "@/components/BlogSection";
 import { featuredVehicles, zeFindsVehicles, tradeVehicles } from "@/data/mockProducts";
 
 interface VehicleSectionProps {
@@ -61,6 +62,9 @@ const Index = () => {
             icon={<ArrowRightLeft className="h-5 w-5 text-primary" />}
           />
         </div>
+
+        {/* Blog Section */}
+        <BlogSection />
       </main>
       <Footer />
     </div>

@@ -39,14 +39,12 @@ import BusPhotoUploadGrid, { busPhotoCategories } from "@/components/add-product
 import { formatPriceInput, parsePriceInput } from "@/lib/formatters";
 import KYCRequiredModal from "@/components/KYCRequiredModal";
 
-import vanCategoryIcon from "@/assets/category-van-icon.png";
-
 const vehicleTypes = [
-  { value: "carro", label: "Carro", icon: Car, image: null },
-  { value: "moto", label: "Moto", icon: Bike, image: null },
-  { value: "caminhao", label: "Caminhão", icon: Truck, image: null },
-  { value: "van", label: "Van", icon: null, image: vanCategoryIcon },
-  { value: "onibus", label: "Ônibus", icon: Bus, image: null },
+  { value: "carro", label: "Carro", icon: Car },
+  { value: "moto", label: "Moto", icon: Bike },
+  { value: "caminhao", label: "Caminhão", icon: Truck },
+  { value: "van", label: "Van", icon: Bus },
+  { value: "onibus", label: "Ônibus", icon: Bus },
 ];
 
 const carSteps = [
@@ -580,15 +578,7 @@ const AddProduct = () => {
                             : "border-border hover:border-primary/50"
                         }`}
                       >
-                        {t.image ? (
-                          <img 
-                            src={t.image} 
-                            alt={t.label} 
-                            className={`h-8 w-auto object-contain ${formData.vehicle_type === t.value ? "" : "opacity-60"}`}
-                          />
-                        ) : Icon ? (
-                          <Icon className={`h-8 w-8 ${formData.vehicle_type === t.value ? "text-primary" : "text-muted-foreground"}`} />
-                        ) : null}
+                        <Icon className={`h-8 w-8 ${formData.vehicle_type === t.value ? "text-primary" : "text-muted-foreground"}`} />
                         <span className={`text-sm font-medium ${formData.vehicle_type === t.value ? "text-primary" : ""}`}>{t.label}</span>
                       </button>
                     );

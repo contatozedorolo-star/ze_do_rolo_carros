@@ -7,7 +7,7 @@ const BlogSection = () => {
   const featuredPosts = getFeaturedPosts(3);
 
   return (
-    <section className="py-12 bg-muted/30">
+    <section className="pt-8 pb-6 bg-muted/30">
       <div className="container">
         <div className="flex items-center justify-between mb-8">
           <div>

@@ -456,7 +456,6 @@ const AdminUsers = () => {
 
   const verifiedCount = users.filter((u) => u.kyc_status === 'approved').length;
   const underReviewCount = users.filter((u) => u.kyc_status === 'under_review' || u.kyc_status === 'pending').length;
-  const pendingCount = users.filter((u) => !u.kyc_status).length;
   const withVehiclesCount = users.filter((u) => (u.vehicles_count || 0) > 0).length;
 
   return (
@@ -517,14 +516,14 @@ const AdminUsers = () => {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-amber-500/50">
+          <Card className="border-orange-500/50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Em Análise</p>
-                  <p className="text-2xl font-bold text-amber-500">{underReviewCount}</p>
+                  <p className="text-sm text-muted-foreground">Análise</p>
+                  <p className="text-2xl font-bold text-orange-500">{underReviewCount}</p>
                 </div>
-                <Shield className="h-8 w-8 text-amber-500" />
+                <Shield className="h-8 w-8 text-orange-500" />
               </div>
             </CardContent>
           </Card>
@@ -533,7 +532,7 @@ const AdminUsers = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Pendentes</p>
-                  <p className="text-2xl font-bold text-gray-500">{pendingCount}</p>
+                  <p className="text-2xl font-bold text-gray-500">{users.length - verifiedCount - underReviewCount}</p>
                 </div>
                 <UserX className="h-8 w-8 text-gray-400" />
               </div>
@@ -677,9 +676,9 @@ const AdminUsers = () => {
                               Verificado
                             </Badge>
                           ) : userItem.kyc_status === 'under_review' || userItem.kyc_status === 'pending' ? (
-                            <Badge className="bg-amber-500 text-white">
+                            <Badge className="bg-orange-500 text-white">
                               <Shield className="w-3 h-3 mr-1" />
-                              Em Análise
+                              Análise
                             </Badge>
                           ) : (
                             <Badge variant="secondary">
@@ -799,7 +798,7 @@ const AdminUsers = () => {
                     {selectedUser.kyc_status === 'approved' ? (
                       <Badge className="bg-green-500">Verificado</Badge>
                     ) : selectedUser.kyc_status === 'under_review' || selectedUser.kyc_status === 'pending' ? (
-                      <Badge className="bg-amber-500 text-white">Em Análise</Badge>
+                      <Badge className="bg-orange-500 text-white">Análise</Badge>
                     ) : (
                       <Badge variant="secondary">Pendente</Badge>
                     )}

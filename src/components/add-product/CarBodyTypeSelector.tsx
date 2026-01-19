@@ -12,12 +12,12 @@ import bodyCoupe from "@/assets/body-coupe.png";
 const carBodyTypes = [
   { value: "buggy", label: "Buggy", image: null, icon: "🏎️" },
   { value: "conversivel", label: "Conversível", image: bodyCoupe, icon: null },
-  { value: "coupe", label: "Cupê", image: bodyCoupe, icon: null },
+  { value: "coupe", label: "Coupe", image: bodyCoupe, icon: null },
   { value: "hatch", label: "Hatch", image: bodyHatch, icon: null },
   { value: "minivan", label: "Minivan", image: bodyMinivan, icon: null },
   { value: "perua", label: "Perua", image: bodyWagon, icon: null },
   { value: "pickup", label: "Picape", image: bodyPickup, icon: null },
-  { value: "sedan", label: "Sedã", image: bodySedan, icon: null },
+  { value: "sedan", label: "Sedan", image: bodySedan, icon: null },
   { value: "suv", label: "SUV", image: bodySuv, icon: null },
   { value: "van", label: "Van", image: bodyMinivan, icon: null },
 ];

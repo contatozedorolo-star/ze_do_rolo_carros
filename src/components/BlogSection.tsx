@@ -7,7 +7,7 @@ const BlogSection = () => {
   const featuredPosts = getFeaturedPosts(3);
 
   return (
-    <section className="pt-6 pb-3 bg-muted/30">
+    <section className="pt-4 pb-1 bg-muted/30">
       <div className="container">
         <div className="flex items-center justify-between mb-8">
           <div>

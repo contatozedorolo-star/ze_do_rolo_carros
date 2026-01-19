@@ -45,7 +45,6 @@ const vehicleTypes = [
   { value: "caminhao", label: "Caminhão", icon: Truck },
   { value: "van", label: "Van", icon: Bus },
   { value: "onibus", label: "Ônibus", icon: Bus },
-  { value: "camionete", label: "Camionete", icon: CarFront },
 ];
 
 const carSteps = [

@@ -52,7 +52,7 @@ const CarBodyTypeSelector = ({ value, onChange }: CarBodyTypeSelectorProps) => {
               <img 
                 src={type.image} 
                 alt={type.label} 
-                className="h-10 w-auto mb-2 object-contain"
+                className="h-8 w-auto mb-2 object-contain"
               />
             ) : (
               <span className="text-3xl mb-2">{type.icon}</span>

@@ -76,10 +76,12 @@ const Auth = () => {
   const isRestrictedRedirect = from === "/veiculos" || from === "/assistente-ia";
 
   useEffect(() => {
-    // Check if we're in password reset mode from URL
+    // Check if we're in password reset mode or signup mode from URL
     const urlMode = searchParams.get('mode');
     if (urlMode === 'reset') {
       setMode('reset');
+    } else if (urlMode === 'signup') {
+      setMode('signup');
     }
   }, [searchParams]);
 

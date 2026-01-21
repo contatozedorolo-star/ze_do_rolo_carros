@@ -43,14 +43,15 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Suporte */}
+          {/* Institucional */}
           <div className="space-y-4">
-            <h4 className="font-semibold">Suporte</h4>
+            <h4 className="font-semibold">Institucional</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li><Link to="/faq" className="hover:text-secondary transition-colors">Perguntas Frequentes</Link></li>
               <li><Link to="/how-it-works" className="hover:text-secondary transition-colors">Como Funciona</Link></li>
               <li><Link to="/termos-de-uso" className="hover:text-secondary transition-colors">Termos de Uso</Link></li>
               <li><Link to="/politica-de-privacidade" className="hover:text-secondary transition-colors">Política de Privacidade</Link></li>
+              <li><Link to="/politica-de-cookies" className="hover:text-secondary transition-colors">Política de Cookies</Link></li>
             </ul>
           </div>
 

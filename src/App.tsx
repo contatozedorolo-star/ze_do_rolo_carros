@@ -20,6 +20,7 @@ import TabelaFipe from "./pages/TabelaFipe";
 import FAQ from "./pages/FAQ";
 import TermosDeUso from "./pages/TermosDeUso";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
+import PoliticaCookies from "./pages/PoliticaCookies";
 import AssistenteIA from "./pages/AssistenteIA";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/termos-de-uso" element={<TermosDeUso />} />
             <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
+            <Route path="/politica-de-cookies" element={<PoliticaCookies />} />
             <Route path="/assistente-ia" element={<AssistenteIA />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />

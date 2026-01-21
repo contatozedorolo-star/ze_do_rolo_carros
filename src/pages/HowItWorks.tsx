@@ -42,7 +42,7 @@ const HowItWorks = () => {
       number: "03",
       icon: Handshake,
       title: "Curadoria de Match",
-      description: "Nossa equipe analisa as propostas de troca. Se você quer uma moto e oferecem um sofá, nós filtramos para você não perder tempo.",
+      description: "Nossa equipe analisa as propostas de troca. Se você quer uma moto e oferecem um carro fora do seu interesse, nós filtramos para você não perder tempo.",
       details: ["Filtro inteligente de propostas", "Notificação de matches", "Sugestões personalizadas"],
       color: "text-primary",
       bgColor: "bg-primary/10",

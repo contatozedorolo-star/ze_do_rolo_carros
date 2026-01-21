@@ -56,6 +56,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [sessionReady, setSessionReady] = useState(false);
   
   const [formData, setFormData] = useState({
     full_name: "",
@@ -66,7 +67,7 @@ const Auth = () => {
     acceptedTerms: false,
   });
 
-  const { user, signUp, signIn, signInWithGoogle, resetPassword, updatePassword } = useAuth();
+  const { user, session, signUp, signIn, signInWithGoogle, resetPassword, updatePassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -75,15 +76,101 @@ const Auth = () => {
   const from = (location.state as { from?: string })?.from || "/dashboard";
   const isRestrictedRedirect = from === "/veiculos" || from === "/assistente-ia";
 
+  // Handle password reset mode - detect hash fragment from Supabase recovery link
   useEffect(() => {
-    // Check if we're in password reset mode or signup mode from URL
     const urlMode = searchParams.get('mode');
+    
     if (urlMode === 'reset') {
       setMode('reset');
+      
+      // Check if there's a hash fragment with access_token (from Supabase recovery link)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+      const type = hashParams.get('type');
+      const errorCode = hashParams.get('error_code');
+      const errorDescription = hashParams.get('error_description');
+      
+      // Check for error in hash (e.g., expired or invalid link)
+      if (errorCode || errorDescription) {
+        console.error('Recovery link error:', errorCode, errorDescription);
+        toast({
+          title: "Link inválido",
+          description: errorDescription?.replace(/\+/g, ' ') || "O link de redefinição de senha é inválido ou expirou. Solicite um novo.",
+          variant: "destructive",
+        });
+        setMode('forgot');
+        // Clean up the URL hash
+        window.history.replaceState(null, '', window.location.pathname + '?mode=forgot');
+        return;
+      }
+      
+      if (accessToken && type === 'recovery') {
+        // Set the session using the tokens from the recovery link
+        import('@/integrations/supabase/client').then(({ supabase }) => {
+          supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || '',
+          }).then(({ error }) => {
+            if (error) {
+              console.error('Error setting session:', error);
+              toast({
+                title: "Link expirado",
+                description: "O link de redefinição de senha expirou. Solicite um novo.",
+                variant: "destructive",
+              });
+              setMode('forgot');
+            } else {
+              setSessionReady(true);
+              // Clean up the URL hash
+              window.history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+          });
+        });
+      } else if (accessToken) {
+        // Handle other token types (like email confirmation that was used for password change)
+        import('@/integrations/supabase/client').then(({ supabase }) => {
+          supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || '',
+          }).then(({ error }) => {
+            if (error) {
+              console.error('Error setting session:', error);
+              // Don't show error, just mark as needing a new request
+              setMode('forgot');
+            } else {
+              setSessionReady(true);
+              window.history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+          });
+        });
+      } else if (session) {
+        // Session already exists (user already authenticated via recovery)
+        setSessionReady(true);
+      } else {
+        // No token in URL and no session - user might have navigated directly
+        // Wait a bit for session to be loaded from storage
+        const checkSession = async () => {
+          const { supabase } = await import('@/integrations/supabase/client');
+          const { data: { session: currentSession } } = await supabase.auth.getSession();
+          if (currentSession) {
+            setSessionReady(true);
+          }
+        };
+        
+        setTimeout(checkSession, 500);
+      }
     } else if (urlMode === 'signup') {
       setMode('signup');
     }
-  }, [searchParams]);
+  }, [searchParams, toast]);
+
+  // Mark session as ready when session becomes available in reset mode
+  useEffect(() => {
+    if (mode === 'reset' && session) {
+      setSessionReady(true);
+    }
+  }, [mode, session]);
 
   useEffect(() => {
     if (user && mode !== 'reset') {
@@ -236,14 +323,35 @@ const Auth = () => {
           return;
         }
 
+        // Check if session is ready before updating password
+        if (!sessionReady && !session) {
+          toast({
+            title: "Aguarde",
+            description: "Verificando sua sessão...",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
         const { error } = await updatePassword(formData.password);
 
         if (error) {
-          toast({
-            title: "Erro ao redefinir senha",
-            description: error.message,
-            variant: "destructive",
-          });
+          // Handle specific error messages
+          if (error.message.includes('Auth session missing')) {
+            toast({
+              title: "Link expirado",
+              description: "O link de redefinição de senha expirou. Solicite um novo.",
+              variant: "destructive",
+            });
+            setMode('forgot');
+          } else {
+            toast({
+              title: "Erro ao redefinir senha",
+              description: error.message,
+              variant: "destructive",
+            });
+          }
         } else {
           toast({
             title: "Senha redefinida!",
@@ -283,6 +391,7 @@ const Auth = () => {
 
   const getButtonText = () => {
     if (loading) return "Carregando...";
+    if (mode === 'reset' && !sessionReady && !session) return "Verificando sessão...";
     switch (mode) {
       case 'signup': return "Criar Conta";
       case 'forgot': return "Enviar Email";
@@ -290,6 +399,9 @@ const Auth = () => {
       default: return "Entrar";
     }
   };
+
+  // Check if button should be disabled
+  const isButtonDisabled = loading || (mode === 'reset' && !sessionReady && !session);
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -473,7 +585,7 @@ const Auth = () => {
               </div>
             )}
 
-            <Button type="submit" variant="cta" size="lg" className="w-full" disabled={loading}>
+            <Button type="submit" variant="cta" size="lg" className="w-full" disabled={isButtonDisabled}>
               {getButtonText()}
             </Button>
 

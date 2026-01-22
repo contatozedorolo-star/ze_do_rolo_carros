@@ -33,7 +33,8 @@ const HeroSection = () => {
 
           {/* Sub-headline */}
           <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            Somos seus consultores de negócios pessoais. Diga o que você tem, o que você precisa e nós encontramos o negócio perfeito para você!
+            <span className="block">Somos seus consultores de negócios pessoais focados em veículos em geral.</span>
+            <span className="block">Diga o que você tem e o que você precisa que nós encontramos o negócio quase perfeito para você!</span>
           </p>
 
           {/* Highlight Block */}

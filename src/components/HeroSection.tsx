@@ -28,7 +28,7 @@ const HeroSection = () => {
           animationDelay: "0.1s"
         }}>
             <span className="block">Negocie tudo!</span>
-            <span className="block">segurança.<span style={{
+            <span className="block">Menos a sua segurança.<span style={{
               color: "#FF8C36"
             }}>segurança</span></span>
           </h1>

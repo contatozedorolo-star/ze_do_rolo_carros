@@ -39,8 +39,8 @@ const HeroSection = () => {
 
           {/* Highlight Block */}
           <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.25s" }}>
-            Compra, venda e principalmente troca, com{" "}
-            <span style={{ color: "#29B765" }}>transparência</span> e segurança!
+            Compra, venda e principalmente{" "}
+            <span className="text-2xl md:text-3xl font-extrabold uppercase" style={{ color: "#FF8C36" }}>TROCA!</span>
           </p>
 
           {/* Trust Points */}

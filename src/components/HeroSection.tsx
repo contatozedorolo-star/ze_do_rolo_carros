@@ -27,8 +27,8 @@ const HeroSection = () => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in text-white" style={{
           animationDelay: "0.1s"
         }}>
-            <span className="block">Negocie tudo</span>
-            <span className="block">Menos a sua <span style={{
+            <span className="block">Negocie tudo!</span>
+            <span className="block">segurança.<span style={{
               color: "#FF8C36"
             }}>segurança</span></span>
           </h1>

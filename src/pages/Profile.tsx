@@ -43,6 +43,7 @@ interface Vehicle {
   price: number;
   is_active: boolean;
   created_at: string;
+  vehicle_images: { image_url: string; is_primary: boolean }[];
 }
 
 // Helper to mask CPF
@@ -194,7 +195,7 @@ const Profile = () => {
       const [vehiclesRes, kycRes, adminRes] = await Promise.all([
         supabase
           .from("vehicles")
-          .select("id, title, brand, model, price, is_active, created_at")
+          .select("id, title, brand, model, price, is_active, created_at, vehicle_images(image_url, is_primary)")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false }),
         supabase
@@ -752,22 +753,45 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {vehicles.map((vehicle) => (
-                      <Link 
-                        key={vehicle.id} 
-                        to={`/veiculos/${vehicle.id}`}
-                        className="border border-border rounded-lg p-4 hover:shadow-card transition-shadow"
-                      >
-                        <h3 className="font-medium text-foreground mb-1">{vehicle.title}</h3>
-                        <p className="text-sm text-muted-foreground mb-2">{vehicle.brand} {vehicle.model}</p>
-                        <p className="font-bold text-primary">
-                          R$ {vehicle.price.toLocaleString("pt-BR")}
-                        </p>
-                        <Badge variant={vehicle.is_active ? "default" : "secondary"} className="mt-2">
-                          {vehicle.is_active ? "Disponível" : "Indisponível"}
-                        </Badge>
-                      </Link>
-                    ))}
+                    {vehicles.map((vehicle) => {
+                      const primaryImage = vehicle.vehicle_images?.find(img => img.is_primary)?.image_url 
+                        || vehicle.vehicle_images?.[0]?.image_url;
+                      
+                      return (
+                        <Link 
+                          key={vehicle.id} 
+                          to={`/veiculos/${vehicle.id}`}
+                          className="border border-border rounded-lg overflow-hidden hover:shadow-card transition-shadow"
+                        >
+                          {/* Vehicle Image */}
+                          <div className="aspect-[16/10] bg-muted relative overflow-hidden">
+                            {primaryImage ? (
+                              <img 
+                                src={primaryImage} 
+                                alt={vehicle.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Car className="h-12 w-12 text-muted-foreground/50" />
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Vehicle Info */}
+                          <div className="p-4">
+                            <h3 className="font-medium text-foreground mb-1 line-clamp-1">{vehicle.title}</h3>
+                            <p className="text-sm text-muted-foreground mb-2">{vehicle.brand} {vehicle.model}</p>
+                            <p className="font-bold text-primary">
+                              R$ {vehicle.price.toLocaleString("pt-BR")}
+                            </p>
+                            <Badge variant={vehicle.is_active ? "default" : "secondary"} className="mt-2">
+                              {vehicle.is_active ? "Disponível" : "Indisponível"}
+                            </Badge>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>

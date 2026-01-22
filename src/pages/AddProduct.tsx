@@ -1588,6 +1588,34 @@ const AddProduct = () => {
             </div>
           )}
 
+          {/* Etapa 8 - Fotos (VANS) */}
+          {step === 8 && formData.vehicle_type === "van" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Galeria 360° - Vans</h2>
+                <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
+              </div>
+
+              <VanPhotoUploadGrid
+                images={images}
+                previews={imagePreviews}
+                onUpload={handleImageUpload}
+                onRemove={handleRemoveImage}
+              />
+
+              <div>
+                <Label className="text-base font-semibold">Descrição do Anúncio</Label>
+                <p className="text-sm text-muted-foreground mb-2">Adicione informações extras que julgar importantes</p>
+                <Textarea 
+                  value={formData.description} 
+                  onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} 
+                  placeholder="Ex: Van bem conservada, sempre usada para frete, documentação em dia..."
+                  rows={4}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Etapa 3 - Histórico (CARROS E MOTOS) */}
           {step === 3 && formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "onibus" && (
             <div className="space-y-6">
@@ -1824,7 +1852,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 6 - Fotos (CARROS E MOTOS) */}
-          {step === 6 && formData.vehicle_type !== "caminhao" && (
+          {step === 6 && formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "van" && formData.vehicle_type !== "onibus" && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Galeria de Fotos</h2>

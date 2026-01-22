@@ -10,6 +10,7 @@ import SearchResults from "./pages/SearchResults";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import AddProduct from "./pages/AddProduct";
+import EditProduct from "./pages/EditProduct";
 import ProductDetail from "./pages/ProductDetail";
 import HowItWorks from "./pages/HowItWorks";
 import Dashboard from "./pages/Dashboard";
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/add-product" element={<AddProduct />} />
+            <Route path="/editar-anuncio/:id" element={<EditProduct />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/vehicle/:id" element={<ProductDetail />} />
             <Route path="/veiculo/:slug" element={<ProductDetail />} />

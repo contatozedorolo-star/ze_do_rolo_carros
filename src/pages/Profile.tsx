@@ -758,38 +758,54 @@ const Profile = () => {
                         || vehicle.vehicle_images?.[0]?.image_url;
                       
                       return (
-                        <Link 
+                        <div 
                           key={vehicle.id} 
-                          to={`/veiculos/${vehicle.id}`}
                           className="border border-border rounded-lg overflow-hidden hover:shadow-card transition-shadow"
                         >
-                          {/* Vehicle Image */}
-                          <div className="aspect-[16/10] bg-muted relative overflow-hidden">
-                            {primaryImage ? (
-                              <img 
-                                src={primaryImage} 
-                                alt={vehicle.title}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <Car className="h-12 w-12 text-muted-foreground/50" />
-                              </div>
-                            )}
-                          </div>
+                          {/* Vehicle Image - clickable to view */}
+                          <Link to={`/veiculos/${vehicle.id}`}>
+                            <div className="aspect-[16/10] bg-muted relative overflow-hidden">
+                              {primaryImage ? (
+                                <img 
+                                  src={primaryImage} 
+                                  alt={vehicle.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Car className="h-12 w-12 text-muted-foreground/50" />
+                                </div>
+                              )}
+                            </div>
+                          </Link>
                           
                           {/* Vehicle Info */}
                           <div className="p-4">
-                            <h3 className="font-medium text-foreground mb-1 line-clamp-1">{vehicle.title}</h3>
+                            <Link to={`/veiculos/${vehicle.id}`}>
+                              <h3 className="font-medium text-foreground mb-1 line-clamp-1 hover:text-primary transition-colors">{vehicle.title}</h3>
+                            </Link>
                             <p className="text-sm text-muted-foreground mb-2">{vehicle.brand} {vehicle.model}</p>
                             <p className="font-bold text-primary">
                               R$ {vehicle.price.toLocaleString("pt-BR")}
                             </p>
-                            <Badge variant={vehicle.is_active ? "default" : "secondary"} className="mt-2">
-                              {vehicle.is_active ? "Disponível" : "Indisponível"}
-                            </Badge>
+                            <div className="flex items-center justify-between mt-3">
+                              <Badge variant={vehicle.is_active ? "default" : "secondary"}>
+                                {vehicle.is_active ? "Disponível" : "Indisponível"}
+                              </Badge>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                asChild
+                                className="gap-1.5"
+                              >
+                                <Link to={`/editar-anuncio/${vehicle.id}`}>
+                                  <Edit className="h-3.5 w-3.5" />
+                                  Editar
+                                </Link>
+                              </Button>
+                            </div>
                           </div>
-                        </Link>
+                        </div>
                       );
                     })}
                   </div>

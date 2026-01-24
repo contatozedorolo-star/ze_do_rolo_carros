@@ -211,8 +211,8 @@ const Veiculos = () => {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${heroBackground})` }}
         />
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/80 to-primary/95" />
+        {/* Dark Overlay - reduced opacity for better image visibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/50 to-primary/70" />
         
         {/* Content */}
         <div className="relative container py-12 md:py-16">

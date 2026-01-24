@@ -83,34 +83,53 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/10 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
-          {/* Social Media Icons */}
-          <div className="flex items-center gap-2">
+          {/* Animated Social Media Card */}
+          <div className="social-card relative flex items-center justify-center bg-muted shadow-md transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] overflow-hidden h-[50px] w-[200px] rounded-md group hover:shadow-xl">
+            {/* Animated background panels */}
+            <div className="absolute left-0 flex items-center justify-end w-1/2 h-full bg-primary transition-transform duration-300 ease-linear z-[1] group-hover:opacity-50 group-hover:-translate-y-full" />
+            <div className="absolute right-0 flex items-center justify-start w-1/2 h-full bg-primary/90 transition-transform duration-300 ease-linear z-[1] group-hover:opacity-50 group-hover:translate-y-full" />
+            
+            {/* "Redes Sociais" text overlay */}
+            <span className="absolute flex items-center justify-center w-full h-full text-primary-foreground font-mono text-base font-bold opacity-100 transition-opacity duration-300 z-[2] group-hover:opacity-0 group-hover:-z-[3]">
+              Redes Sociais
+            </span>
+            
+            {/* Social links */}
             <a 
               href="https://instagram.com/zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
+              className="social-link relative flex items-center justify-center w-1/4 h-full text-primary transition-all duration-300 hover:bg-primary-foreground/80 hover:animate-bounce-social z-[3]"
               aria-label="Instagram"
             >
-              <Instagram className="h-5 w-5" />
+              <Instagram className="h-6 w-6 drop-shadow-md" />
             </a>
             <a 
               href="https://facebook.com/zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
+              className="social-link relative flex items-center justify-center w-1/4 h-full text-primary transition-all duration-300 hover:bg-primary-foreground/80 hover:animate-bounce-social z-[3]"
               aria-label="Facebook"
             >
-              <Facebook className="h-5 w-5" />
+              <Facebook className="h-6 w-6 drop-shadow-md" />
             </a>
             <a 
               href="https://tiktok.com/@zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
+              className="social-link relative flex items-center justify-center w-1/4 h-full text-primary transition-all duration-300 hover:bg-primary-foreground/80 hover:animate-bounce-social z-[3]"
               aria-label="TikTok"
             >
-              <TikTokIcon className="h-5 w-5" />
+              <TikTokIcon className="h-6 w-6 drop-shadow-md" />
+            </a>
+            <a 
+              href="https://wa.me/5511983765437" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="social-link relative flex items-center justify-center w-1/4 h-full text-primary transition-all duration-300 hover:bg-primary-foreground/80 hover:animate-bounce-social z-[3]"
+              aria-label="WhatsApp"
+            >
+              <Phone className="h-6 w-6 drop-shadow-md" />
             </a>
           </div>
           

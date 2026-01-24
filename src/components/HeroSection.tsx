@@ -6,17 +6,14 @@ import heroBackground from "@/assets/hero-background.png";
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden min-h-[600px] md:min-h-[700px]">
-      {/* Background Image */}
+      {/* Background Image with Parallax Effect */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
         style={{ backgroundImage: `url(${heroBackground})` }}
       />
       
-      {/* Dark Overlay for text readability */}
-      <div className="absolute inset-0 bg-black/50" />
-      
-      {/* Gradient overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-black/60" />
+      {/* Dark Overlay 60% opacity for text readability */}
+      <div className="absolute inset-0 bg-black/60" />
 
       <div className="container relative py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center space-y-8">

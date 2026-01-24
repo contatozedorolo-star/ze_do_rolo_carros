@@ -95,6 +95,12 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-5px)" },
         },
+        "bounce-social": {
+          "40%": { transform: "scale(1.4)" },
+          "60%": { transform: "scale(0.8)" },
+          "80%": { transform: "scale(1.2)" },
+          "100%": { transform: "scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -103,6 +109,7 @@ export default {
         "slide-in-right": "slide-in-right 0.4s ease-out forwards",
         "pulse-soft": "pulse-soft 2s ease-in-out infinite",
         "bounce-soft": "bounce-soft 2s ease-in-out infinite",
+        "bounce-social": "bounce-social 0.4s linear",
       },
     },
   },

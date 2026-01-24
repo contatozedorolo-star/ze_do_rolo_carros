@@ -84,52 +84,52 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/10 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
           {/* Animated Social Media Card */}
-          <div className="social-card relative flex items-center justify-center bg-muted shadow-md transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] overflow-hidden h-[50px] w-[200px] rounded-md group hover:shadow-xl">
-            {/* Animated background panels - dark blue to hide icons */}
-            <div className="absolute left-0 flex items-center justify-end w-1/2 h-full bg-[#1a2654] transition-transform duration-300 ease-linear z-[1] group-hover:opacity-50 group-hover:-translate-y-full" />
-            <div className="absolute right-0 flex items-center justify-start w-1/2 h-full bg-[#151f45] transition-transform duration-300 ease-linear z-[1] group-hover:opacity-50 group-hover:translate-y-full" />
+          <div className="social-card relative flex items-center justify-center shadow-md transition-all duration-300 overflow-hidden h-[50px] w-[200px] rounded-md group hover:shadow-xl bg-secondary">
+            {/* Solid background panels that slide away on hover */}
+            <div className="absolute left-0 w-1/2 h-full bg-primary z-[2] transition-transform duration-300 ease-out group-hover:-translate-y-full" />
+            <div className="absolute right-0 w-1/2 h-full bg-primary z-[2] transition-transform duration-300 ease-out group-hover:translate-y-full" />
             
-            {/* "Redes Sociais" text overlay - on top of panels */}
-            <span className="absolute flex items-center justify-center w-full h-full text-primary-foreground font-mono text-base font-bold transition-opacity duration-300 z-[2] group-hover:opacity-0">
+            {/* "Redes Sociais" text - on top of panels */}
+            <span className="absolute inset-0 flex items-center justify-center text-primary-foreground font-semibold text-sm tracking-wide z-[3] transition-opacity duration-300 group-hover:opacity-0 pointer-events-none">
               Redes Sociais
             </span>
             
-            {/* Social links */}
+            {/* Social links - visible when panels slide away */}
             <a 
               href="https://instagram.com/zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="social-link relative flex items-center justify-center w-1/4 h-full text-primary transition-all duration-300 hover:bg-primary-foreground/80 hover:animate-bounce-social z-[3]"
+              className="relative flex items-center justify-center w-1/4 h-full text-primary z-[1] transition-all duration-300 hover:bg-white/20 hover:animate-bounce-social"
               aria-label="Instagram"
             >
-              <Instagram className="h-6 w-6 drop-shadow-md" />
+              <Instagram className="h-5 w-5" />
             </a>
             <a 
               href="https://facebook.com/zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="social-link relative flex items-center justify-center w-1/4 h-full text-primary transition-all duration-300 hover:bg-primary-foreground/80 hover:animate-bounce-social z-[3]"
+              className="relative flex items-center justify-center w-1/4 h-full text-primary z-[1] transition-all duration-300 hover:bg-white/20 hover:animate-bounce-social"
               aria-label="Facebook"
             >
-              <Facebook className="h-6 w-6 drop-shadow-md" />
+              <Facebook className="h-5 w-5" />
             </a>
             <a 
               href="https://tiktok.com/@zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="social-link relative flex items-center justify-center w-1/4 h-full text-primary transition-all duration-300 hover:bg-primary-foreground/80 hover:animate-bounce-social z-[3]"
+              className="relative flex items-center justify-center w-1/4 h-full text-primary z-[1] transition-all duration-300 hover:bg-white/20 hover:animate-bounce-social"
               aria-label="TikTok"
             >
-              <TikTokIcon className="h-6 w-6 drop-shadow-md" />
+              <TikTokIcon className="h-5 w-5" />
             </a>
             <a 
               href="https://wa.me/5511983765437" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="social-link relative flex items-center justify-center w-1/4 h-full text-primary transition-all duration-300 hover:bg-primary-foreground/80 hover:animate-bounce-social z-[3]"
+              className="relative flex items-center justify-center w-1/4 h-full text-primary z-[1] transition-all duration-300 hover:bg-white/20 hover:animate-bounce-social"
               aria-label="WhatsApp"
             >
-              <Phone className="h-6 w-6 drop-shadow-md" />
+              <Phone className="h-5 w-5" />
             </a>
           </div>
           

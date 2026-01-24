@@ -85,9 +85,9 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/10 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
           {/* Animated Social Media Card */}
           <div className="social-card relative flex items-center justify-center shadow-md transition-all duration-300 overflow-hidden h-[50px] w-[200px] rounded-md group hover:shadow-xl bg-secondary">
-            {/* Solid background panels that slide away on hover - overlapping to fully cover */}
-            <div className="absolute left-0 w-[55%] h-full bg-primary z-[2] transition-transform duration-300 ease-out group-hover:-translate-y-full" />
-            <div className="absolute right-0 w-[55%] h-full bg-primary z-[2] transition-transform duration-300 ease-out group-hover:translate-y-full" />
+            {/* Solid background panels that slide away on hover - with rounded corners */}
+            <div className="absolute -left-1 -top-1 -bottom-1 w-[56%] bg-primary z-[2] transition-transform duration-300 ease-out group-hover:-translate-y-full rounded-l-md" />
+            <div className="absolute -right-1 -top-1 -bottom-1 w-[56%] bg-primary z-[2] transition-transform duration-300 ease-out group-hover:translate-y-full rounded-r-md" />
             
             {/* "Redes Sociais" text - on top of panels */}
             <span className="absolute inset-0 flex items-center justify-center text-primary-foreground font-semibold text-sm tracking-wide z-[3] transition-opacity duration-300 group-hover:opacity-0 pointer-events-none">

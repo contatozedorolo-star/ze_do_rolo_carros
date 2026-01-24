@@ -84,13 +84,13 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/10 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
           {/* Animated Social Media Card */}
-          <div className="social-card relative flex items-center justify-center bg-primary-foreground/10 shadow-md transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] overflow-hidden h-[50px] w-[200px] rounded-md group hover:shadow-xl">
-            {/* Animated background panels - using secondary (orange) color */}
-            <div className="absolute left-0 flex items-center justify-end w-1/2 h-full bg-secondary transition-transform duration-300 ease-linear z-[1] group-hover:opacity-50 group-hover:-translate-y-full" />
-            <div className="absolute right-0 flex items-center justify-start w-1/2 h-full bg-secondary/90 transition-transform duration-300 ease-linear z-[1] group-hover:opacity-50 group-hover:translate-y-full" />
+          <div className="social-card relative flex items-center justify-center bg-muted shadow-md transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] overflow-hidden h-[50px] w-[200px] rounded-md group hover:shadow-xl">
+            {/* Animated background panels */}
+            <div className="absolute left-0 flex items-center justify-end w-1/2 h-full bg-primary transition-transform duration-300 ease-linear z-[1] group-hover:opacity-50 group-hover:-translate-y-full" />
+            <div className="absolute right-0 flex items-center justify-start w-1/2 h-full bg-primary/90 transition-transform duration-300 ease-linear z-[1] group-hover:opacity-50 group-hover:translate-y-full" />
             
             {/* "Redes Sociais" text overlay */}
-            <span className="absolute flex items-center justify-center w-full h-full text-secondary-foreground font-mono text-base font-bold opacity-100 transition-opacity duration-300 z-[2] group-hover:opacity-0 group-hover:-z-[3]">
+            <span className="absolute flex items-center justify-center w-full h-full text-primary-foreground font-mono text-base font-bold opacity-100 transition-opacity duration-300 z-[2] group-hover:opacity-0 group-hover:-z-[3]">
               Redes Sociais
             </span>
             

@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Sparkles, MapPin, Star, ArrowRightLeft } from "lucide-react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
@@ -34,31 +32,6 @@ const VehicleSection = ({ title, description, vehicles, icon }: VehicleSectionPr
 };
 
 const Index = () => {
-  const navigate = useNavigate();
-
-  // Interceptar links de recuperação de senha que chegam na home
-  useEffect(() => {
-    const hash = window.location.hash;
-    
-    if (hash && (hash.includes('access_token') || hash.includes('error') || hash.includes('type=recovery'))) {
-      const hashParams = new URLSearchParams(hash.substring(1));
-      const type = hashParams.get('type');
-      const errorCode = hashParams.get('error_code');
-      const hasAccessToken = hash.includes('access_token');
-      
-      // Se for recovery (válido ou com erro), redirecionar para /auth?mode=reset
-      if (type === 'recovery' || errorCode === 'otp_expired' || hasAccessToken) {
-        // Preservar o hash para que o Auth.tsx possa processar
-        navigate(`/auth?mode=reset`, { replace: true });
-        // Após navegação, restaurar o hash
-        setTimeout(() => {
-          window.location.hash = hash.substring(1);
-        }, 0);
-        return;
-      }
-    }
-  }, [navigate]);
-
   return (
     <div className="min-h-screen bg-background">
       <Header />

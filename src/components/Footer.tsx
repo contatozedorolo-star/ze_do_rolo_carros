@@ -83,26 +83,13 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/10 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
-          {/* Animated Social Media Card */}
-          <div className="social-card relative flex items-center justify-center shadow-md transition-all duration-300 overflow-hidden h-[50px] w-[200px] rounded-md group hover:shadow-xl bg-primary">
-            {/* Orange layer (only visible on hover to avoid any corner bleed) */}
-            <div className="absolute inset-0 bg-secondary z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-            {/* Solid background panels that slide away on hover - with rounded corners */}
-            <div className="absolute -left-1 -top-1 -bottom-1 w-[56%] bg-primary z-[2] transition-transform duration-300 ease-out group-hover:-translate-y-full rounded-l-md" />
-            <div className="absolute -right-1 -top-1 -bottom-1 w-[56%] bg-primary z-[2] transition-transform duration-300 ease-out group-hover:translate-y-full rounded-r-md" />
-            
-            {/* "Redes Sociais" text - on top of panels */}
-            <span className="absolute inset-0 flex items-center justify-center text-primary-foreground font-semibold text-sm tracking-wide z-[3] transition-opacity duration-300 group-hover:opacity-0 pointer-events-none">
-              Redes Sociais
-            </span>
-            
-            {/* Social links - visible when panels slide away */}
+          {/* Social Media Icons */}
+          <div className="flex items-center gap-2">
             <a 
               href="https://instagram.com/zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="relative flex items-center justify-center w-1/4 h-full text-primary z-[1] transition-all duration-300 hover:bg-primary/10 hover:animate-bounce-social"
+              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
               aria-label="Instagram"
             >
               <Instagram className="h-5 w-5" />
@@ -111,7 +98,7 @@ const Footer = () => {
               href="https://facebook.com/zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="relative flex items-center justify-center w-1/4 h-full text-primary z-[1] transition-all duration-300 hover:bg-primary/10 hover:animate-bounce-social"
+              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
               aria-label="Facebook"
             >
               <Facebook className="h-5 w-5" />
@@ -120,19 +107,10 @@ const Footer = () => {
               href="https://tiktok.com/@zedorolo" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="relative flex items-center justify-center w-1/4 h-full text-primary z-[1] transition-all duration-300 hover:bg-primary/10 hover:animate-bounce-social"
+              className="bg-primary-foreground/10 hover:bg-secondary hover:text-secondary-foreground p-2 rounded-md transition-colors"
               aria-label="TikTok"
             >
               <TikTokIcon className="h-5 w-5" />
-            </a>
-            <a 
-              href="https://wa.me/5511983765437" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="relative flex items-center justify-center w-1/4 h-full text-primary z-[1] transition-all duration-300 hover:bg-primary/10 hover:animate-bounce-social"
-              aria-label="WhatsApp"
-            >
-              <Phone className="h-5 w-5" />
             </a>
           </div>
           

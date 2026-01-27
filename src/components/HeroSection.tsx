@@ -1,19 +1,19 @@
 import { Shield, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import heroBackground from "@/assets/hero-background.png";
+import { BeamsBackground } from "@/components/ui/beams-background";
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden min-h-[600px] md:min-h-[700px]">
-      {/* Background Image with Parallax Effect */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
-        style={{ backgroundImage: `url(${heroBackground})` }}
-      />
+    <section className="relative overflow-hidden gradient-hero">
+      {/* Animated Beams Background */}
+      <BeamsBackground className="absolute inset-0" intensity="medium" />
       
-      {/* Dark Overlay 60% opacity for text readability */}
-      <div className="absolute inset-0 bg-black/60" />
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-secondary rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-20 w-96 h-96 bg-accent rounded-full blur-3xl" />
+      </div>
 
       <div className="container relative py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center space-y-8">

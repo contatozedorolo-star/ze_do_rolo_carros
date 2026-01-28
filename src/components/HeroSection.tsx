@@ -5,15 +5,23 @@ import heroBackground from "@/assets/hero-background.jpg";
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden">
-      {/* Background Image */}
+    <section 
+      className="relative overflow-hidden"
+      style={{ 
+        backgroundImage: `url(${heroBackground})`,
+        backgroundAttachment: 'fixed',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Overlay Gradiente: preto transparente → preto semi-sólido */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBackground})` }}
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%)'
+        }}
       />
-      
-      {/* Dark Overlay for text readability */}
-      <div className="absolute inset-0 bg-primary/70" />
 
       <div className="container relative py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center space-y-8">

@@ -38,7 +38,7 @@ const Index = () => {
       <main>
         <HeroSection />
         
-        <div className="container">
+        <div className="container relative z-10 bg-background">
           <CategoryGrid />
 
           <VehicleSection

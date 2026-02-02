@@ -1,0 +1,13 @@
+project_id = "muvornzsnhncihxawntz"
+
+[functions.fipe-lookup]
+verify_jwt = false
+
+[functions.ze-ia-chat]
+verify_jwt = false
+
+[functions.admin-get-users]
+verify_jwt = false
+
+[functions.admin-delete-user]
+verify_jwt = false

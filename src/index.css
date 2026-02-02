@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Zé do Rolo Brand Colors */
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary - Navy Blue (Trust) */
+    --primary: 227 66% 24%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Orange (Action) */
+    --secondary: 27 100% 61%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Accent - Green (Verified/Success) */
+    --accent: 149 60% 44%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 227 66% 24%;
+
+    --radius: 0.75rem;
+
+    /* Custom Brand Tokens */
+    --trust-blue: 227 66% 24%;
+    --action-orange: 27 100% 61%;
+    --verified-green: 149 60% 44%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(227 66% 24%) 0%, hsl(227 66% 18%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(27 100% 61%) 0%, hsl(27 100% 55%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(149 60% 44%) 0%, hsl(149 60% 38%) 100%);
+    
+    /* Shadows - Material Design inspired */
+    --shadow-card: 0 1px 3px 0 hsl(227 66% 24% / 0.1), 0 1px 2px -1px hsl(227 66% 24% / 0.1);
+    --shadow-card-hover: 0 10px 15px -3px hsl(227 66% 24% / 0.1), 0 4px 6px -4px hsl(227 66% 24% / 0.1);
+    --shadow-elevated: 0 20px 25px -5px hsl(227 66% 24% / 0.1), 0 8px 10px -6px hsl(227 66% 24% / 0.1);
+    --shadow-cta: 0 4px 14px -2px hsl(27 100% 61% / 0.4);
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 227 66% 24%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 227 66% 24%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 227 66% 24%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 0 0% 98%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 27 100% 61%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 227 40% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --accent: 149 60% 44%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 222 40% 15%;
+    --muted-foreground: 220 9% 65%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 40% 18%;
+    --input: 222 40% 18%;
+    --ring: 27 100% 61%;
+
+    --sidebar-background: 222 47% 6%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 27 100% 61%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 222 40% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 222 40% 18%;
+    --sidebar-ring: 27 100% 61%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .gradient-cta {
+    background: var(--gradient-cta);
+  }
+  
+  .gradient-success {
+    background: var(--gradient-success);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-card-hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  
+  .shadow-cta {
+    box-shadow: var(--shadow-cta);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Custom scrollbar for chat area */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Firefox scrollbar support */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Hide Lovable badge */
+a[href*="lovable.dev"], iframe[src*="lovable.dev"], div[style*="Edit with Lovable"], .lovable-badge {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: -9999 !important;
+}

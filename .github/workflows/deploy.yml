@@ -15,6 +15,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: public_html/zedorolo.com.br/
+          server-dir: ./
+          dangerous-clean-slate: false
           protocol: ftps
           port: 21

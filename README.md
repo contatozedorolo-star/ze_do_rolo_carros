@@ -38,6 +38,8 @@ Este projeto passa por auditorias regulares de segurança via Antigravity para a
 Nenhuma chave de API ou segredo esteja exposto no código fonte
 Os dados de identidade dos usuários (Storage) estejam protegidos contra acesso público
 As URLs de redirecionamento de autenticação estejam restritas aos domínios autorizados
+
+
 💡 Dica Importante
 Como o repositório é privado, certifique-se de configurar as suas Actions no GitHub para usar apenas segredos armazenados nas configurações do repositório (`Settings > Secrets and variables > Actions`), mantendo suas chaves de produção 100% protegidas.
 ⭐ Mantido exclusivamente por Fernando Borges / Alavanca AI

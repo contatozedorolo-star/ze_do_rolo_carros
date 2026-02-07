@@ -1,26 +1,18 @@
-# Welcome to your Lovable project
+🚗 Zé do Carros - Marketplace Inteligente de Veículos
+⚠️ **Repositório Privado** Propriedade de **BORGES MIDIA NEGOCIOS DIGITAIS LTDA (Alavanca AI)**. O acesso, cópia ou distribuição de qualquer parte do código sem autorização expressa é estritamente proibido.
+📋 Sobre o Projeto
+O Zé do Carros é uma plataforma de marketplace automotivo de alta tecnologia, desenvolvida para gerenciar a compra, venda e troca de veículos no Brasil com segurança máxima. O sistema utiliza o Consultor Zé IA, uma inteligência artificial que consome um banco de dados RAG (Retrieval-Augmented Generation) para suporte em tempo real.
 
-## Project info
-
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+🚀 Funcionalidades Proprietárias
+Consultoria IA com RAG: Chatbot avançado que analisa o estoque em tempo real para responder usuários
+Moderação Prévia (Admin): Fluxo de aprovação obrigatória para novos anúncios e verificação de identidade
+Sistema de Troca Inteligente: Lógica específica para negociações envolvendo volta em dinheiro e restrições de troca
+Verificação de Documentação: Integração de upload de documentos para validação de perfis pelo administrador
+🛠️ Stack Tecnológica
+Frontend: React + Vite (Customizado via Lovable)
+Backend: Supabase (PostgreSQL) com políticas de Row Level Security (RLS) granulares
+Integrações de Voz: ElevenLabs para respostas de áudio da IA
+Infraestrutura: Google Cloud Platform (Auth, Analytics Data API e Cloud Storage)
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
@@ -36,38 +28,13 @@ npm i
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+🔒 Segurança e Compliance
+Este projeto passa por auditorias regulares de segurança via Antigravity para assegurar que:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
+Nenhuma chave de API ou segredo esteja exposto no código fonte
+Os dados de identidade dos usuários (Storage) estejam protegidos contra acesso público
+As URLs de redirecionamento de autenticação estejam restritas aos domínios autorizados
+💡 Dica Importante
+Como o repositório é privado, certifique-se de configurar as suas Actions no GitHub para usar apenas segredos armazenados nas configurações do repositório (`Settings > Secrets and variables > Actions`), mantendo suas chaves de produção 100% protegidas.
+⭐ Mantido exclusivamente por Fernando Borges / Alavanca AI
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)

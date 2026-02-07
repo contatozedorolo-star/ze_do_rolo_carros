@@ -7,8 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-
-const API_BASE = "https://parallelum.com.br/fipe/api/v1";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Brand { codigo: string; nome: string; }
 interface Model { codigo: number; nome: string; }
@@ -30,6 +29,15 @@ const vehicleTypes = [
   { value: "motos", label: "Motos", icon: Bike },
   { value: "caminhoes", label: "Caminhões", icon: Truck },
 ];
+
+async function fipeProxy(path: string) {
+  const { data, error } = await supabase.functions.invoke("fipe-lookup", {
+    body: { path },
+  });
+
+  if (error) throw new Error(error.message || "Erro ao consultar FIPE");
+  return data;
+}
 
 const TabelaFipe = () => {
   const { toast } = useToast();
@@ -59,36 +67,36 @@ const TabelaFipe = () => {
 
   // Fetch brands when vehicle type changes
   useEffect(() => {
-    const controller = new AbortController();
+    let cancelled = false;
     const fetchBrands = async () => {
       setLoadingBrands(true);
       handleClearAll();
       setBrands([]);
 
       try {
-        const response = await fetch(`${API_BASE}/${vehicleType}/marcas`, { signal: controller.signal });
-        if (!response.ok) throw new Error("Erro na API");
-        const data = await response.json();
-        setBrands(Array.isArray(data) ? data : []);
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
+        const data = await fipeProxy(`${vehicleType}/marcas`);
+        if (!cancelled) {
+          setBrands(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        if (!cancelled) {
           toast({ title: "Erro", description: "Não foi possível carregar as marcas. Tente novamente.", variant: "destructive" });
           setBrands([]);
         }
       } finally {
-        setLoadingBrands(false);
+        if (!cancelled) setLoadingBrands(false);
       }
     };
 
     fetchBrands();
-    return () => controller.abort();
+    return () => { cancelled = true; };
   }, [vehicleType]);
 
   // Fetch models when brand changes
   useEffect(() => {
     if (!selectedBrand) return;
 
-    const controller = new AbortController();
+    let cancelled = false;
     const fetchModels = async () => {
       setLoadingModels(true);
       setSelectedModel("");
@@ -98,29 +106,29 @@ const TabelaFipe = () => {
       setResult(null);
 
       try {
-        const response = await fetch(`${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos`, { signal: controller.signal });
-        if (!response.ok) throw new Error("Erro na API");
-        const data = await response.json();
-        setModels(Array.isArray(data?.modelos) ? data.modelos : []);
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
+        const data = await fipeProxy(`${vehicleType}/marcas/${selectedBrand}/modelos`);
+        if (!cancelled) {
+          setModels(Array.isArray(data?.modelos) ? data.modelos : []);
+        }
+      } catch (error) {
+        if (!cancelled) {
           toast({ title: "Erro", description: "Não foi possível carregar os modelos. Tente novamente.", variant: "destructive" });
           setModels([]);
         }
       } finally {
-        setLoadingModels(false);
+        if (!cancelled) setLoadingModels(false);
       }
     };
 
     fetchModels();
-    return () => controller.abort();
+    return () => { cancelled = true; };
   }, [selectedBrand, vehicleType]);
 
   // Fetch years when model changes
   useEffect(() => {
     if (!selectedModel) return;
 
-    const controller = new AbortController();
+    let cancelled = false;
     const fetchYears = async () => {
       setLoadingYears(true);
       setSelectedYear("");
@@ -128,59 +136,55 @@ const TabelaFipe = () => {
       setResult(null);
 
       try {
-        const response = await fetch(
-          `${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos`,
-          { signal: controller.signal }
-        );
-        if (!response.ok) throw new Error("Erro na API");
-        const data = await response.json();
-        setYears(Array.isArray(data) ? data : []);
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
+        const data = await fipeProxy(`${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos`);
+        if (!cancelled) {
+          setYears(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        if (!cancelled) {
           toast({ title: "Erro", description: "Não foi possível carregar os anos. Tente novamente.", variant: "destructive" });
           setYears([]);
         }
       } finally {
-        setLoadingYears(false);
+        if (!cancelled) setLoadingYears(false);
       }
     };
 
     fetchYears();
-    return () => controller.abort();
+    return () => { cancelled = true; };
   }, [selectedModel, selectedBrand, vehicleType]);
 
   // Auto-fetch result when year is selected
   useEffect(() => {
     if (!selectedYear || !selectedModel || !selectedBrand) return;
 
-    const controller = new AbortController();
+    let cancelled = false;
     const fetchResult = async () => {
       setLoadingResult(true);
       setResult(null);
 
       try {
-        const response = await fetch(
-          `${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos/${selectedYear}`,
-          { signal: controller.signal }
+        const data = await fipeProxy(
+          `${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos/${selectedYear}`
         );
-        if (!response.ok) throw new Error("Erro na API");
-        const data = await response.json();
-        if (data && data.Valor) {
-          setResult(data);
-        } else {
-          throw new Error("Dados inválidos");
+        if (!cancelled) {
+          if (data && data.Valor) {
+            setResult(data);
+          } else {
+            throw new Error("Dados inválidos");
+          }
         }
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
+      } catch (error) {
+        if (!cancelled) {
           toast({ title: "Erro", description: "Não foi possível consultar o valor FIPE. Tente novamente.", variant: "destructive" });
         }
       } finally {
-        setLoadingResult(false);
+        if (!cancelled) setLoadingResult(false);
       }
     };
 
     fetchResult();
-    return () => controller.abort();
+    return () => { cancelled = true; };
   }, [selectedYear, selectedModel, selectedBrand, vehicleType]);
 
   const SelectSkeleton = () => (

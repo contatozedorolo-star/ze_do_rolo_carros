@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Car, Bike, Truck, Search, DollarSign, Calendar, Hash, Loader2, RotateCcw } from "lucide-react";
+import { Car, Bike, Truck, DollarSign, Calendar, Hash, Loader2, RotateCcw, Fuel } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
 const API_BASE = "https://parallelum.com.br/fipe/api/v1";
@@ -25,9 +26,9 @@ interface FipeResult {
 }
 
 const vehicleTypes = [
-  { value: "carros", label: "Carros", icon: Car, apiPath: "carros" },
-  { value: "motos", label: "Motos", icon: Bike, apiPath: "motos" },
-  { value: "caminhoes", label: "Caminhões", icon: Truck, apiPath: "caminhoes" },
+  { value: "carros", label: "Carros", icon: Car },
+  { value: "motos", label: "Motos", icon: Bike },
+  { value: "caminhoes", label: "Caminhões", icon: Truck },
 ];
 
 const TabelaFipe = () => {
@@ -36,18 +37,17 @@ const TabelaFipe = () => {
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedModel, setSelectedModel] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-  
+
   const [brands, setBrands] = useState<Brand[]>([]);
   const [models, setModels] = useState<Model[]>([]);
   const [years, setYears] = useState<Year[]>([]);
   const [result, setResult] = useState<FipeResult | null>(null);
-  
+
   const [loadingBrands, setLoadingBrands] = useState(false);
   const [loadingModels, setLoadingModels] = useState(false);
   const [loadingYears, setLoadingYears] = useState(false);
   const [loadingResult, setLoadingResult] = useState(false);
 
-  // Clear all selections and result
   const handleClearAll = () => {
     setSelectedBrand("");
     setSelectedModel("");
@@ -59,35 +59,36 @@ const TabelaFipe = () => {
 
   // Fetch brands when vehicle type changes
   useEffect(() => {
+    const controller = new AbortController();
     const fetchBrands = async () => {
       setLoadingBrands(true);
-      setSelectedBrand("");
-      setSelectedModel("");
-      setSelectedYear("");
+      handleClearAll();
       setBrands([]);
-      setModels([]);
-      setYears([]);
-      setResult(null);
 
       try {
-        const response = await fetch(`${API_BASE}/${vehicleType}/marcas`);
+        const response = await fetch(`${API_BASE}/${vehicleType}/marcas`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Erro na API");
         const data = await response.json();
         setBrands(Array.isArray(data) ? data : []);
-      } catch (error) {
-        toast({ title: "Erro", description: "Não foi possível carregar as marcas", variant: "destructive" });
-        setBrands([]);
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          toast({ title: "Erro", description: "Não foi possível carregar as marcas. Tente novamente.", variant: "destructive" });
+          setBrands([]);
+        }
       } finally {
         setLoadingBrands(false);
       }
     };
 
     fetchBrands();
-  }, [vehicleType, toast]);
+    return () => controller.abort();
+  }, [vehicleType]);
 
   // Fetch models when brand changes
   useEffect(() => {
     if (!selectedBrand) return;
 
+    const controller = new AbortController();
     const fetchModels = async () => {
       setLoadingModels(true);
       setSelectedModel("");
@@ -97,24 +98,29 @@ const TabelaFipe = () => {
       setResult(null);
 
       try {
-        const response = await fetch(`${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos`);
+        const response = await fetch(`${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Erro na API");
         const data = await response.json();
         setModels(Array.isArray(data?.modelos) ? data.modelos : []);
-      } catch (error) {
-        toast({ title: "Erro", description: "Não foi possível carregar os modelos", variant: "destructive" });
-        setModels([]);
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          toast({ title: "Erro", description: "Não foi possível carregar os modelos. Tente novamente.", variant: "destructive" });
+          setModels([]);
+        }
       } finally {
         setLoadingModels(false);
       }
     };
 
     fetchModels();
-  }, [selectedBrand, vehicleType, toast]);
+    return () => controller.abort();
+  }, [selectedBrand, vehicleType]);
 
   // Fetch years when model changes
   useEffect(() => {
     if (!selectedModel) return;
 
+    const controller = new AbortController();
     const fetchYears = async () => {
       setLoadingYears(true);
       setSelectedYear("");
@@ -122,55 +128,85 @@ const TabelaFipe = () => {
       setResult(null);
 
       try {
-        const response = await fetch(`${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos`);
+        const response = await fetch(
+          `${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos`,
+          { signal: controller.signal }
+        );
+        if (!response.ok) throw new Error("Erro na API");
         const data = await response.json();
         setYears(Array.isArray(data) ? data : []);
-      } catch (error) {
-        toast({ title: "Erro", description: "Não foi possível carregar os anos", variant: "destructive" });
-        setYears([]);
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          toast({ title: "Erro", description: "Não foi possível carregar os anos. Tente novamente.", variant: "destructive" });
+          setYears([]);
+        }
       } finally {
         setLoadingYears(false);
       }
     };
 
     fetchYears();
-  }, [selectedModel, selectedBrand, vehicleType, toast]);
+    return () => controller.abort();
+  }, [selectedModel, selectedBrand, vehicleType]);
 
-  // Fetch result when year changes
-  const fetchResult = async () => {
-    if (!selectedYear) return;
+  // Auto-fetch result when year is selected
+  useEffect(() => {
+    if (!selectedYear || !selectedModel || !selectedBrand) return;
 
-    setLoadingResult(true);
-    setResult(null);
+    const controller = new AbortController();
+    const fetchResult = async () => {
+      setLoadingResult(true);
+      setResult(null);
 
-    try {
-      const response = await fetch(`${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos/${selectedYear}`);
-      const data = await response.json();
-      setResult(data);
-    } catch (error) {
-      toast({ title: "Erro", description: "Não foi possível consultar o valor", variant: "destructive" });
-    } finally {
-      setLoadingResult(false);
-    }
-  };
+      try {
+        const response = await fetch(
+          `${API_BASE}/${vehicleType}/marcas/${selectedBrand}/modelos/${selectedModel}/anos/${selectedYear}`,
+          { signal: controller.signal }
+        );
+        if (!response.ok) throw new Error("Erro na API");
+        const data = await response.json();
+        if (data && data.Valor) {
+          setResult(data);
+        } else {
+          throw new Error("Dados inválidos");
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          toast({ title: "Erro", description: "Não foi possível consultar o valor FIPE. Tente novamente.", variant: "destructive" });
+        }
+      } finally {
+        setLoadingResult(false);
+      }
+    };
+
+    fetchResult();
+    return () => controller.abort();
+  }, [selectedYear, selectedModel, selectedBrand, vehicleType]);
+
+  const SelectSkeleton = () => (
+    <div className="space-y-2">
+      <Skeleton className="h-4 w-20" />
+      <Skeleton className="h-10 w-full rounded-md" />
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="relative py-16 gradient-hero overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')]" />
         </div>
-        
+
         <div className="container relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Tabela FIPE
+              Consulta Tabela FIPE
             </h1>
             <p className="text-lg text-primary-foreground/80 mb-8">
-              Consulte o preço médio de veículos novos e usados em tempo real
+              Consulte o preço médio de veículos no mercado brasileiro em tempo real
             </p>
           </div>
 
@@ -180,7 +216,7 @@ const TabelaFipe = () => {
               {/* Vehicle Type Selection */}
               <div className="text-center mb-6">
                 <p className="text-sm text-muted-foreground mb-4">Selecione o tipo de veículo</p>
-                <div className="flex justify-center gap-2">
+                <div className="flex justify-center gap-2 flex-wrap">
                   {vehicleTypes.map((type) => {
                     const Icon = type.icon;
                     const isActive = vehicleType === type.value;
@@ -203,87 +239,90 @@ const TabelaFipe = () => {
               </div>
 
               {/* Filters Grid */}
-              <div className="grid gap-4 md:grid-cols-2 mb-6">
+              <div className="grid gap-4 md:grid-cols-3 mb-4">
                 {/* Brand */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Marca</label>
-                  <Select 
-                    value={selectedBrand} 
-                    onValueChange={setSelectedBrand}
-                    disabled={loadingBrands || brands.length === 0}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={loadingBrands ? "Carregando..." : "Selecione a marca"} />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {brands.map((brand) => (
-                        <SelectItem key={brand.codigo} value={brand.codigo}>
-                          {brand.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {loadingBrands ? (
+                  <SelectSkeleton />
+                ) : (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Marca</label>
+                    <Select
+                      value={selectedBrand}
+                      onValueChange={setSelectedBrand}
+                      disabled={brands.length === 0}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a marca" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60 bg-popover">
+                        {brands.map((brand) => (
+                          <SelectItem key={brand.codigo} value={brand.codigo}>
+                            {brand.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {/* Model */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Modelo</label>
-                  <Select 
-                    value={selectedModel} 
-                    onValueChange={setSelectedModel}
-                    disabled={!selectedBrand || loadingModels || models.length === 0}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={loadingModels ? "Carregando..." : "Selecione o modelo"} />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {models.map((model) => (
-                        <SelectItem key={model.codigo} value={model.codigo.toString()}>
-                          {model.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {loadingModels ? (
+                  <SelectSkeleton />
+                ) : (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Modelo</label>
+                    <Select
+                      value={selectedModel}
+                      onValueChange={setSelectedModel}
+                      disabled={!selectedBrand || models.length === 0}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={!selectedBrand ? "Selecione a marca primeiro" : "Selecione o modelo"} />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60 bg-popover">
+                        {models.map((model) => (
+                          <SelectItem key={model.codigo} value={model.codigo.toString()}>
+                            {model.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {/* Year */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Ano</label>
-                  <Select 
-                    value={selectedYear} 
-                    onValueChange={setSelectedYear}
-                    disabled={!selectedModel || loadingYears || years.length === 0}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={loadingYears ? "Carregando..." : "Selecione o ano"} />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {years.map((year) => (
-                        <SelectItem key={year.codigo} value={year.codigo}>
-                          {year.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Search Button */}
-                <div className="flex items-end">
-                  <Button 
-                    variant="cta" 
-                    className="w-full h-10"
-                    onClick={fetchResult}
-                    disabled={!selectedYear || loadingResult}
-                  >
-                    {loadingResult ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Search className="h-4 w-4 mr-2" />
-                    )}
-                    Consultar Valor
-                  </Button>
-                </div>
+                {loadingYears ? (
+                  <SelectSkeleton />
+                ) : (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Ano</label>
+                    <Select
+                      value={selectedYear}
+                      onValueChange={setSelectedYear}
+                      disabled={!selectedModel || years.length === 0}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={!selectedModel ? "Selecione o modelo primeiro" : "Selecione o ano"} />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60 bg-popover">
+                        {years.map((year) => (
+                          <SelectItem key={year.codigo} value={year.codigo}>
+                            {year.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
+
+              {/* Loading Result Indicator */}
+              {loadingResult && (
+                <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span className="text-sm">Consultando valor FIPE...</span>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -303,33 +342,41 @@ const TabelaFipe = () => {
 
               <div className="grid gap-4 md:grid-cols-2 text-sm">
                 <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
-                  <Car className="h-5 w-5 text-primary" />
+                  <Car className="h-5 w-5 text-primary shrink-0" />
                   <div>
-                    <p className="text-muted-foreground">Veículo</p>
+                    <p className="text-muted-foreground">Marca / Modelo</p>
                     <p className="font-semibold">{result.Marca} {result.Modelo}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
-                  <Calendar className="h-5 w-5 text-primary" />
+                  <Calendar className="h-5 w-5 text-primary shrink-0" />
                   <div>
                     <p className="text-muted-foreground">Ano Modelo</p>
-                    <p className="font-semibold">{result.AnoModelo} - {result.Combustivel}</p>
+                    <p className="font-semibold">{result.AnoModelo}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
-                  <Hash className="h-5 w-5 text-primary" />
+                  <Fuel className="h-5 w-5 text-primary shrink-0" />
+                  <div>
+                    <p className="text-muted-foreground">Combustível</p>
+                    <p className="font-semibold">{result.Combustivel} ({result.SiglaCombustivel})</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
+                  <Hash className="h-5 w-5 text-primary shrink-0" />
                   <div>
                     <p className="text-muted-foreground">Código FIPE</p>
                     <p className="font-semibold">{result.CodigoFipe}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
-                  <DollarSign className="h-5 w-5 text-primary" />
+                <div className="flex items-center gap-3 p-4 bg-card rounded-lg border md:col-span-2">
+                  <DollarSign className="h-5 w-5 text-primary shrink-0" />
                   <div>
-                    <p className="text-muted-foreground">Mês Referência</p>
+                    <p className="text-muted-foreground">Mês de Referência</p>
                     <p className="font-semibold">{result.MesReferencia}</p>
                   </div>
                 </div>
@@ -337,14 +384,14 @@ const TabelaFipe = () => {
 
               <div className="mt-6 p-4 bg-secondary/10 rounded-lg border border-secondary/30">
                 <p className="text-sm text-center text-muted-foreground">
-                  💡 Este é o preço médio de mercado conforme a Tabela FIPE. 
+                  💡 Este é o preço médio de mercado conforme a Tabela FIPE.
                   Use como referência para negociações de compra, venda ou troca.
                 </p>
               </div>
 
               <div className="mt-6 flex justify-center">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={handleClearAll}
                   className="flex items-center gap-2"
                 >
@@ -377,11 +424,11 @@ const TabelaFipe = () => {
             <Card className="text-center">
               <CardContent className="pt-6">
                 <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
-                  <Search className="h-6 w-6 text-accent" />
+                  <Calendar className="h-6 w-6 text-accent" />
                 </div>
                 <h3 className="font-semibold mb-2">Dados Atualizados</h3>
                 <p className="text-sm text-muted-foreground">
-                  Informações em tempo real direto da Tabela FIPE oficial
+                  Informações atualizadas direto da base FIPE oficial
                 </p>
               </CardContent>
             </Card>

@@ -71,6 +71,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (!insertError && newProfile) {
           setProfile(newProfile as Profile);
+          
+          // Send welcome email for new users
+          const userEmail = currentUser.email;
+          if (userEmail) {
+            supabase.functions.invoke('send-welcome-email', {
+              body: { email: userEmail, name: fullName || '' },
+            }).then(({ error: emailError }) => {
+              if (emailError) {
+                console.error('Failed to send welcome email:', emailError);
+              } else {
+                console.log('Welcome email sent to:', userEmail);
+              }
+            });
+          }
         }
       }
     }

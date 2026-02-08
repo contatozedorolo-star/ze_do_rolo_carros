@@ -589,8 +589,8 @@ const Auth = () => {
               {getButtonText()}
             </Button>
 
-            {/* Google Sign In - Only for signin mode */}
-            {mode === 'signin' && (
+            {/* Google Sign In - for signin and signup modes */}
+            {(mode === 'signin' || mode === 'signup') && (
               <>
                 <div className="relative my-4">
                   <div className="absolute inset-0 flex items-center">
@@ -638,7 +638,7 @@ const Auth = () => {
                       fill="#EA4335"
                     />
                   </svg>
-                  Entrar com Google
+                  {mode === 'signin' ? 'Entrar com Google' : 'Cadastrar com Google'}
                 </Button>
               </>
             )}

@@ -1,10 +1,5 @@
 // Veículos - Dados de exemplo para o marketplace automotivo
 
-// Importar imagens locais para tratores e implementos
-import pulverizadorImg from "@/assets/vehicle-implemento-pulverizador.jpg";
-import plantadeiraImg from "@/assets/vehicle-implemento-plantadeira.jpg";
-import colheitadeiraImg from "@/assets/vehicle-implemento-colheitadeira.jpg";
-
 
 
 export const vehicles = [
@@ -446,31 +441,13 @@ export const vehicles = [
     paintOriginal: true,
     type: "trator",
   },
-  // IMPLEMENTOS AGRÍCOLAS
+  // IMPLEMENTOS AGRÍCOLAS (curadoria fixa)
   {
     id: "v13",
-    image: pulverizadorImg,
-    title: "John Deere 4730 Pulverizador Autopropelido",
-    price: 980000,
+    image: "https://mativeequipamentos.com.br/wp-content/uploads/2023/02/WhatsApp-Image-2022-05-24-at-09.57.37-1_800x600.jpeg",
+    title: "Arado Reversível Hidráulico Preparo do Solo",
+    price: 60000,
     location: "Sorriso, MT",
-    year: "2022/2022",
-    mileage: 3200,
-    transmission: "Hidrostática",
-    fuel: "Diesel",
-    sellerLevel: "ouro" as const,
-    verified: true,
-    certified: true,
-    acceptsTrade: false,
-    motorScore: 5,
-    paintOriginal: true,
-    type: "implemento",
-  },
-  {
-    id: "v16",
-    image: plantadeiraImg,
-    title: "John Deere 2130 Plantadeira 24 Linhas",
-    price: 750000,
-    location: "Rondonópolis, MT",
     year: "2023/2023",
     mileage: 0,
     transmission: "N/A",
@@ -484,13 +461,31 @@ export const vehicles = [
     type: "implemento",
   },
   {
+    id: "v16",
+    image: "https://www.agrourbano.com.br/img/upload/thumb/7da98a2be7bd3f5d3fc8eca.jpeg",
+    title: "Plantadeira de Precisão Semeadura Inteligente",
+    price: 150000,
+    location: "Rondonópolis, MT",
+    year: "2024/2024",
+    mileage: 0,
+    transmission: "N/A",
+    fuel: "N/A",
+    sellerLevel: "ouro" as const,
+    verified: true,
+    certified: true,
+    acceptsTrade: true,
+    motorScore: 5,
+    paintOriginal: true,
+    type: "implemento",
+  },
+  {
     id: "v27",
-    image: colheitadeiraImg,
-    title: "Case IH 8250 Colheitadeira Axial-Flow",
-    price: 1850000,
+    image: "https://dealersites-content.s3.us-east-1.amazonaws.com/dealersites/vehicles/models/john-deere/foto890_46575.webp",
+    title: "Colhedora de Grãos Alta Eficiência",
+    price: 550000,
     location: "Lucas do Rio Verde, MT",
-    year: "2021/2021",
-    mileage: 2800,
+    year: "2023/2023",
+    mileage: 1200,
     transmission: "Hidrostática",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,

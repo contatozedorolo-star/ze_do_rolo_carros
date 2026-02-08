@@ -7,7 +7,7 @@ import pulverizadorImg from "@/assets/vehicle-implemento-pulverizador.jpg";
 import plantadeiraImg from "@/assets/vehicle-implemento-plantadeira.jpg";
 import colheitadeiraImg from "@/assets/vehicle-implemento-colheitadeira.jpg";
 import tratorImg from "@/assets/category-trator.jpg";
-import s10Img from "@/assets/vehicle-s10.jpg";
+
 import volvoFhImg from "@/assets/vehicle-volvo-fh.jpg";
 import vanSprinterImg from "@/assets/vehicle-van-sprinter.jpg";
 import vanMasterImg from "@/assets/vehicle-van-master.jpg";
@@ -122,17 +122,17 @@ export const vehicles = [
     paintOriginal: true,
     type: "carro",
   },
-  // PICAPES / CAMIONETES
+  // PICAPES / CAMIONETES (curadoria fixa)
   {
     id: "v7",
-    image: s10Img,
-    title: "Chevrolet S10 2.8 High Country 4x4 CD",
-    price: 189900,
-    location: "Belo Horizonte, MG",
-    year: "2022/2022",
-    mileage: 45000,
+    image: "https://image1.mobiauto.com.br/images/api/images/v1.0/451328785/transform/fl_progressive,f_webp,q_70,w_750",
+    title: "Fiat Toro Picape Compacta",
+    price: 185000,
+    location: "São Paulo, SP",
+    year: "2025/2025",
+    mileage: 12000,
     transmission: "Automático",
-    fuel: "Diesel",
+    fuel: "Flex",
     sellerLevel: "ouro" as const,
     verified: true,
     certified: true,
@@ -143,12 +143,12 @@ export const vehicles = [
   },
   {
     id: "v17",
-    image: "https://images.unsplash.com/photo-1612544448445-b8232cff3b6c?w=600&h=400&fit=crop",
-    title: "Ford Ranger 3.2 Limited 4x4 CD",
-    price: 215000,
-    location: "Goiânia, GO",
-    year: "2023/2023",
-    mileage: 28000,
+    image: "https://cloudfront-us-east-1.images.arcpublishing.com/estadao/FEV2UIOQOBLDZB2LAWJ4ATVAPA.png",
+    title: "Chevrolet S10 Picape Média",
+    price: 212500,
+    location: "Belo Horizonte, MG",
+    year: "2025/2025",
+    mileage: 18000,
     transmission: "Automático",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,
@@ -161,18 +161,18 @@ export const vehicles = [
   },
   {
     id: "v18",
-    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop",
-    title: "Toyota Hilux SRX 2.8 4x4 Diesel",
-    price: 285000,
-    location: "Campo Grande, MS",
-    year: "2024/2024",
+    image: "https://miamiimports.com.br/wp-content/uploads/2023/11/Ford-Ranger-XlS-6.png",
+    title: "Ford Ranger Picape Média-Grande",
+    price: 245000,
+    location: "Goiânia, GO",
+    year: "2025/2025",
     mileage: 15000,
     transmission: "Automático",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,
     verified: true,
     certified: true,
-    acceptsTrade: false,
+    acceptsTrade: true,
     motorScore: 5,
     paintOriginal: true,
     type: "camionete",

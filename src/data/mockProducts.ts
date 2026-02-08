@@ -1,12 +1,9 @@
 // Veículos - Dados de exemplo para o marketplace automotivo
 
 // Importar imagens locais para tratores e implementos
-import tratorCaseImg from "@/assets/vehicle-trator-case.jpg";
-import tratorNewhollandImg from "@/assets/vehicle-trator-newholland.jpg";
 import pulverizadorImg from "@/assets/vehicle-implemento-pulverizador.jpg";
 import plantadeiraImg from "@/assets/vehicle-implemento-plantadeira.jpg";
 import colheitadeiraImg from "@/assets/vehicle-implemento-colheitadeira.jpg";
-import tratorImg from "@/assets/category-trator.jpg";
 
 
 
@@ -394,15 +391,15 @@ export const vehicles = [
     paintOriginal: true,
     type: "van",
   },
-  // TRATORES
+  // TRATORES (curadoria fixa)
   {
     id: "v12",
-    image: tratorImg,
-    title: "John Deere 8R 340 Trator Agrícola 340cv",
-    price: 1450000,
+    image: "https://img.mfrural.com.br/api/image?url=https://s3.amazonaws.com/mfrural-produtos-us/70408-883447-82022505-trator-john-deere-5090e-plataformado-ano-2022.webp&width=289&height=220&mode=4",
+    title: "John Deere 5090E Trator Utilitário Médio 90cv",
+    price: 315000,
     location: "Sorriso, MT",
-    year: "2021/2021",
-    mileage: 3500,
+    year: "2022/2022",
+    mileage: 2500,
     transmission: "PowerShift",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,
@@ -415,13 +412,13 @@ export const vehicles = [
   },
   {
     id: "v25",
-    image: tratorCaseImg,
-    title: "Case IH Magnum 380 CVT 380cv",
-    price: 1680000,
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ56nMVfvxDjJ-J4byLHNwJOTeDWuSLqvZjqg&s",
+    title: "Massey Ferguson 7718 Trator Agrícola 180cv",
+    price: 415000,
     location: "Rondonópolis, MT",
-    year: "2022/2022",
-    mileage: 2800,
-    transmission: "CVT",
+    year: "2023/2023",
+    mileage: 1800,
+    transmission: "PowerShift",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,
     verified: true,
@@ -433,19 +430,19 @@ export const vehicles = [
   },
   {
     id: "v26",
-    image: tratorNewhollandImg,
-    title: "New Holland T7.245 245cv",
-    price: 890000,
+    image: "https://img.popagro.com.br/products/product-69317beab5184e4d081c4573/images/bb69ebb8-0767-45f6-9c12-65dbd7f510a6/valtra-a950r.jpg",
+    title: "AGCO Valtra A950R Trator Agrícola Premium 220cv",
+    price: 460000,
     location: "Dourados, MS",
-    year: "2020/2020",
-    mileage: 4500,
-    transmission: "PowerShift",
+    year: "2024/2024",
+    mileage: 800,
+    transmission: "CVT",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,
     verified: true,
     certified: true,
-    acceptsTrade: false,
-    motorScore: 4,
+    acceptsTrade: true,
+    motorScore: 5,
     paintOriginal: true,
     type: "trator",
   },

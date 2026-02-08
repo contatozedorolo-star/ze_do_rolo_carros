@@ -8,7 +8,7 @@ import plantadeiraImg from "@/assets/vehicle-implemento-plantadeira.jpg";
 import colheitadeiraImg from "@/assets/vehicle-implemento-colheitadeira.jpg";
 import tratorImg from "@/assets/category-trator.jpg";
 
-import volvoFhImg from "@/assets/vehicle-volvo-fh.jpg";
+
 import vanSprinterImg from "@/assets/vehicle-van-sprinter.jpg";
 import vanMasterImg from "@/assets/vehicle-van-master.jpg";
 
@@ -159,33 +159,33 @@ export const vehicles = [
     paintOriginal: true,
     type: "camionete",
   },
-  // CAMINHÕES
+  // CAMINHÕES (curadoria fixa)
   {
     id: "v8",
-    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop",
-    title: "Scania R450 6x2 Highline Streamline",
-    price: 750000,
-    location: "Campinas, SP",
-    year: "2021/2021",
-    mileage: 280000,
+    image: "https://d36qmzp7jiean8.cloudfront.net/cliente_019157/veiculos/1334439_202512080041526978843_big.webp",
+    title: "Scania R450 Caminhão Trator 6x2",
+    price: 500000,
+    location: "São Paulo, SP",
+    year: "2024/2024",
+    mileage: 120000,
     transmission: "Automático",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,
     verified: true,
     certified: true,
     acceptsTrade: true,
-    motorScore: 4,
+    motorScore: 5,
     paintOriginal: true,
     type: "caminhao",
   },
   {
     id: "v19",
-    image: volvoFhImg,
-    title: "Volvo FH 540 6x4 Globetrotter",
-    price: 920000,
+    image: "https://cloudfront-us-east-1.images.arcpublishing.com/estadao/H3LKYTPOFBP5JGWD6VIBA53QFI.jpg",
+    title: "Volvo FH 540 Caminhão Trator 6x4",
+    price: 530000,
     location: "Curitiba, PR",
-    year: "2022/2022",
-    mileage: 150000,
+    year: "2024/2024",
+    mileage: 95000,
     transmission: "I-Shift",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,
@@ -198,19 +198,19 @@ export const vehicles = [
   },
   {
     id: "v20",
-    image: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=600&h=400&fit=crop",
-    title: "Mercedes-Benz Actros 2651 6x4",
-    price: 850000,
+    image: "https://img.olx.com.br/images/43/434587839719691.jpg",
+    title: "Mercedes-Benz Actros 2651 Caminhão Trator 6x4",
+    price: 570000,
     location: "Joinville, SC",
-    year: "2021/2021",
-    mileage: 220000,
+    year: "2024/2024",
+    mileage: 80000,
     transmission: "Automático",
     fuel: "Diesel",
     sellerLevel: "ouro" as const,
     verified: true,
     certified: true,
-    acceptsTrade: false,
-    motorScore: 4,
+    acceptsTrade: true,
+    motorScore: 5,
     paintOriginal: true,
     type: "caminhao",
   },

@@ -50,6 +50,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (!error && data) {
       setProfile(data as Profile);
+    } else if (!data) {
+      // Profile doesn't exist yet (e.g. first Google OAuth login)
+      // Create it using metadata from the auth user
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        const meta = currentUser.user_metadata;
+        const fullName = meta?.full_name || meta?.name || null;
+        const avatarUrl = meta?.avatar_url || meta?.picture || null;
+
+        const { data: newProfile, error: insertError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: userId,
+            full_name: fullName,
+            avatar_url: avatarUrl,
+          }, { onConflict: 'id' })
+          .select()
+          .maybeSingle();
+
+        if (!insertError && newProfile) {
+          setProfile(newProfile as Profile);
+        }
+      }
     }
   };
 

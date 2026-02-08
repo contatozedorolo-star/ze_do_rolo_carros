@@ -394,15 +394,28 @@ const AdminUsers = () => {
 
       if (vehiclesError) throw vehiclesError;
 
-      // Fetch primary images for each vehicle
+      // Fetch primary images for each vehicle (fallback to first image if no primary)
       const vehiclesWithImages = await Promise.all(
         (vehiclesData || []).map(async (vehicle) => {
-          const { data: imageData } = await supabase
+          // Try primary image first
+          let { data: imageData } = await supabase
             .from("vehicle_images")
             .select("image_url")
             .eq("vehicle_id", vehicle.id)
             .eq("is_primary", true)
             .maybeSingle();
+
+          // Fallback: get the first uploaded image if no primary is set
+          if (!imageData) {
+            const { data: fallbackImage } = await supabase
+              .from("vehicle_images")
+              .select("image_url")
+              .eq("vehicle_id", vehicle.id)
+              .order("created_at", { ascending: true })
+              .limit(1)
+              .maybeSingle();
+            imageData = fallbackImage;
+          }
 
           return {
             ...vehicle,

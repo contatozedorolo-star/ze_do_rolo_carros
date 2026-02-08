@@ -1,33 +1,57 @@
 
-# Plano: Corrigir Configuração do Supabase
+# Padronizar Email de Contato para contato@zedorolo.com.br
 
 ## Problema Identificado
-O arquivo `.env` está apontando para um projeto Supabase inexistente (`qquumdurizsexbzlxjwz`), quando o projeto real do usuário é `muvornzsnhncihxawntz`.
+Algumas paginas do site utilizam emails diferentes (como `privacidade@zedorolo.com.br` e `dpo@zedorolo.com.br`) e tambem numeros de telefone fictícios. O unico email de contato valido e: **contato@zedorolo.com.br**.
 
-## Solução
+## Alteracoes Necessarias
 
-### Passo 1: Corrigir o arquivo `.env`
-Atualizar as variáveis de ambiente para apontar ao projeto correto:
+### 1. Politica de Privacidade (`src/pages/PoliticaPrivacidade.tsx`)
 
-```
-VITE_SUPABASE_PROJECT_ID="muvornzsnhncihxawntz"
-VITE_SUPABASE_PUBLISHABLE_KEY="[anon key do painel]"
-VITE_SUPABASE_URL="https://muvornzsnhncihxawntz.supabase.co"
-```
+**Linha 150** - Secao "Seus Direitos":
+- De: `privacidade@zedorolo.com.br`
+- Para: `contato@zedorolo.com.br`
 
-### Passo 2: Atualizar o `supabase/config.toml`
-O arquivo de configuração também precisa ser atualizado:
+**Linhas 196-198** - Secao "DPO" (item 13):
+- De: `dpo@zedorolo.com.br`
+- Para: `contato@zedorolo.com.br`
 
-```toml
-project_id = "muvornzsnhncihxawntz"
-```
+**Linhas 206-210** - Secao "Contato" (item 14):
+- Remover a linha separada de "E-mail privacidade" (`privacidade@zedorolo.com.br`)
+- Manter apenas: `contato@zedorolo.com.br`
+- Remover o telefone ficticio `(11) 9999-9999`
 
-## Informacao Necessaria
-Para completar a correção, preciso da **anon key completa** do seu projeto. Na imagem ela aparece truncada. 
+### 2. Politica de Cookies (`src/pages/PoliticaCookies.tsx`)
 
-Você pode copiar clicando no botão "Copy" ao lado da chave `anon public` em **API Keys**.
+**Linha 180** - Secao "Seus Direitos":
+- De: `privacidade@zedorolo.com.br`
+- Para: `contato@zedorolo.com.br`
 
-## Resultado Esperado
-- App vai conseguir se conectar ao Supabase
-- Login, cadastro e listagem de dados vão funcionar
-- Erro de DNS vai desaparecer
+**Linhas 199-203** - Secao "Contato" (item 10):
+- Remover a linha separada de "E-mail privacidade" (`privacidade@zedorolo.com.br`)
+- Manter apenas: `contato@zedorolo.com.br`
+- Manter o telefone `(11) 98376-5437` (parece ser real)
+
+### 3. Termos de Uso (`src/pages/TermosDeUso.tsx`)
+
+**Linhas 179-182** - Secao "Contato" (item 11):
+- Email ja esta correto (`contato@zedorolo.com.br`)
+- Remover o telefone ficticio `(11) 9999-9999`
+
+### 4. Footer (`src/components/Footer.tsx`)
+- Ja esta correto com `contato@zedorolo.com.br` -- nenhuma alteracao necessaria.
+
+---
+
+## Resumo das Alteracoes
+
+| Arquivo | Emails Incorretos | Acao |
+|---|---|---|
+| PoliticaPrivacidade.tsx | `privacidade@zedorolo.com.br`, `dpo@zedorolo.com.br` | Substituir por `contato@zedorolo.com.br` |
+| PoliticaCookies.tsx | `privacidade@zedorolo.com.br` | Substituir por `contato@zedorolo.com.br` |
+| TermosDeUso.tsx | (email correto, telefone ficticio) | Remover telefone ficticio |
+
+## Detalhes Tecnicos
+- Sao alteracoes simples de texto em 3 arquivos `.tsx`
+- Nenhuma dependencia ou logica de codigo afetada
+- Apenas substituicao de strings estáticas

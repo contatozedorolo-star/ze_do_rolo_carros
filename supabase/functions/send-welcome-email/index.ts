@@ -30,8 +30,9 @@ const buildWelcomeHtml = (name: string): string => {
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #F97316, #EA580C);padding:40px 40px 30px;text-align:center;">
+              <img src="https://zedorolo.lovable.app/logo-zedorolo.png" alt="Zé do Rolo" width="180" style="display:block;margin:0 auto 12px;" />
               <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:800;letter-spacing:-0.5px;">
-                🚗 Zé do Rolo
+                Zé do Rolo
               </h1>
               <p style="margin:8px 0 0;color:rgba(255,255,255,0.9);font-size:14px;">
                 O portal de trocas e vendas de veículos
@@ -98,9 +99,9 @@ const buildWelcomeHtml = (name: string): string => {
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                 <tr>
                   <td align="center">
-                    <a href="https://zedorolo.lovable.app/veiculos" 
+                    <a href="https://zedorolo.lovable.app/dashboard" 
                        style="display:inline-block;background:linear-gradient(135deg,#F97316,#EA580C);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:10px;font-size:15px;font-weight:700;letter-spacing:0.3px;">
-                      Explorar Veículos →
+                      Acessar meu Painel →
                     </a>
                   </td>
                 </tr>
@@ -159,7 +160,7 @@ const handler = async (req: Request): Promise<Response> => {
     const html = buildWelcomeHtml(name);
 
     const emailResponse = await resend.emails.send({
-      from: "Zé do Rolo <onboarding@resend.dev>",
+      from: "Zé do Rolo <contato@zedorolo.com>",
       to: [email],
       subject: "🚗 Bem-vindo ao Zé do Rolo! Sua conta foi criada",
       html,

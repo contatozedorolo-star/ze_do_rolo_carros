@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string, isNewLogin = false) => {
+  const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -50,33 +50,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (!error && data) {
       setProfile(data as Profile);
-
-      // Check if this is a brand-new profile (created within the last 60 seconds)
-      // This handles the case where the DB trigger already created the profile
-      if (isNewLogin) {
-        const createdAt = new Date(data.created_at).getTime();
-        const now = Date.now();
-        const isNewUser = (now - createdAt) < 60_000; // less than 60 seconds ago
-
-        if (isNewUser) {
-          const { data: { user: currentUser } } = await supabase.auth.getUser();
-          if (currentUser?.email) {
-            const fullName = data.full_name || currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '';
-            console.log('New user detected, sending welcome email to:', currentUser.email);
-            supabase.functions.invoke('send-welcome-email', {
-              body: { email: currentUser.email, name: fullName },
-            }).then(({ error: emailError }) => {
-              if (emailError) {
-                console.error('Failed to send welcome email:', emailError);
-              } else {
-                console.log('Welcome email sent to:', currentUser.email);
-              }
-            });
-          }
-        }
-      }
     } else if (!data) {
-      // Profile doesn't exist yet — create it and send welcome email
+      // Profile doesn't exist yet (rare edge case — trigger should handle it)
+      // Fallback: upsert profile from auth metadata
       const { data: { user: currentUser } } = await supabase.auth.getUser();
       if (currentUser) {
         const meta = currentUser.user_metadata;
@@ -95,21 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (!insertError && newProfile) {
           setProfile(newProfile as Profile);
-          
-          // Send welcome email for new users
-          const userEmail = currentUser.email;
-          if (userEmail) {
-            console.log('New profile created, sending welcome email to:', userEmail);
-            supabase.functions.invoke('send-welcome-email', {
-              body: { email: userEmail, name: fullName || '' },
-            }).then(({ error: emailError }) => {
-              if (emailError) {
-                console.error('Failed to send welcome email:', emailError);
-              } else {
-                console.log('Welcome email sent to:', userEmail);
-              }
-            });
-          }
         }
       }
     }
@@ -125,9 +86,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Defer profile fetch with setTimeout
         // Pass isNewLogin=true for SIGNED_IN events to detect new OAuth users
         if (session?.user) {
-          const isNewLogin = event === 'SIGNED_IN';
           setTimeout(() => {
-            fetchProfile(session.user.id, isNewLogin);
+            fetchProfile(session.user.id);
           }, 0);
         } else {
           setProfile(null);

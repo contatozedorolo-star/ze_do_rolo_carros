@@ -147,7 +147,7 @@ const PoliticaPrivacidade = () => {
                 <li><strong>Oposição:</strong> opor-se ao tratamento em determinadas situações.</li>
               </ul>
               <p className="mt-4">
-                Para exercer seus direitos, entre em contato através do e-mail: <strong>privacidade@zedorolo.com.br</strong>
+                Para exercer seus direitos, entre em contato através do e-mail: <strong>contato@zedorolo.com.br</strong>
               </p>
             </section>
 
@@ -194,7 +194,7 @@ const PoliticaPrivacidade = () => {
                 Nosso Encarregado de Proteção de Dados está disponível para esclarecer dúvidas e receber solicitações relacionadas ao tratamento de seus dados pessoais:
               </p>
               <ul className="list-none mt-2 space-y-1">
-                <li><strong>E-mail:</strong> dpo@zedorolo.com.br</li>
+                <li><strong>E-mail:</strong> contato@zedorolo.com.br</li>
               </ul>
             </section>
 
@@ -204,9 +204,7 @@ const PoliticaPrivacidade = () => {
                 Para dúvidas, sugestões ou reclamações relacionadas a esta Política de Privacidade, entre em contato conosco:
               </p>
               <ul className="list-none mt-2 space-y-1">
-                <li><strong>E-mail geral:</strong> contato@zedorolo.com.br</li>
-                <li><strong>E-mail privacidade:</strong> privacidade@zedorolo.com.br</li>
-                <li><strong>Telefone:</strong> (11) 9999-9999</li>
+                <li><strong>E-mail:</strong> contato@zedorolo.com.br</li>
               </ul>
             </section>
 

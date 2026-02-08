@@ -178,7 +178,6 @@ const TermosDeUso = () => {
               </p>
               <ul className="list-none mt-2 space-y-1">
                 <li><strong>E-mail:</strong> contato@zedorolo.com.br</li>
-                <li><strong>Telefone:</strong> (11) 9999-9999</li>
               </ul>
             </section>
           </div>

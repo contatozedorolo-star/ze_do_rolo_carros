@@ -27,7 +27,7 @@ import AssistenteIA from "./pages/AssistenteIA";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
-
+import FloatingAssistantButton from "./components/FloatingAssistantButton";
 
 const queryClient = new QueryClient();
 
@@ -67,7 +67,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          
+          <FloatingAssistantButton />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,7 +41,9 @@ import {
   ImageIcon,
   ZoomIn,
   Download,
+  Search,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/formatters";
 
 interface KYCVerification {
@@ -86,6 +88,7 @@ const AdminNotificacoes = () => {
   const [pendingVehicles, setPendingVehicles] = useState<PendingVehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   // KYC Dialog State
   const [selectedKYC, setSelectedKYC] = useState<KYCVerification | null>(null);
@@ -369,6 +372,28 @@ const AdminNotificacoes = () => {
     }
   };
 
+  const filteredKyc = useMemo(() => {
+    if (!searchQuery.trim()) return kycRequests;
+    const q = searchQuery.toLowerCase();
+    return kycRequests.filter(r =>
+      r.profile?.full_name?.toLowerCase().includes(q) ||
+      r.document_number?.toLowerCase().includes(q)
+    );
+  }, [kycRequests, searchQuery]);
+
+  const filteredVehicles = useMemo(() => {
+    if (!searchQuery.trim()) return pendingVehicles;
+    const q = searchQuery.toLowerCase();
+    return pendingVehicles.filter(v =>
+      v.title?.toLowerCase().includes(q) ||
+      v.brand?.toLowerCase().includes(q) ||
+      v.model?.toLowerCase().includes(q) ||
+      v.profile?.full_name?.toLowerCase().includes(q)
+    );
+  }, [pendingVehicles, searchQuery]);
+
+  const totalPending = kycRequests.length + pendingVehicles.length;
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -378,8 +403,6 @@ const AdminNotificacoes = () => {
   }
 
   if (!isAdmin) return null;
-
-  const totalPending = kycRequests.length + pendingVehicles.length;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -468,6 +491,21 @@ const AdminNotificacoes = () => {
           </Card>
         </div>
 
+        {/* Search */}
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome, documento, veículo ou vendedor..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* KYC Section */}
         <Card className="mb-8">
           <CardHeader>
@@ -480,10 +518,10 @@ const AdminNotificacoes = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {kycRequests.length === 0 ? (
+            {filteredKyc.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-500" />
-                <p>Nenhuma verificação pendente.</p>
+                <p>{searchQuery ? "Nenhum resultado encontrado." : "Nenhuma verificação pendente."}</p>
               </div>
             ) : (
               <Table>
@@ -496,7 +534,7 @@ const AdminNotificacoes = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {kycRequests.map((request) => (
+                  {filteredKyc.map((request) => (
                     <TableRow key={request.id}>
                       <TableCell>
                         <div>
@@ -541,10 +579,10 @@ const AdminNotificacoes = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {pendingVehicles.length === 0 ? (
+            {filteredVehicles.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-500" />
-                <p>Nenhum anúncio pendente de aprovação.</p>
+                <p>{searchQuery ? "Nenhum resultado encontrado." : "Nenhum anúncio pendente de aprovação."}</p>
               </div>
             ) : (
               <Table>
@@ -558,7 +596,7 @@ const AdminNotificacoes = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pendingVehicles.map((vehicle) => (
+                  {filteredVehicles.map((vehicle) => (
                     <TableRow key={vehicle.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">

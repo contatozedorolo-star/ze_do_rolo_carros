@@ -24,5 +24,8 @@ verify_jwt = false
 [functions.send-ad-pending-email]
 verify_jwt = false
 
+[functions.send-ad-approved-email]
+verify_jwt = false
+
 [functions.send-new-proposal-email]
 verify_jwt = false

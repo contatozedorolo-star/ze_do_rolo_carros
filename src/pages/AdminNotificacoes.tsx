@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdminRealtime, updateTabTitle } from "@/hooks/useAdminRealtime";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -224,6 +225,21 @@ const AdminNotificacoes = () => {
       setLoading(false);
     }
   };
+
+  // Realtime alerts
+  const handleNewPending = useCallback(() => {
+    fetchData();
+  }, []);
+
+  useAdminRealtime({ enabled: isAdmin, onNewPending: handleNewPending });
+
+  // Update tab title
+  useEffect(() => {
+    if (isAdmin) {
+      updateTabTitle(kycRequests.length + pendingVehicles.length);
+    }
+    return () => { document.title = "Zé do Rolo"; };
+  }, [isAdmin, kycRequests.length, pendingVehicles.length]);
 
   // Generate signed URLs for private bucket files
   const fetchDocumentUrls = async (request: KYCVerification) => {

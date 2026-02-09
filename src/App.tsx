@@ -18,6 +18,7 @@ import AdminKYC from "./pages/AdminKYC";
 import AdminUsers from "./pages/AdminUsers";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminNotificacoes from "./pages/AdminNotificacoes";
+import AdminDashboard from "./pages/AdminDashboard";
 import TabelaFipe from "./pages/TabelaFipe";
 import FAQ from "./pages/FAQ";
 import TermosDeUso from "./pages/TermosDeUso";
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/como-funciona" element={<HowItWorks />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/kyc" element={<AdminKYC />} />
             <Route path="/admin/usuarios" element={<AdminUsers />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />

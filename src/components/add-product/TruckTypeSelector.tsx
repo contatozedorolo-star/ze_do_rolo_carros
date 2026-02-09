@@ -8,14 +8,20 @@ interface TruckType {
 }
 
 const truckTypeOptions: TruckType[] = [
-  { value: "3_4", label: "Caminhão 3/4", description: "Leve, até 3.500kg PBT" },
-  { value: "toco", label: "Caminhão Toco", description: "Eixo simples traseiro" },
-  { value: "truck", label: "Caminhão Truck", description: "Eixo duplo traseiro" },
-  { value: "bitruck", label: "Caminhão Bitruck", description: "Dois eixos traseiros duplos" },
-  { value: "cavalo_mecanico", label: "Cavalo Mecânico", description: "Para reboque de semirreboques" },
-  { value: "vuc", label: "VUC", description: "Veículo Urbano de Carga" },
-  { value: "fora_estrada", label: "Fora de Estrada", description: "Mineração e construção" },
+  { value: "3_4", label: "Leve / 3/4", description: "Entrega urbana (Delivery, Accelo)" },
+  { value: "toco", label: "Toco (4x2)", description: "Médio, um eixo traseiro" },
+  { value: "truck", label: "Truck (6x2 / 6x4)", description: "Pesado, eixo duplo traseiro" },
+  { value: "cavalo_mecanico", label: "Cavalo Mecânico", description: "Cabine para rebocar carreta" },
+  { value: "caminhonete_furgao", label: "Caminhonete / Furgão", description: "HR, Bongo, Iveco Daily" },
 ];
+
+const getIcon = (val: string) => {
+  switch (val) {
+    case "cavalo_mecanico": return Container;
+    case "caminhonete_furgao": return Car;
+    default: return Truck;
+  }
+};
 
 interface TruckTypeSelectorProps {
   value: string;
@@ -24,35 +30,38 @@ interface TruckTypeSelectorProps {
 
 const TruckTypeSelector: React.FC<TruckTypeSelectorProps> = ({ value, onChange }) => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-      {truckTypeOptions.map((type) => (
-        <button
-          key={type.value}
-          type="button"
-          onClick={() => onChange(type.value)}
-          className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all text-center ${
-            value === type.value 
-              ? "border-primary bg-primary/5 shadow-md" 
-              : "border-border hover:border-primary/50 hover:bg-muted/30"
-          }`}
-        >
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-            value === type.value ? "bg-primary/10" : "bg-muted"
-          }`}>
-            {type.value === "cavalo_mecanico" ? (
-              <Container className={`h-8 w-8 ${value === type.value ? "text-primary" : "text-muted-foreground"}`} />
-            ) : type.value === "vuc" ? (
-              <Car className={`h-8 w-8 ${value === type.value ? "text-primary" : "text-muted-foreground"}`} />
-            ) : (
-              <Truck className={`h-8 w-8 ${value === type.value ? "text-primary" : "text-muted-foreground"}`} />
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      {truckTypeOptions.map((type) => {
+        const Icon = getIcon(type.value);
+        const isSelected = value === type.value;
+        return (
+          <button
+            key={type.value}
+            type="button"
+            onClick={() => onChange(type.value)}
+            className={`relative p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all hover:shadow-md ${
+              isSelected
+                ? "border-primary bg-primary/5 shadow-md ring-2 ring-primary/20"
+                : "border-border hover:border-primary/50 bg-card"
+            }`}
+          >
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+              isSelected ? "bg-primary/10" : "bg-muted"
+            }`}>
+              <Icon className={`h-6 w-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+            </div>
+            <div className="text-center">
+              <span className={`text-sm font-semibold block ${isSelected ? "text-primary" : "text-foreground"}`}>
+                {type.label}
+              </span>
+              <span className="text-xs text-muted-foreground">{type.description}</span>
+            </div>
+            {isSelected && (
+              <div className="absolute top-2 right-2 w-3 h-3 bg-primary rounded-full" />
             )}
-          </div>
-          <span className={`text-sm font-medium ${value === type.value ? "text-primary" : "text-foreground"}`}>
-            {type.label}
-          </span>
-          <span className="text-xs text-muted-foreground">{type.description}</span>
-        </button>
-      ))}
+          </button>
+        );
+      })}
     </div>
   );
 };

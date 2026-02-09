@@ -235,13 +235,11 @@ const Auth = () => {
           }
         } else {
           toast({
-            title: "Cadastro realizado!",
-            description: "Verifique seu email para confirmar a conta.",
+            title: "🎉 Bem-vindo ao Zé do Rolo!",
+            description: "Sua conta foi criada com sucesso.",
           });
-          // Automatically switch to login mode after successful signup
-          setMode('signin');
-          // Clear password fields for security
-          setFormData(prev => ({ ...prev, password: "", confirmPassword: "" }));
+          // With email confirmation disabled, user is auto-logged in
+          // The useEffect watching `user` will redirect to dashboard
         }
       } else if (mode === 'signin') {
         const result = signInSchema.safeParse(formData);

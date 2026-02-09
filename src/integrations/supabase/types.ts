@@ -341,6 +341,7 @@ export type Database = {
           has_ze_seal: boolean
           id: string
           ideal_trade_description: string | null
+          implemento_subcategory: string | null
           insurance_coverage_percent: number | null
           insurance_covers_100: string | null
           ipva_paid: boolean | null
@@ -389,6 +390,7 @@ export type Database = {
           trade_restrictions: string[] | null
           trade_value_accepted: number | null
           transmission: Database["public"]["Enums"]["transmission_type"]
+          trator_subcategory: string | null
           truck_body: string | null
           truck_cabin: string | null
           truck_traction: string | null
@@ -425,6 +427,7 @@ export type Database = {
           has_ze_seal?: boolean
           id?: string
           ideal_trade_description?: string | null
+          implemento_subcategory?: string | null
           insurance_coverage_percent?: number | null
           insurance_covers_100?: string | null
           ipva_paid?: boolean | null
@@ -473,6 +476,7 @@ export type Database = {
           trade_restrictions?: string[] | null
           trade_value_accepted?: number | null
           transmission?: Database["public"]["Enums"]["transmission_type"]
+          trator_subcategory?: string | null
           truck_body?: string | null
           truck_cabin?: string | null
           truck_traction?: string | null
@@ -509,6 +513,7 @@ export type Database = {
           has_ze_seal?: boolean
           id?: string
           ideal_trade_description?: string | null
+          implemento_subcategory?: string | null
           insurance_coverage_percent?: number | null
           insurance_covers_100?: string | null
           ipva_paid?: boolean | null
@@ -557,6 +562,7 @@ export type Database = {
           trade_restrictions?: string[] | null
           trade_value_accepted?: number | null
           transmission?: Database["public"]["Enums"]["transmission_type"]
+          trator_subcategory?: string | null
           truck_body?: string | null
           truck_cabin?: string | null
           truck_traction?: string | null

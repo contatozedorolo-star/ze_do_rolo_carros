@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ChevronRight, ChevronLeft, Car, Truck, Bike, Bus, CarFront, DollarSign, ExternalLink, ShieldCheck, AlertTriangle, Settings2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, Car, Truck, Bike, Bus, CarFront, DollarSign, ExternalLink, ShieldCheck, AlertTriangle, Settings2, Tractor, Cog } from "lucide-react";
 import { 
   brands, colorOptions, transmissionTypes, fuelTypes, 
   engineLiters, doorOptions, seatOptions, auctionReasons,
@@ -36,6 +36,8 @@ import VanTypeSelector from "@/components/add-product/VanTypeSelector";
 import VanPhotoUploadGrid, { vanPhotoCategories } from "@/components/add-product/VanPhotoUploadGrid";
 import BusTypeSelector from "@/components/add-product/BusTypeSelector";
 import BusPhotoUploadGrid, { busPhotoCategories } from "@/components/add-product/BusPhotoUploadGrid";
+import TratorTypeSelector from "@/components/add-product/TratorTypeSelector";
+import ImplementoTypeSelector from "@/components/add-product/ImplementoTypeSelector";
 import { formatPriceInput, parsePriceInput } from "@/lib/formatters";
 import KYCRequiredModal from "@/components/KYCRequiredModal";
 
@@ -45,6 +47,8 @@ const vehicleTypes = [
   { value: "caminhao", label: "Caminhão", icon: Truck },
   { value: "van", label: "Van", icon: Bus },
   { value: "onibus", label: "Ônibus", icon: Bus },
+  { value: "trator", label: "Trator", icon: Tractor },
+  { value: "implemento", label: "Implemento", icon: Cog },
 ];
 
 const carSteps = [
@@ -181,6 +185,8 @@ const AddProduct = () => {
     truck_type: "",
     van_subcategory: "",
     bus_subcategory: "",
+    trator_subcategory: "",
+    implemento_subcategory: "",
     
     // Etapa 2 - Dados Técnicos
     city: "", state: "",
@@ -447,6 +453,9 @@ const AddProduct = () => {
         body_type: formData.body_type || null,
         is_armored: formData.is_armored,
         van_subcategory: formData.vehicle_type === "van" ? formData.van_subcategory : null,
+        bus_subcategory: formData.vehicle_type === "onibus" ? formData.bus_subcategory : null,
+        trator_subcategory: formData.vehicle_type === "trator" ? formData.trator_subcategory : null,
+        implemento_subcategory: formData.vehicle_type === "implemento" ? formData.implemento_subcategory : null,
         
         // Campos específicos de Moto
         moto_style: formData.vehicle_type === "moto" ? formData.moto_style : null,
@@ -641,6 +650,28 @@ const AddProduct = () => {
                   <BusTypeSelector
                     value={formData.bus_subcategory}
                     onChange={(value) => setFormData(p => ({ ...p, bus_subcategory: value }))}
+                  />
+                </div>
+              )}
+
+              {formData.vehicle_type === "trator" && (
+                <div className="pt-4 border-t">
+                  <Label className="text-base font-semibold">Tipo de Trator *</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Selecione o tipo que melhor descreve seu trator</p>
+                  <TratorTypeSelector
+                    value={formData.trator_subcategory}
+                    onChange={(value) => setFormData(p => ({ ...p, trator_subcategory: value }))}
+                  />
+                </div>
+              )}
+
+              {formData.vehicle_type === "implemento" && (
+                <div className="pt-4 border-t">
+                  <Label className="text-base font-semibold">Tipo de Implemento *</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Selecione a função principal do implemento</p>
+                  <ImplementoTypeSelector
+                    value={formData.implemento_subcategory}
+                    onChange={(value) => setFormData(p => ({ ...p, implemento_subcategory: value }))}
                   />
                 </div>
               )}

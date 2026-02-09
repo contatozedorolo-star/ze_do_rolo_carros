@@ -339,6 +339,7 @@ export type Database = {
           has_service_history: boolean | null
           has_warranty: boolean | null
           has_ze_seal: boolean
+          hours_use: number | null
           id: string
           ideal_trade_description: string | null
           implemento_subcategory: string | null
@@ -369,6 +370,7 @@ export type Database = {
           photo_checklist: Json | null
           plate: string | null
           plate_end: string | null
+          power_cv: number | null
           price: number
           rating_cambio: number | null
           rating_documentacao: number | null
@@ -385,6 +387,7 @@ export type Database = {
           start_type: string | null
           state: string | null
           title: string
+          traction: string | null
           trade_description: string | null
           trade_priority: string | null
           trade_restrictions: string[] | null
@@ -425,6 +428,7 @@ export type Database = {
           has_service_history?: boolean | null
           has_warranty?: boolean | null
           has_ze_seal?: boolean
+          hours_use?: number | null
           id?: string
           ideal_trade_description?: string | null
           implemento_subcategory?: string | null
@@ -455,6 +459,7 @@ export type Database = {
           photo_checklist?: Json | null
           plate?: string | null
           plate_end?: string | null
+          power_cv?: number | null
           price: number
           rating_cambio?: number | null
           rating_documentacao?: number | null
@@ -471,6 +476,7 @@ export type Database = {
           start_type?: string | null
           state?: string | null
           title: string
+          traction?: string | null
           trade_description?: string | null
           trade_priority?: string | null
           trade_restrictions?: string[] | null
@@ -511,6 +517,7 @@ export type Database = {
           has_service_history?: boolean | null
           has_warranty?: boolean | null
           has_ze_seal?: boolean
+          hours_use?: number | null
           id?: string
           ideal_trade_description?: string | null
           implemento_subcategory?: string | null
@@ -541,6 +548,7 @@ export type Database = {
           photo_checklist?: Json | null
           plate?: string | null
           plate_end?: string | null
+          power_cv?: number | null
           price?: number
           rating_cambio?: number | null
           rating_documentacao?: number | null
@@ -557,6 +565,7 @@ export type Database = {
           start_type?: string | null
           state?: string | null
           title?: string
+          traction?: string | null
           trade_description?: string | null
           trade_priority?: string | null
           trade_restrictions?: string[] | null

@@ -187,6 +187,9 @@ const AddProduct = () => {
     bus_subcategory: "",
     trator_subcategory: "",
     implemento_subcategory: "",
+    hours_use: "",
+    power_cv: "",
+    traction: "",
     
     // Etapa 2 - Dados Técnicos
     city: "", state: "",
@@ -502,6 +505,11 @@ const AddProduct = () => {
         trade_priority: formData.trade_priority,
         max_cash_return: formData.max_cash_return ? parsePriceInput(formData.max_cash_return) : null,
         trade_restrictions: formData.trade_restrictions.length > 0 ? formData.trade_restrictions : null,
+        
+        // Trator / Implemento
+        hours_use: formData.hours_use ? parseInt(formData.hours_use) : null,
+        power_cv: formData.power_cv ? parseInt(formData.power_cv) : null,
+        traction: formData.traction || null,
       };
 
       const { data: vehicle, error: vehicleError } = await supabase
@@ -725,21 +733,86 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* Quilometragem */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Quilometragem *</Label>
-                  <Input 
-                    type="number" 
-                    value={formData.km} 
-                    onChange={e => setFormData(p => ({ ...p, km: e.target.value }))} 
-                    placeholder="Ex: 45000"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">Se 0km, deixe em branco ou 0</p>
+              {/* Quilometragem / Horas de Uso */}
+              {formData.vehicle_type === "implemento" ? null : formData.vehicle_type === "trator" ? (
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <Label>Horas de Uso *</Label>
+                    <Input 
+                      type="number" 
+                      value={formData.hours_use} 
+                      onChange={e => setFormData(p => ({ ...p, hours_use: e.target.value }))} 
+                      placeholder="Ex: 3500"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Horímetro do trator</p>
+                  </div>
+                  <div>
+                    <Label>Potência (cv) *</Label>
+                    <Input 
+                      type="number" 
+                      value={formData.power_cv} 
+                      onChange={e => setFormData(p => ({ ...p, power_cv: e.target.value }))} 
+                      placeholder="Ex: 150"
+                    />
+                  </div>
+                  <div>
+                    <Label>Tração *</Label>
+                    <Select value={formData.traction} onValueChange={v => setFormData(p => ({ ...p, traction: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        <SelectItem value="4x2">4x2</SelectItem>
+                        <SelectItem value="4x4">4x4</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label>Quilometragem *</Label>
+                    <Input 
+                      type="number" 
+                      value={formData.km} 
+                      onChange={e => setFormData(p => ({ ...p, km: e.target.value }))} 
+                      placeholder="Ex: 45000"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Se 0km, deixe em branco ou 0</p>
+                  </div>
+                </div>
+              )}
 
-              {/* Marca, Modelo, Versão */}
+              {/* Capacidade (Lugares) - Ônibus e Vans */}
+              {(formData.vehicle_type === "onibus" || formData.vehicle_type === "van") && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label>Capacidade (Lugares)</Label>
+                    <Input 
+                      type="number" 
+                      value={formData.seats} 
+                      onChange={e => setFormData(p => ({ ...p, seats: e.target.value }))} 
+                      placeholder="Ex: 15"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Tipo de Carroceria - Caminhões */}
+              {formData.vehicle_type === "caminhao" && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label>Tipo de Carroceria</Label>
+                    <Select value={formData.truck_body} onValueChange={v => setFormData(p => ({ ...p, truck_body: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        {["Baú", "Sider", "Caçamba", "Prancha", "Tanque", "Graneleiro"].map(t => (
+                          <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
               <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label>Marca *</Label>

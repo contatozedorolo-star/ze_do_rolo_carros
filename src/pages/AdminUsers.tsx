@@ -489,6 +489,12 @@ const AdminUsers = () => {
         {/* Admin Navigation */}
         <div className="flex gap-2 mb-6 flex-wrap">
           <Button variant="outline" asChild>
+            <Link to="/admin/dashboard">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Dashboard
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
             <Link to="/admin/notificacoes">
               <Bell className="h-4 w-4 mr-2" />
               Notificações

@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdminRealtime, updateTabTitle } from "@/hooks/useAdminRealtime";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -108,6 +109,23 @@ const AdminDashboard = () => {
   const [pendingVehicles, setPendingVehicles] = useState<PendingVehicle[]>([]);
   const [selectedVehicle, setSelectedVehicle] = useState<PendingVehicle | null>(null);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate]);
+
+  // Update tab title with pending count
+  useEffect(() => {
+    if (isAdmin) {
+      const total = kycRequests.length + pendingVehicles.length;
+      updateTabTitle(total);
+    }
+    return () => {
+      document.title = "Zé do Rolo";
+    };
+  }, [isAdmin, kycRequests.length, pendingVehicles.length]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -238,6 +256,13 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
+
+  // Realtime alerts - must be after fetchData definition
+  const handleNewPending = useCallback(() => {
+    fetchData();
+  }, []);
+
+  useAdminRealtime({ enabled: isAdmin, onNewPending: handleNewPending });
 
   // KYC document URLs
   const fetchDocumentUrls = async (request: KYCVerification) => {

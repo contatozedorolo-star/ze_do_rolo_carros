@@ -327,17 +327,20 @@ const AdminNotificacoes = () => {
     setProcessing(true);
     try {
       if (status === "rejected") {
-        // Delete the vehicle if rejected
+        // Update vehicle to rejected and store reason in diagnostic_notes
         const { error } = await supabase
           .from("vehicles")
-          .delete()
+          .update({
+            moderation_status: "rejected",
+            diagnostic_notes: vehicleRejectionReason || null,
+          })
           .eq("id", selectedVehicle.id);
 
         if (error) throw error;
 
         toast({
           title: "Anúncio Rejeitado",
-          description: "O anúncio foi removido da plataforma.",
+          description: "O vendedor será notificado por e-mail com o motivo.",
         });
       } else {
         // Approve the vehicle
@@ -859,11 +862,11 @@ const AdminNotificacoes = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Motivo da Rejeição (opcional)</label>
+                <label className="text-sm font-medium text-destructive">Motivo da Rejeição (obrigatório para reprovar)</label>
                 <Textarea
                   value={vehicleRejectionReason}
                   onChange={(e) => setVehicleRejectionReason(e.target.value)}
-                  placeholder="Descreva o motivo caso rejeite..."
+                  placeholder="Ex: Fotos de baixa qualidade, preço incompatível, dados incorretos..."
                   rows={3}
                 />
               </div>
@@ -871,7 +874,17 @@ const AdminNotificacoes = () => {
               <DialogFooter className="gap-2">
                 <Button
                   variant="destructive"
-                  onClick={() => handleVehicleReview("rejected")}
+                  onClick={() => {
+                    if (!vehicleRejectionReason.trim()) {
+                      toast({
+                        title: "Motivo obrigatório",
+                        description: "Informe o motivo da rejeição para que o vendedor saiba o que corrigir.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    handleVehicleReview("rejected");
+                  }}
                   disabled={processing}
                 >
                   {processing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <XCircle className="h-4 w-4 mr-2" />}

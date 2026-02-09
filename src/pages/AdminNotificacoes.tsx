@@ -782,11 +782,11 @@ const AdminNotificacoes = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Motivo da Rejeição (opcional)</label>
+                <label className="text-sm font-medium text-destructive">Motivo da Rejeição (obrigatório para reprovar)</label>
                 <Textarea
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
-                  placeholder="Descreva o motivo caso rejeite..."
+                  placeholder="Ex: Documento ilegível, foto cortada, dados não conferem..."
                   rows={3}
                 />
               </div>
@@ -794,7 +794,17 @@ const AdminNotificacoes = () => {
               <DialogFooter className="gap-2">
                 <Button
                   variant="destructive"
-                  onClick={() => handleKYCReview("rejected")}
+                  onClick={() => {
+                    if (!rejectionReason.trim()) {
+                      toast({
+                        title: "Motivo obrigatório",
+                        description: "Informe o motivo da rejeição para que o usuário saiba o que corrigir.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    handleKYCReview("rejected");
+                  }}
                   disabled={processing}
                 >
                   {processing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <XCircle className="h-4 w-4 mr-2" />}

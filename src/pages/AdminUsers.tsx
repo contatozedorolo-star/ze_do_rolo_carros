@@ -65,6 +65,7 @@ import {
   MessageSquare,
   TrendingUp,
   Bell,
+  KeyRound,
 } from "lucide-react";
 import {
   Tooltip,
@@ -374,6 +375,37 @@ const AdminUsers = () => {
       });
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleResetPassword = async (userItem: UserProfile) => {
+    if (!userItem.email) {
+      toast({
+        title: "Erro",
+        description: "E-mail do usuário não encontrado.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(userItem.email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "E-mail enviado!",
+        description: `Link de redefinição de senha enviado para ${userItem.email}.`,
+      });
+    } catch (error: any) {
+      console.error("Reset password error:", error);
+      toast({
+        title: "Erro ao enviar",
+        description: error.message || "Não foi possível enviar o e-mail de redefinição.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -759,6 +791,27 @@ const AdminUsers = () => {
                               Ver
                             </Button>
                             
+                            {/* Reset Password button */}
+                            {userItem.email && userItem.id !== user?.id && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleResetPassword(userItem);
+                                      }}
+                                    >
+                                      <KeyRound className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Resetar Senha</TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+
                             {/* Delete button - disabled for self */}
                             <TooltipProvider>
                               <Tooltip>

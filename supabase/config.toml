@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.send-document-status-email]
 verify_jwt = false
+
+[functions.send-account-approved-email]
+verify_jwt = false

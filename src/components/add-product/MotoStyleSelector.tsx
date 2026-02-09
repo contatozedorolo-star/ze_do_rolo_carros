@@ -1,12 +1,9 @@
 import { 
   Bike, 
-  Zap, 
   Wind, 
   Mountain, 
   Gauge, 
   CircleDot,
-  Car,
-  Truck
 } from "lucide-react";
 
 interface MotoStyleSelectorProps {
@@ -15,38 +12,28 @@ interface MotoStyleSelectorProps {
 }
 
 const motoStyleOptions = [
-  { value: "ciclomotor", label: "Ciclomotor", description: "Até 50cc" },
-  { value: "custom", label: "Custom", description: "Estilo clássico" },
-  { value: "eletrica", label: "Elétrica", description: "Motor elétrico" },
+  { value: "street", label: "Street / Urbana", description: "Uso diário na cidade" },
+  { value: "scooter", label: "Scooter / Cub", description: "Prática e econômica" },
+  { value: "cross", label: "Trail / Cross", description: "Trilhas e off-road" },
   { value: "esportiva", label: "Esportiva", description: "Alta performance" },
-  { value: "naked", label: "Naked", description: "Sem carenagem" },
-  { value: "cross", label: "Cross/Off-Road", description: "Trilhas e terra" },
-  { value: "quadriciclo", label: "Quadriciclo", description: "4 rodas" },
-  { value: "scooter", label: "Scooter", description: "Urbana e prática" },
-  { value: "street", label: "Street", description: "Uso urbano" },
-  { value: "supermotard", label: "Supermotard", description: "Asfalto e terra" },
-  { value: "touring", label: "Touring", description: "Longas viagens" },
-  { value: "big_trail", label: "Big Trail", description: "Adventure" },
-  { value: "trial", label: "Trial", description: "Obstáculos" },
-  { value: "triciclo", label: "Triciclo", description: "3 rodas" },
-  { value: "utilitaria", label: "Utilitária", description: "Trabalho" },
+  { value: "custom", label: "Custom / Cruiser", description: "Estilo clássico" },
+  { value: "touring", label: "Touring / Big Trail", description: "Longas viagens" },
 ];
 
 const getIconForStyle = (style: string) => {
   switch (style) {
-    case "eletrica": return Zap;
     case "esportiva": return Gauge;
-    case "cross": case "big_trail": case "trial": return Mountain;
+    case "cross": return Mountain;
     case "touring": return Wind;
-    case "quadriciclo": return Car;
-    case "triciclo": case "utilitaria": return Truck;
+    case "scooter": return CircleDot;
+    case "custom": return Bike;
     default: return Bike;
   }
 };
 
 const MotoStyleSelector = ({ value, onChange }: MotoStyleSelectorProps) => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
       {motoStyleOptions.map((style) => {
         const Icon = getIconForStyle(style.value);
         const isSelected = value === style.value;

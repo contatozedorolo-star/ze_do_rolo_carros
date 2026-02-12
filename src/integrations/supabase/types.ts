@@ -332,6 +332,7 @@ export type Database = {
           description: string | null
           diagnostic_notes: string | null
           doors: number | null
+          embedding: string | null
           engine: string | null
           engine_liters: number | null
           fuel: Database["public"]["Enums"]["fuel_type"]
@@ -421,6 +422,7 @@ export type Database = {
           description?: string | null
           diagnostic_notes?: string | null
           doors?: number | null
+          embedding?: string | null
           engine?: string | null
           engine_liters?: number | null
           fuel?: Database["public"]["Enums"]["fuel_type"]
@@ -510,6 +512,7 @@ export type Database = {
           description?: string | null
           diagnostic_notes?: string | null
           doors?: number | null
+          embedding?: string | null
           engine?: string | null
           engine_liters?: number | null
           fuel?: Database["public"]["Enums"]["fuel_type"]
@@ -598,6 +601,25 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      match_vehicles: {
+        Args: { match_count?: number; query_embedding: string }
+        Returns: {
+          brand: string
+          city: string
+          description: string
+          fuel: string
+          id: string
+          km: number
+          model: string
+          price: number
+          similarity: number
+          state: string
+          title: string
+          transmission: string
+          vehicle_type: string
+          year_model: number
+        }[]
       }
     }
     Enums: {

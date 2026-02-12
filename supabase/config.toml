@@ -35,3 +35,9 @@ verify_jwt = false
 
 [functions.send-document-rejected-email]
 verify_jwt = false
+
+[functions.generate-vehicle-embedding]
+verify_jwt = false
+
+[functions.search-vehicles-semantic]
+verify_jwt = false

@@ -198,7 +198,7 @@ const PoliticaCookies = () => {
               </p>
               <ul className="list-none mt-2 space-y-1">
                 <li><strong>E-mail:</strong> contato@zedorolo.com.br</li>
-                <li><strong>Telefone:</strong> (11) 98376-5437</li>
+                <li><strong>Telefone:</strong> <a href="https://wa.me/5543991972445" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors">(43) 99197-2445</a></li>
               </ul>
             </section>
 

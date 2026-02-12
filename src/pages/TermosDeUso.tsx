@@ -164,7 +164,7 @@ const TermosDeUso = () => {
                 <strong>Lei Aplicável:</strong> Estes Termos são regidos pelas leis da República Federativa do Brasil.
               </p>
               <p className="mt-2">
-                <strong>Foro:</strong> Fica eleito o foro da comarca de São Paulo/SP para dirimir quaisquer controvérsias decorrentes destes Termos.
+                <strong>Foro:</strong> Fica eleito o foro da comarca de Apucarana/PR para dirimir quaisquer controvérsias decorrentes destes Termos.
               </p>
               <p className="mt-2">
                 <strong>Independência das Cláusulas:</strong> Se qualquer disposição destes Termos for considerada inválida, as demais disposições permanecerão em pleno vigor e efeito.

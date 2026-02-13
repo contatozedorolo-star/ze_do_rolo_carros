@@ -38,6 +38,11 @@ import {
   Package
 } from "lucide-react";
 
+import TechRadar from "@/components/TechRadar";
+import MobileActionDock from "@/components/MobileActionDock";
+import BentoGallery from "@/components/BentoGallery";
+import { DescriptionFormatter } from "@/components/DescriptionFormatter";
+
 interface Vehicle {
   id: string;
   user_id: string;
@@ -406,6 +411,9 @@ const ProductDetail = () => {
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <Header />
       
+      {/* Mobile Action Dock (Sticky Bottom) */}
+      <MobileActionDock vehicle={vehicle} />
+
       <main className="flex-1">
         {/* Breadcrumb */}
         <div className="bg-white border-b">
@@ -425,75 +433,8 @@ const ProductDetail = () => {
             {/* Left Column - Gallery & Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Image Gallery */}
-              <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
-                <div className="relative aspect-[16/10]">
-                  {images.length > 0 ? (
-                    <>
-                      <img
-                        src={images[currentImage].image_url}
-                        alt={vehicle.title}
-                        className="w-full h-full object-cover"
-                      />
-                      
-                      {/* Verified Badge Overlay */}
-                      {vehicle.has_ze_seal && (
-                        <div className="absolute top-4 left-4 bg-[#29B765] text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
-                          <Shield className="h-5 w-5" />
-                          <span className="font-semibold text-sm">Verificado pelo Zé</span>
-                        </div>
-                      )}
-
-                      {/* Image Counter */}
-                      <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
-                        {currentImage + 1} / {images.length}
-                      </div>
-                      
-                      {/* Navigation Arrows */}
-                      {images.length > 1 && (
-                        <>
-                          <button
-                            onClick={() => setCurrentImage(prev => prev === 0 ? images.length - 1 : prev - 1)}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 rounded-full hover:bg-white shadow-lg transition-all hover:scale-105"
-                          >
-                            <ChevronLeft className="h-6 w-6 text-[#142562]" />
-                          </button>
-                          <button
-                            onClick={() => setCurrentImage(prev => prev === images.length - 1 ? 0 : prev + 1)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 rounded-full hover:bg-white shadow-lg transition-all hover:scale-105"
-                          >
-                            <ChevronRight className="h-6 w-6 text-[#142562]" />
-                          </button>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-slate-100">
-                      <Car className="h-24 w-24 text-slate-300" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Thumbnails */}
-                {images.length > 1 && (
-                  <div className="p-4 border-t">
-                    <div className="flex gap-2 overflow-x-auto pb-1">
-                      {images.map((img, index) => (
-                        <button
-                          key={img.id}
-                          onClick={() => setCurrentImage(index)}
-                          className={`shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                            currentImage === index 
-                              ? "border-[#FF8C36] shadow-md" 
-                              : "border-transparent hover:border-slate-300"
-                          }`}
-                        >
-                          <img src={img.image_url} alt="" className="w-full h-full object-cover" />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+              {/* Gallery (Bento Grid) */}
+              <BentoGallery images={images} title={vehicle.title} />
 
               {/* Technical Specifications Grid */}
               <Card className="bg-white shadow-sm border-0">
@@ -529,9 +470,7 @@ const ProductDetail = () => {
                       <FileText className="h-5 w-5" />
                       Descrição do Vendedor
                     </h2>
-                    <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">
-                      {vehicle.description}
-                    </p>
+                    <DescriptionFormatter description={vehicle.description} />
                   </CardContent>
                 </Card>
               )}
@@ -583,22 +522,40 @@ const ProductDetail = () => {
                       </div>
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {ratings.map((rating) => (
-                        <div key={rating.label} className="bg-white/10 rounded-xl p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <rating.icon className="h-4 w-4 text-white/70" />
-                              <span className="text-sm font-medium">{rating.label}</span>
+                    <div className="grid md:grid-cols-2 gap-8 items-center">
+                      {/* Left: Radar Chart */}
+                      <div className="flex justify-center py-4 order-2 md:order-1">
+                        <TechRadar 
+                          data={ratings.map(r => ({ label: r.label, value: r.value || 0 }))} 
+                          width={320} 
+                          height={300} 
+                        />
+                      </div>
+
+                      {/* Right: Legend & Highlights */}
+                      <div className="order-1 md:order-2 space-y-4">
+                         <div className="bg-white/10 rounded-xl p-4 border border-white/10">
+                            <h3 className="font-semibold mb-3 flex items-center gap-2">
+                              <Zap className="h-4 w-4 text-[#FF8C36]" />
+                              Destaques
+                            </h3>
+                            <div className="space-y-2">
+                              {ratings
+                                .sort((a, b) => (b.value || 0) - (a.value || 0))
+                                .slice(0, 3)
+                                .map((item) => (
+                                  <div key={item.label} className="flex justify-between items-center text-sm">
+                                    <span className="text-white/80">{item.label}</span>
+                                    <span className="text-[#29B765] font-bold">{item.value}/10</span>
+                                  </div>
+                                ))}
                             </div>
-                            <span className="font-bold text-[#FF8C36]">{rating.value}/10</span>
-                          </div>
-                          <Progress 
-                            value={(rating.value || 0) * 10} 
-                            className="h-2 bg-white/20"
-                          />
                         </div>
-                      ))}
+                        
+                        <div className="p-3 rounded-lg bg-[#FF8C36]/10 border border-[#FF8C36]/20 text-xs text-[#FF8C36]">
+                           Passe o mouse sobre os pontos do gráfico para ver a nota de cada item.
+                        </div>
+                      </div>
                     </div>
 
                     {vehicle.diagnostic_notes && (

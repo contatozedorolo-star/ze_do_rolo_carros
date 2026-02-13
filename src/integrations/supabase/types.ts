@@ -630,7 +630,6 @@ export type Database = {
           year_model: number
         }[]
       }
-      unaccent: { Args: { "": string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

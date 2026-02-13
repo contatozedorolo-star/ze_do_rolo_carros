@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { Send, Shield, Rocket, Clock, ShieldCheck, RotateCcw } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
@@ -385,9 +386,20 @@ const AssistenteIA = () => {
                             <span className="text-sm font-medium text-white/90">Consultor Zé</span>
                           </div>
                         )}
-                        <p className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">
-                          {message.content}
-                        </p>
+                        <div className="whitespace-pre-wrap text-sm md:text-base leading-relaxed prose prose-invert prose-sm max-w-none prose-a:text-blue-300 prose-a:underline prose-a:hover:text-blue-200">
+                          <ReactMarkdown
+                            components={{
+                              a: ({ href, children }) => (
+                                <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-300 underline hover:text-blue-200 transition-colors">
+                                  {children}
+                                </a>
+                              ),
+                              p: ({ children }) => <span>{children}</span>,
+                            }}
+                          >
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
                       </div>
                     </div>
                   ))}

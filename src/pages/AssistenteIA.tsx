@@ -38,6 +38,7 @@ const AssistenteIA = () => {
   const [isWaitingForEmail, setIsWaitingForEmail] = useState(false);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Show modal if not logged in instead of redirecting
   const showRestrictedModal = !loading && !user;
@@ -47,6 +48,16 @@ const AssistenteIA = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Auto-focus input when loading finishes
+  useEffect(() => {
+    if (!isLoading) {
+      // Small timeout ensures focus happens after UI updates/re-renders
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 10);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     if (messages.length > 1) {
@@ -300,33 +311,31 @@ const AssistenteIA = () => {
               O futuro das trocas é inteligente. Deixe a IA trabalhar por você.
             </p>
             
-            {!hasStartedConversation && (
-              <div className="space-y-3 md:space-y-4 mt-4 md:mt-8">
-                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
-                  <Rocket className="w-5 h-5 md:w-6 md:h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-white font-semibold text-xs md:text-sm">Match Perfeito</h3>
-                    <p className="text-white/70 text-xs md:text-sm">Cruzamos dados de milhares de anúncios para você não perder tempo.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
-                  <ShieldCheck className="w-5 h-5 md:w-6 md:h-6 text-[#29B765] flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-white font-semibold text-xs md:text-sm">Segurança Total</h3>
-                    <p className="text-white/70 text-xs md:text-sm">Consultoria baseada em vistorias reais e vendedores verificados.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
-                  <Clock className="w-5 h-5 md:w-6 md:h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-white font-semibold text-xs md:text-sm">Rapidez</h3>
-                    <p className="text-white/70 text-xs md:text-sm">Respostas instantâneas sobre preços FIPE e condições de troca.</p>
-                  </div>
+            <div className="space-y-3 md:space-y-4 mt-4 md:mt-8">
+              <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                <Rocket className="w-5 h-5 md:w-6 md:h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-white font-semibold text-xs md:text-sm">Match Perfeito</h3>
+                  <p className="text-white/70 text-xs md:text-sm">Cruzamos dados de milhares de anúncios para você não perder tempo.</p>
                 </div>
               </div>
-            )}
+              
+              <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                <ShieldCheck className="w-5 h-5 md:w-6 md:h-6 text-[#29B765] flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-white font-semibold text-xs md:text-sm">Segurança Total</h3>
+                  <p className="text-white/70 text-xs md:text-sm">Consultoria baseada em vistorias reais e vendedores verificados.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                <Clock className="w-5 h-5 md:w-6 md:h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-white font-semibold text-xs md:text-sm">Rapidez</h3>
+                  <p className="text-white/70 text-xs md:text-sm">Respostas instantâneas sobre preços FIPE e condições de troca.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -426,6 +435,7 @@ const AssistenteIA = () => {
             <div className="p-4 lg:p-6 border-t border-white/10">
               <div className="flex gap-3">
                 <Input
+                  ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}

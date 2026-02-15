@@ -145,6 +145,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithGoogle = async (redirectPath?: string) => {
     const finalRedirect = redirectPath || '/dashboard';
     
+    // Detect if we're on a custom domain (not lovable.app or lovableproject.com)
+    const isCustomDomain =
+      !window.location.hostname.includes("lovable.app") &&
+      !window.location.hostname.includes("lovableproject.com") &&
+      !window.location.hostname.includes("localhost");
+
+    if (isCustomDomain) {
+      // Bypass auth-bridge for custom domains (fixes mobile OAuth)
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}${finalRedirect}`,
+          skipBrowserRedirect: true,
+        }
+      });
+
+      if (error) return { error };
+
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+
+      return { error: null };
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

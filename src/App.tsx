@@ -29,8 +29,14 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 import FloatingAssistantButton from "./components/FloatingAssistantButton";
+import useGTMPageView from "./hooks/useGTMPageView";
 
 const queryClient = new QueryClient();
+
+const GTMTracker = () => {
+  useGTMPageView();
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -69,6 +75,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <GTMTracker />
           <FloatingAssistantButton />
         </BrowserRouter>
       </TooltipProvider>

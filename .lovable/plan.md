@@ -1,40 +1,46 @@
 
 
-## Criar função `match_documents` para integração com n8n
+## Plano: Migrar dominio de zedorolo.lovable.app para zedorolo.com
 
-O n8n utiliza internamente a função `match_documents` para busca vetorial (padrão do nó Supabase Vector Store). Como o projeto já possui a função `match_vehicles`, basta criar uma nova função com o nome e assinatura que o n8n espera.
+### Resumo
 
-### O que será feito
+O dominio antigo `zedorolo.lovable.app` aparece em 3 lugares que precisam ser corrigidos. Nao existe coluna de URL na tabela `vehicles` - a URL e gerada dinamicamente na funcao SQL `match_documents`, entao nao ha dados para atualizar.
 
-Uma migração SQL que:
+Alem disso, ha um erro de build nao relacionado (import do Resend no Deno) que sera corrigido junto.
 
-1. Garante que a extensão `pgvector` está ativa (já está, mas incluímos por segurança).
-2. Cria a função `match_documents(query_embedding vector(1536), match_count int, filter jsonb)` que:
-   - Busca na tabela `vehicles` apenas registros com `is_active = true`, `is_sold = false` e `embedding IS NOT NULL`.
-   - Retorna `id`, `content` (texto com marca, modelo e descrição), `metadata` (JSON com preco, ano, cidade) e `similarity`.
-   - Ordena por similaridade de cosseno (usando o operador `<=>`) e limita ao `match_count`.
+### O que sera feito
 
-### Detalhes Técnicos
+**1. Corrigir a funcao SQL `match_documents`**
+- Atualizar o dominio hardcoded de `zedorolo.lovable.app` para `zedorolo.com` na geracao da URL do veiculo
+- Migrar via SQL migration
+
+**2. Criar Trigger de seguranca (BEFORE INSERT/UPDATE)**
+- Nao se aplica diretamente porque nao existe coluna `url` na tabela `vehicles`
+- Em vez disso, a URL e construida dinamicamente na funcao `match_documents`
+- A abordagem mais segura e centralizar o dominio apenas na funcao SQL, garantindo que qualquer mudanca futura precise alterar apenas um lugar
+
+**3. Corrigir Edge Functions com dominio antigo**
+- `supabase/functions/send-ad-rejected-email/index.ts` - trocar link do perfil de `zedorolo.lovable.app` para `zedorolo.com`
+- `supabase/functions/send-document-rejected-email/index.ts` - trocar link de reenvio de `zedorolo.lovable.app` para `zedorolo.com`
+
+**4. Corrigir erro de build (Resend import)**
+- Atualizar o import do Resend em todas as edge functions de `npm:resend@2.0.0` para `npm:resend@^4.0.0` (versao compativel com Deno)
+
+### Detalhes tecnicos
 
 ```text
-Assinatura da função:
-  match_documents(
-    query_embedding vector(1536),
-    match_count int DEFAULT 5,
-    filter jsonb DEFAULT '{}'
-  )
-  RETURNS TABLE(id uuid, content text, metadata jsonb, similarity float)
-
-Corpo:
-  - content = brand || ' ' || model || ' - ' || COALESCE(description, '')
-  - metadata = jsonb com price, year_model, city, state, vehicle_type, km
-  - similarity = 1 - (embedding <=> query_embedding)
-  - WHERE is_active = true AND is_sold = false AND embedding IS NOT NULL
-  - ORDER BY embedding <=> query_embedding
-  - LIMIT match_count
-
-Propriedades: STABLE, SECURITY DEFINER, search_path = 'public', 'extensions'
+Arquivos a modificar:
++-- SQL Migration (nova)
+|   +-- Recriar match_documents com dominio zedorolo.com
+|
++-- supabase/functions/send-ad-rejected-email/index.ts
+|   +-- Trocar URL do perfil
+|   +-- Atualizar import Resend
+|
++-- supabase/functions/send-document-rejected-email/index.ts
+    +-- Trocar URL de reenvio
+    +-- Atualizar import Resend
 ```
 
-Nenhuma alteração no frontend ou em Edge Functions -- apenas a migração SQL.
+**Nota sobre Trigger:** Como a tabela `vehicles` nao armazena URLs (sao geradas dinamicamente), criar um trigger nao e necessario. O ponto unico de controle e a funcao `match_documents`.
 

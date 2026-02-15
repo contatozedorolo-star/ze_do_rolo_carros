@@ -35,7 +35,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const displayName = name || "Usuário";
     const displayReason = rejection_reason || "Documento não atendeu aos critérios de verificação.";
-    const resubmitUrl = "https://zedorolo.lovable.app/profile?tab=identity";
+    const resubmitUrl = "https://zedorolo.com/profile?tab=identity";
 
     console.log(`Sending document-rejected email to: ${email} (name: ${displayName}, reason: ${displayReason})`);
 

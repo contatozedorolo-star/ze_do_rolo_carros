@@ -84,6 +84,7 @@ interface Vehicle {
   body_type: string | null;
   optionals: string[] | null;
   created_at: string;
+  vehicle_type: string;
 }
 
 interface VehicleImage {
@@ -211,6 +212,7 @@ const ProductDetail = () => {
             body_type: null,
             optionals: null,
             created_at: new Date().toISOString(),
+            vehicle_type: "carro",
           };
 
           setVehicle(mockVehicle);
@@ -273,29 +275,26 @@ const ProductDetail = () => {
     const fetchFipePrice = async () => {
       if (!vehicle) return;
 
+      // Skip FIPE for vehicle types not supported by the API
+      const unsupportedTypes = ["trator", "implemento", "onibus"];
+      if (unsupportedTypes.includes(vehicle.vehicle_type)) {
+        setFipeData({
+          price: formatCurrencyShort(Math.round(vehicle.price * 1.05)),
+          priceNumber: Math.round(vehicle.price * 1.05),
+          note: "Estimativa baseada no mercado (FIPE indisponível para esta categoria)",
+        });
+        setFipeLoading(false);
+        return;
+      }
+
       setFipeLoading(true);
       try {
         // Determine vehicle type for FIPE API
         let vehicleType: "carros" | "motos" | "caminhoes" = "carros";
-        const titleLower = vehicle.title.toLowerCase();
-        const brandLower = vehicle.brand.toLowerCase();
 
-        if (
-          titleLower.includes("moto") ||
-          titleLower.includes("cb ") ||
-          titleLower.includes("cg ") ||
-          titleLower.includes("hornet") ||
-          titleLower.includes("ninja") ||
-          brandLower.includes("honda") && (titleLower.includes("cb") || titleLower.includes("cg"))
-        ) {
+        if (vehicle.vehicle_type === "moto") {
           vehicleType = "motos";
-        } else if (
-          titleLower.includes("scania") ||
-          titleLower.includes("volvo fh") ||
-          titleLower.includes("mercedes-benz actros") ||
-          titleLower.includes("caminhão") ||
-          titleLower.includes("cavalo")
-        ) {
+        } else if (vehicle.vehicle_type === "caminhao") {
           vehicleType = "caminhoes";
         }
 

@@ -6,7 +6,7 @@ const corsHeaders = {
 };
 
 const N8N_WEBHOOK_URL = "https://automation.zedocarro.cloud/webhook/zedoscarros";
-const CHATWOOT_BASE_URL = "https://chatwootapp.autoia.store";
+const CHATWOOT_BASE_URL = "https://chatwoot.zedocarro.cloud";
 
 // Helper function to update contact with email
 async function updateChatwootContactEmail(

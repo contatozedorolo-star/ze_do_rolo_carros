@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, Suspense, lazy } from "react";
-import { Send, Shield, Rocket, Clock, ShieldCheck, RotateCcw } from "lucide-react";
+import { Send, Shield, Rocket, Clock, ShieldCheck, RotateCcw, UserCheck } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
@@ -14,8 +15,9 @@ import logoZe from "@/assets/logo-zedorolo.png";
 const Spline = lazy(() => import("@splinetool/react-spline"));
 
 type Message = {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "admin";
   content: string;
+  senderName?: string;
 };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ze-ia-chat`;
@@ -64,6 +66,46 @@ const AssistenteIA = () => {
       setHasStartedConversation(true);
     }
   }, [messages]);
+
+  // Subscribe to admin messages from Chatwoot via Supabase Realtime
+  useEffect(() => {
+    const channel = supabase
+      .channel(`admin-msgs-${sessionId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "chatwoot_admin_messages",
+          filter: `session_id=eq.${sessionId}`,
+        },
+        (payload) => {
+          const adminMsg = payload.new as { id: string; content: string; sender_name: string };
+          console.log("Admin message received:", adminMsg);
+          
+          setMessages(prev => [
+            ...prev,
+            {
+              role: "admin",
+              content: adminMsg.content,
+              senderName: adminMsg.sender_name || "Administrador",
+            }
+          ]);
+
+          // Mark as delivered
+          supabase
+            .from("chatwoot_admin_messages")
+            .update({ is_delivered: true })
+            .eq("id", adminMsg.id)
+            .then(() => console.log("Marked admin message as delivered"));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [sessionId]);
 
   const streamChat = async (userMessages: Message[], email?: string | null) => {
     const resp = await fetch(CHAT_URL, {
@@ -386,9 +428,17 @@ const AssistenteIA = () => {
                         className={`max-w-[85%] p-4 rounded-2xl transition-all duration-300 ${
                           message.role === "user"
                             ? "bg-[#FF8C36] text-white rounded-br-md shadow-lg shadow-orange-500/20"
+                            : message.role === "admin"
+                            ? "bg-[#29B765] text-white rounded-bl-md border border-white/20 shadow-lg"
                             : "bg-[#1a3080] text-white rounded-bl-md border border-white/20 shadow-lg"
                         }`}
                       >
+                        {message.role === "admin" && (
+                          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/20">
+                            <UserCheck className="w-5 h-5 text-white" />
+                            <span className="text-sm font-medium text-white/90">{message.senderName || "Administrador"}</span>
+                          </div>
+                        )}
                         {message.role === "assistant" && (
                           <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/20">
                             <img src={logoZe} alt="Zé" className="w-5 h-5 rounded-full" />

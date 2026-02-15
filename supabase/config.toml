@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.search-vehicles-semantic]
 verify_jwt = false
+
+[functions.chatwoot-webhook]
+verify_jwt = false

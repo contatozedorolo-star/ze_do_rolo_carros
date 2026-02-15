@@ -37,7 +37,7 @@ const handler = async (req: Request): Promise<Response> => {
     const displayName = name || "Usuário";
     const displayReason = rejection_reason || "O anúncio não atendeu aos critérios da plataforma.";
     const displayTitle = vehicle_title || "Seu veículo";
-    const vehiclesUrl = "https://zedorolo.lovable.app/profile?tab=vehicles";
+    const vehiclesUrl = "https://zedorolo.com/profile?tab=vehicles";
 
     console.log(`Sending ad-rejected email to: ${email} (name: ${displayName}, vehicle: ${displayTitle}, reason: ${displayReason})`);
 

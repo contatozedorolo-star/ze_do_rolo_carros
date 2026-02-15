@@ -380,7 +380,8 @@ serve(async (req) => {
     }
 
     // Generate or use provided sessionId - prefer email as identifier if available
-    const contactIdentifier = userEmail || providedSessionId || `session_${Date.now()}_${userId || 'anonymous'}`;
+    // Always use sessionId as the Chatwoot contact identifier so webhook can map back
+    const contactIdentifier = providedSessionId || `session_${Date.now()}_${userId || 'anonymous'}`;
     const sessionId = providedSessionId || `session_${Date.now()}_${userId || 'anonymous'}`;
 
     console.log("Processing message:", {

@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      chatwoot_admin_messages: {
+        Row: {
+          chatwoot_conversation_id: number | null
+          content: string
+          created_at: string
+          id: string
+          is_delivered: boolean | null
+          sender_name: string | null
+          session_id: string
+        }
+        Insert: {
+          chatwoot_conversation_id?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          is_delivered?: boolean | null
+          sender_name?: string | null
+          session_id: string
+        }
+        Update: {
+          chatwoot_conversation_id?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_delivered?: boolean | null
+          sender_name?: string | null
+          session_id?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string
@@ -594,6 +624,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_chatwoot_messages: { Args: never; Returns: undefined }
       has_approved_kyc: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {

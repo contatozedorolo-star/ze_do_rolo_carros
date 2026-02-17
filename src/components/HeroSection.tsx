@@ -1,6 +1,6 @@
 import { Shield, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+
 import heroBackground from "@/assets/hero-background.jpg";
 
 const HeroSection = () => {
@@ -72,13 +72,13 @@ const HeroSection = () => {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <Button variant="hero" size="xl" className="group" asChild>
-              <Link to="/auth?mode=signup">
+              <a href="/auth?mode=signup">
                 Cadastre-se Agora
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
+              </a>
             </Button>
             <Button variant="heroOutline" size="xl" asChild>
-              <Link to="/how-it-works">Como Funciona</Link>
+              <a href="/how-it-works">Como Funciona</a>
             </Button>
           </div>
         </div>

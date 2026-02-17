@@ -109,17 +109,18 @@ Deno.serve(async (req) => {
 
     console.log('Deleting user:', profileToDelete.full_name);
 
-    // Step 1: Delete vehicle images from storage
+    // Step 1: Delete vehicle images from storage and collect vehicle IDs
     const { data: vehicles } = await supabaseAdmin
       .from('vehicles')
       .select('id')
       .eq('user_id', user_id_to_delete);
 
-    if (vehicles && vehicles.length > 0) {
-      console.log(`Found ${vehicles.length} vehicles to clean up`);
+    const vehicleIds = vehicles?.map(v => v.id) || [];
+
+    if (vehicleIds.length > 0) {
+      console.log(`Found ${vehicleIds.length} vehicles to clean up`);
       
-      for (const vehicle of vehicles) {
-        // Delete vehicle images from storage
+      for (const vehicle of vehicles!) {
         const { data: images } = await supabaseAdmin
           .from('vehicle_images')
           .select('image_url')
@@ -128,7 +129,6 @@ Deno.serve(async (req) => {
         if (images) {
           for (const img of images) {
             try {
-              // Extract path from URL and delete from storage
               const url = new URL(img.image_url);
               const pathMatch = url.pathname.match(/\/storage\/v1\/object\/public\/vehicle-images\/(.+)/);
               if (pathMatch) {
@@ -140,6 +140,14 @@ Deno.serve(async (req) => {
           }
         }
       }
+
+      // Delete vehicle_views for user's vehicles
+      await supabaseAdmin.from('vehicle_views').delete().in('vehicle_id', vehicleIds);
+      console.log('Deleted vehicle_views');
+
+      // Delete vehicle_images records
+      await supabaseAdmin.from('vehicle_images').delete().in('vehicle_id', vehicleIds);
+      console.log('Deleted vehicle_images');
     }
 
     // Step 2: Delete avatar from storage
@@ -172,7 +180,46 @@ Deno.serve(async (req) => {
       console.log('Could not delete KYC documents:', e);
     }
 
-    // Step 4: Delete from auth (this will cascade delete profile due to FK constraint)
+    // Step 4: Delete all related DB records before deleting auth user
+
+    // Get proposal IDs where user is involved (as proposer or seller)
+    const { data: userProposals } = await supabaseAdmin
+      .from('proposals')
+      .select('id')
+      .or(`proposer_id.eq.${user_id_to_delete},seller_id.eq.${user_id_to_delete}`);
+
+    const proposalIds = userProposals?.map(p => p.id) || [];
+
+    if (proposalIds.length > 0) {
+      await supabaseAdmin.from('messages').delete().in('proposal_id', proposalIds);
+      console.log('Deleted messages');
+      await supabaseAdmin.from('proposals').delete().in('id', proposalIds);
+      console.log('Deleted proposals');
+    }
+
+    // Delete favorites
+    await supabaseAdmin.from('favorites').delete().eq('user_id', user_id_to_delete);
+    console.log('Deleted favorites');
+
+    // Delete vehicles
+    if (vehicleIds.length > 0) {
+      await supabaseAdmin.from('vehicles').delete().in('id', vehicleIds);
+      console.log('Deleted vehicles');
+    }
+
+    // Delete KYC verifications
+    await supabaseAdmin.from('kyc_verifications').delete().eq('user_id', user_id_to_delete);
+    console.log('Deleted kyc_verifications');
+
+    // Delete user roles
+    await supabaseAdmin.from('user_roles').delete().eq('user_id', user_id_to_delete);
+    console.log('Deleted user_roles');
+
+    // Delete profile
+    await supabaseAdmin.from('profiles').delete().eq('id', user_id_to_delete);
+    console.log('Deleted profile');
+
+    // Step 5: Delete from auth
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user_id_to_delete);
 
     if (deleteError) {

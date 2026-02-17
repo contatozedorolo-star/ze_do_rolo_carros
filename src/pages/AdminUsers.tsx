@@ -294,19 +294,25 @@ const AdminUsers = () => {
     }
   };
 
-  // Filter users based on search query
+  // Filter users based on search query - splits into words for flexible matching
   const filteredUsers = useMemo(() => {
     if (!searchQuery.trim()) return users;
     
-    const query = searchQuery.toLowerCase();
-    return users.filter((user) => {
-      const nameMatch = user.full_name?.toLowerCase().includes(query);
-      const cpfMatch = user.cpf?.includes(query.replace(/\D/g, ''));
-      const phoneMatch = user.phone?.includes(query.replace(/\D/g, ''));
-      const cityMatch = user.city?.toLowerCase().includes(query);
-      const stateMatch = user.state?.toLowerCase().includes(query);
-      
-      return nameMatch || cpfMatch || phoneMatch || cityMatch || stateMatch;
+    const words = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
+    return users.filter((u) => {
+      const fields = [
+        u.full_name?.toLowerCase() || '',
+        u.email?.toLowerCase() || '',
+        u.cpf?.replace(/\D/g, '') || '',
+        u.phone?.replace(/\D/g, '') || '',
+        u.city?.toLowerCase() || '',
+        u.state?.toLowerCase() || '',
+      ];
+      return words.every(word => {
+        const cleanWord = word.replace(/\D/g, '');
+        return fields.some(field => field.includes(word)) ||
+               (cleanWord && fields.some(field => field.includes(cleanWord)));
+      });
     });
   }, [users, searchQuery]);
 

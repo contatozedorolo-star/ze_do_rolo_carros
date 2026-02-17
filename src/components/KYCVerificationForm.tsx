@@ -61,6 +61,7 @@ const KYCVerificationForm = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [kycVerification, setKycVerification] = useState<KYCVerification | null>(null);
+  const [showForm, setShowForm] = useState(false);
   const [personType, setPersonType] = useState<"fisica" | "juridica">("fisica");
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [cpfCnpjError, setCpfCnpjError] = useState("");
@@ -196,7 +197,7 @@ const KYCVerificationForm = () => {
       }
 
       // Create or update KYC verification
-      if (kycVerification && kycVerification.status === 'pending') {
+      if (kycVerification) {
         const { error } = await supabase
           .from("kyc_verifications")
           .update({
@@ -206,11 +207,12 @@ const KYCVerificationForm = () => {
             document_back_url: backPath,
             selfie_url: selfiePath,
             status: 'under_review',
+            rejection_reason: null,
           })
           .eq("id", kycVerification.id);
 
         if (error) throw error;
-      } else if (!kycVerification) {
+      } else {
         const { error } = await supabase
           .from("kyc_verifications")
           .insert({
@@ -232,6 +234,7 @@ const KYCVerificationForm = () => {
       });
 
       // Refresh data
+      setShowForm(false);
       await fetchKYCVerification();
       refreshProfile();
       
@@ -258,8 +261,8 @@ const KYCVerificationForm = () => {
     );
   }
 
-  // Show status card if request exists and is not pending
-  if (kycVerification && kycVerification.status !== 'pending') {
+  // Show status card if request exists and is not pending (unless user clicked "retry")
+  if (kycVerification && kycVerification.status !== 'pending' && !showForm) {
     const status = statusInfo[kycVerification.status];
     const StatusIcon = status.icon;
 
@@ -296,7 +299,7 @@ const KYCVerificationForm = () => {
               <Button 
                 variant="outline" 
                 className="mt-4"
-                onClick={() => setKycVerification(null)}
+                onClick={() => setShowForm(true)}
               >
                 Tentar Novamente
               </Button>

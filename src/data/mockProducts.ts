@@ -1,4 +1,5 @@
 // Veículos - Dados de exemplo para o marketplace automotivo
+import vehicleRanger from "@/assets/vehicle-ranger.jpg";
 
 
 
@@ -133,7 +134,7 @@ export const vehicles = [
   },
   {
     id: "v18",
-    image: "https://miamiimports.com.br/wp-content/uploads/2023/11/Ford-Ranger-XlS-6.png",
+    image: vehicleRanger,
     title: "Ford Ranger Picape Média-Grande",
     price: 245000,
     location: "Goiânia, GO",

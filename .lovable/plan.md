@@ -1,56 +1,35 @@
 
 
-## Corrigir busca de usuarios e exclusao em cascata no Admin
+## Corrigir erro "null value in column url" ao enviar documentos KYC
 
-### Problema 1: Busca nao filtra usuarios
+### Problema
+Ao submeter documentos para verificacao, o erro ocorre:
+`null value in column "url" of relation "http_request_queue" violates not-null constraint`
 
-A busca atual tenta encontrar o texto completo digitado dentro do nome do usuario. Porem, o filtro so funciona se o nome completo digitado for uma substring exata do `full_name`. Alem disso, a busca nao inclui o campo `email`.
+### Causa raiz
+Existem **dois triggers** que disparam quando o status muda para `under_review`:
 
-**Correcao**: Alterar o filtro para dividir a busca em palavras individuais e verificar se TODAS as palavras aparecem nos campos do usuario (nome, email, CPF, cidade, estado). Isso permite buscas parciais mais flexiveis.
+1. `on_kyc_status_under_review` -> chama `handle_kyc_under_review()` (URL hardcoded - funciona)
+2. `on_kyc_under_review_send_email` -> chama `notify_document_under_review()` (usa `current_setting('app.settings.supabase_url')` que retorna NULL)
 
-### Problema 2: Exclusao nao remove veiculos do banco de dados
+O trigger `notify_document_under_review()` tenta construir a URL com `supabase_url || '/functions/v1/send-document-status-email'`, mas como `app.settings.supabase_url` nao esta configurado no banco, a URL fica NULL e causa o erro.
 
-A edge function `admin-delete-user` apaga as imagens do storage e exclui o usuario via `auth.admin.deleteUser`, mas nao exclui explicitamente os registros relacionados do banco (veiculos, imagens de veiculos, views, propostas, mensagens, favoritos, KYC). Como a tabela `vehicles` nao possui constraint `ON DELETE CASCADE` vinculada ao `auth.users`, os veiculos ficam orfaos no banco.
+Alem disso, os dois triggers fazem a mesma coisa (enviar email de status), entao ha duplicidade.
 
-**Correcao**: Atualizar a edge function para deletar todos os dados relacionados ao usuario ANTES de excluir o usuario do auth.
-
----
+### Solucao
+Remover o trigger duplicado `on_kyc_under_review_send_email` que usa a funcao com URL nula. O trigger `on_kyc_status_under_review` (que usa `handle_kyc_under_review` com URL hardcoded) ja cobre essa funcionalidade.
 
 ### Detalhes tecnicos
 
-**Arquivo: `src/pages/AdminUsers.tsx`**
+**Migration SQL:**
 
-Alterar o `filteredUsers` useMemo para:
-- Dividir o `searchQuery` em palavras separadas
-- Verificar se cada palavra aparece em pelo menos um dos campos: `full_name`, `email`, `cpf`, `phone`, `city`, `state`
-- Todas as palavras devem ter pelo menos um match (busca AND)
+```sql
+-- Remover o trigger duplicado que causa o erro de URL nula
+DROP TRIGGER IF EXISTS on_kyc_under_review_send_email ON public.kyc_verifications;
 
-```text
-Logica:
-query = "Bryan Fogaca"
-palavras = ["bryan", "fogaca"]
-
-Para cada usuario:
-  - "bryan" aparece no nome, email, cpf, cidade ou estado? 
-  - "fogaca" aparece no nome, email, cpf, cidade ou estado?
-  - Se AMBAS sim -> usuario aparece nos resultados
+-- Opcional: remover a funcao orfao tambem
+DROP FUNCTION IF EXISTS public.notify_document_under_review();
 ```
 
-**Arquivo: `supabase/functions/admin-delete-user/index.ts`**
-
-Antes de chamar `auth.admin.deleteUser`, adicionar etapas de limpeza:
-
-1. Buscar todos os IDs de veiculos do usuario
-2. Deletar `vehicle_views` dos veiculos do usuario
-3. Deletar `vehicle_images` dos veiculos do usuario  
-4. Deletar `messages` de propostas onde o usuario e proposer ou seller
-5. Deletar `proposals` onde o usuario e proposer ou seller
-6. Deletar `favorites` do usuario
-7. Deletar `vehicles` do usuario
-8. Deletar `kyc_verifications` do usuario
-9. Deletar `user_roles` do usuario
-10. Deletar `profiles` do usuario
-11. Por fim, deletar o usuario do auth
-
-Isso garante que nenhum dado orfao permaneca no banco apos a exclusao.
+Isso resolve o erro imediatamente sem alterar nenhum codigo frontend.
 

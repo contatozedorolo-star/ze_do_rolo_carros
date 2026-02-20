@@ -118,7 +118,7 @@ const Veiculos = () => {
   // Show modal if not logged in
   const showRestrictedModal = !authLoading && !user;
 
-  const handleFiltersChange = (newFilters: any) => {
+  const handleFiltersChange = (newFilters: VehicleFilters) => {
     // Convert to typed filters
     const typedFilters: VehicleFilters = {
       ...newFilters,
@@ -471,8 +471,12 @@ const Veiculos = () => {
                   : "flex flex-col gap-4"
               }>
                 {/* Real vehicles from Supabase */}
-                {supabaseVehicles.map((vehicle) => (
-                  <VehicleCardSupabase key={vehicle.id} vehicle={vehicle} />
+                {supabaseVehicles.map((vehicle, index) => (
+                  <VehicleCardSupabase 
+                    key={vehicle.id} 
+                    vehicle={vehicle} 
+                    priority={index < 2}
+                  />
                 ))}
                 
                 {/* Mock vehicles for demonstration */}

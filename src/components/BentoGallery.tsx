@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import { Button } from "./ui/button";
+import { getOptimizedImageUrl } from "@/lib/image-utils";
 
 interface BentoGalleryProps {
   images: Array<{
@@ -44,8 +45,13 @@ const BentoGallery = ({ images, title }: BentoGalleryProps) => {
             onClick={() => openLightbox(0)}
           >
             <img 
-              src={images[0].image_url} 
+              src={getOptimizedImageUrl(images[0].image_url, { width: 800, height: 500 })} 
               alt={`${title} - Principal`} 
+              width={800}
+              height={500}
+              loading="eager"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              {...({ fetchpriority: "high" } as any)}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
@@ -62,8 +68,11 @@ const BentoGallery = ({ images, title }: BentoGalleryProps) => {
                 onClick={() => openLightbox(idx + 1)}
               >
                 <img 
-                  src={img.image_url} 
+                  src={getOptimizedImageUrl(img.image_url, { width: 400, height: 250 })} 
                   alt={`${title} - ${idx + 2}`} 
+                  width={400}
+                  height={250}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 
@@ -93,8 +102,11 @@ const BentoGallery = ({ images, title }: BentoGalleryProps) => {
                 onClick={() => openLightbox(idx + 1)}
               >
                   <img 
-                    src={img.image_url} 
+                    src={getOptimizedImageUrl(img.image_url, { width: 400, height: 250 })} 
                     alt={`${title} - ${idx + 2}`} 
+                    width={400}
+                    height={250}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
               </div>
@@ -137,7 +149,7 @@ const BentoGallery = ({ images, title }: BentoGalleryProps) => {
               className="max-w-[90vw] max-h-[85vh] relative"
             >
               <img 
-                src={images[currentIndex].image_url} 
+                src={getOptimizedImageUrl(images[currentIndex].image_url, { width: 1200, quality: 90 })} 
                 alt={`${title} - Fullscreen`} 
                 className="max-w-full max-h-[85vh] object-contain rounded-sm"
               />

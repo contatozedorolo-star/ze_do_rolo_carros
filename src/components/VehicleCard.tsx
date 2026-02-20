@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getOptimizedImageUrl } from "@/lib/image-utils";
 
 interface VehicleCardProps {
   id: string;
@@ -20,6 +21,7 @@ interface VehicleCardProps {
   certified?: boolean;
   acceptsTrade?: boolean;
   requiresAuth?: boolean;
+  priority?: boolean;
 }
 
 const sellerLevelConfig = {
@@ -43,6 +45,7 @@ const VehicleCard = ({
   certified,
   acceptsTrade,
   requiresAuth = false,
+  priority = false,
 }: VehicleCardProps) => {
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -76,11 +79,14 @@ const VehicleCard = ({
           <div className="absolute inset-0 bg-muted animate-pulse" />
         )}
         <img
-          src={image}
+          src={getOptimizedImageUrl(image, { width: 400, height: 250 })}
           alt={title}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          width={400}
+          height={250}
           decoding="async"
           onLoad={() => setImageLoaded(true)}
+          {...(priority ? { fetchpriority: "high" } : {})}
           className={cn(
             "w-full h-full object-cover transition-all duration-300 group-hover:scale-105",
             imageLoaded ? "opacity-100" : "opacity-0"

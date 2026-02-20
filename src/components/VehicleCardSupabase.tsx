@@ -7,12 +7,14 @@ import { cn } from "@/lib/utils";
 import { VehicleWithImages } from "@/hooks/useVehicles";
 import { generateVehicleSlugWithId } from "@/lib/slugify";
 import { formatCurrencyShort } from "@/lib/formatters";
+import { getOptimizedImageUrl } from "@/lib/image-utils";
 
 interface VehicleCardSupabaseProps {
   vehicle: VehicleWithImages;
+  priority?: boolean;
 }
 
-const VehicleCardSupabase = ({ vehicle }: VehicleCardSupabaseProps) => {
+const VehicleCardSupabase = ({ vehicle, priority = false }: VehicleCardSupabaseProps) => {
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -71,11 +73,14 @@ const VehicleCardSupabase = ({ vehicle }: VehicleCardSupabaseProps) => {
           <div className="absolute inset-0 bg-muted animate-pulse" />
         )}
         <img
-          src={vehicle.primary_image}
+          src={getOptimizedImageUrl(vehicle.primary_image, { width: 400, height: 250 })}
           alt={vehicle.title}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          width={400}
+          height={250}
           decoding="async"
           onLoad={() => setImageLoaded(true)}
+          {...(priority ? { fetchpriority: "high" } : {})}
           className={cn(
             "w-full h-full object-cover transition-all duration-300 group-hover:scale-105",
             imageLoaded ? "opacity-100" : "opacity-0"

@@ -81,8 +81,8 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="container flex h-24 items-center justify-between gap-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={logo} alt="Zé do Rolo" className="h-16 md:h-20 w-auto" width={160} height={80} />
+        <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="Ir para a página inicial">
+          <img src={logo} alt="Logotipo Zé do Rolo - Compra e Venda de Veículos" className="h-16 md:h-20 w-auto" width={160} height={80} />
         </Link>
 
         {/* Search Bar - Desktop */}
@@ -182,6 +182,8 @@ const Header = () => {
             size="icon"
             className="md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>

@@ -180,6 +180,8 @@ const AdvancedVehicleFilters = ({ onFiltersChange, initialCategory }: AdvancedVe
                   : [...current, brand];
                 handleFilterChange("brand", updated);
               }}
+              aria-label={`Filtrar por marca ${brand}`}
+              aria-pressed={(filters.brand || []).includes(brand)}
               className={`p-2 rounded-lg border transition-all text-xs font-medium text-center ${
                 (filters.brand || []).includes(brand)
                   ? "border-primary bg-primary/10 text-primary"
@@ -341,6 +343,8 @@ const AdvancedVehicleFilters = ({ onFiltersChange, initialCategory }: AdvancedVe
                   : [...current, ending];
                 handleFilterChange("plate_end", updated);
               }}
+              aria-label={`Filtrar por final de placa ${ending}`}
+              aria-pressed={(filters.plate_end || []).includes(ending)}
               className={`w-9 h-9 rounded-lg border transition-all text-sm font-medium flex items-center justify-center ${
                 (filters.plate_end || []).includes(ending)
                   ? "border-primary bg-primary/10 text-primary"

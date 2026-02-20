@@ -26,6 +26,8 @@ const CategoryTabs = ({ selectedCategory, onCategoryChange }: CategoryTabsProps)
           <button
             key={cat.value}
             onClick={() => onCategoryChange(cat.value)}
+            aria-label={`Visualizar categoria ${cat.label}`}
+            aria-pressed={isActive}
             className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 transition-all whitespace-nowrap ${
               isActive
                 ? "border-primary bg-primary text-primary-foreground"

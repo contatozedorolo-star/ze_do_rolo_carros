@@ -20,8 +20,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <Link to="/">
-              <img src={logoFooter} alt="Zé do Rolo" className="h-20 md:h-28 w-auto" />
+            <Link to="/" aria-label="Ir para a página inicial">
+              <img src={logoFooter} alt="Logotipo Zé do Rolo" className="h-20 md:h-28 w-auto" width={224} height={112} />
             </Link>
             <p className="text-primary-foreground/70 text-sm">
               Seu corretor de negócios pessoais. Trocas e vendas com segurança do início ao fim.

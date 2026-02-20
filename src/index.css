@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -29,7 +29,7 @@
     --accent-foreground: 0 0% 100%;
 
     --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted-foreground: 220 9% 38%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -44,16 +44,33 @@
     --trust-blue: 227 66% 24%;
     --action-orange: 27 100% 61%;
     --verified-green: 149 60% 44%;
-    
+
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(227 66% 24%) 0%, hsl(227 66% 18%) 100%);
-    --gradient-cta: linear-gradient(135deg, hsl(27 100% 61%) 0%, hsl(27 100% 55%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(149 60% 44%) 0%, hsl(149 60% 38%) 100%);
-    
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(227 66% 24%) 0%,
+      hsl(227 66% 18%) 100%
+    );
+    --gradient-cta: linear-gradient(
+      135deg,
+      hsl(27 100% 61%) 0%,
+      hsl(27 100% 55%) 100%
+    );
+    --gradient-success: linear-gradient(
+      135deg,
+      hsl(149 60% 44%) 0%,
+      hsl(149 60% 38%) 100%
+    );
+
     /* Shadows - Material Design inspired */
-    --shadow-card: 0 1px 3px 0 hsl(227 66% 24% / 0.1), 0 1px 2px -1px hsl(227 66% 24% / 0.1);
-    --shadow-card-hover: 0 10px 15px -3px hsl(227 66% 24% / 0.1), 0 4px 6px -4px hsl(227 66% 24% / 0.1);
-    --shadow-elevated: 0 20px 25px -5px hsl(227 66% 24% / 0.1), 0 8px 10px -6px hsl(227 66% 24% / 0.1);
+    --shadow-card:
+      0 1px 3px 0 hsl(227 66% 24% / 0.1), 0 1px 2px -1px hsl(227 66% 24% / 0.1);
+    --shadow-card-hover:
+      0 10px 15px -3px hsl(227 66% 24% / 0.1),
+      0 4px 6px -4px hsl(227 66% 24% / 0.1);
+    --shadow-elevated:
+      0 20px 25px -5px hsl(227 66% 24% / 0.1),
+      0 8px 10px -6px hsl(227 66% 24% / 0.1);
     --shadow-cta: 0 4px 14px -2px hsl(27 100% 61% / 0.4);
 
     /* Sidebar */
@@ -114,10 +131,15 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-semibold tracking-tight;
   }
 }
@@ -126,19 +148,19 @@
   .gradient-hero {
     background: var(--gradient-hero);
   }
-  
+
   .gradient-cta {
     background: var(--gradient-cta);
   }
-  
+
   .gradient-success {
     background: var(--gradient-success);
   }
-  
+
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
-  
+
   .shadow-card-hover {
     box-shadow: var(--shadow-card-hover);
   }
@@ -146,7 +168,7 @@
   .shadow-elevated {
     box-shadow: var(--shadow-elevated);
   }
-  
+
   .shadow-cta {
     box-shadow: var(--shadow-cta);
   }
@@ -199,4 +221,3 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
-

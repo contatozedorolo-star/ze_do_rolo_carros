@@ -63,6 +63,7 @@ const MobileActionDock = ({ vehicle }: MobileActionDockProps) => {
                   href={`https://wa.me/5511999999999?text=Olá, vi o anuncio do ${vehicle.title} e gostaria de mais informações.`} 
                   target="_blank" 
                   rel="noreferrer"
+                  aria-label="Conversar no WhatsApp"
                 >
                   <MessageCircle className="h-5 w-5" />
                 </a>

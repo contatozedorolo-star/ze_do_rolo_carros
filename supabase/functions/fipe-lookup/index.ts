@@ -73,12 +73,31 @@ serve(async (req) => {
         );
       }
       const modelsData = await modelsRes.json();
-      const modelLower = (model || "").toLowerCase();
-      const matchedModel = modelsData.modelos?.find((m: { nome: string }) =>
+      const modelLower = (model || "").toLowerCase().trim();
+      // Try exact includes first, then try first word, then try each word
+      const modelWords = modelLower.split(/\s+/).filter((w: string) => w.length > 2);
+      
+      let matchedModel = modelsData.modelos?.find((m: { nome: string }) =>
         m.nome.toLowerCase().includes(modelLower)
       );
+      
+      if (!matchedModel && modelWords.length > 0) {
+        // Try matching with just the first significant word (e.g., "kicks" from "kicks suv")
+        matchedModel = modelsData.modelos?.find((m: { nome: string }) =>
+          m.nome.toLowerCase().includes(modelWords[0])
+        );
+      }
+      
+      if (!matchedModel && modelWords.length > 1) {
+        // Try any word match
+        matchedModel = modelsData.modelos?.find((m: { nome: string }) => {
+          const mLower = m.nome.toLowerCase();
+          return modelWords.some((w: string) => mLower.includes(w));
+        });
+      }
 
       if (!matchedModel) {
+        console.log("[fipe-lookup] Available models sample:", modelsData.modelos?.slice(0, 5).map((m: { nome: string }) => m.nome));
         return new Response(
           JSON.stringify({ success: false, error: "Modelo não encontrado na FIPE" }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 404 }

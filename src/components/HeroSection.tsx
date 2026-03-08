@@ -1,20 +1,18 @@
 import { Shield, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import heroBackground from "@/assets/hero-background.jpg";
+import heroBackground from "@/assets/hero-background.gif";
 
 const HeroSection = () => {
   return (
-    <section 
-      className="relative overflow-hidden"
-      style={{ 
-        backgroundImage: `url(${heroBackground})`,
-        backgroundAttachment: 'fixed',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
+    <section className="relative overflow-hidden">
+      {/* GIF de fundo em loop */}
+      <img
+        src={heroBackground}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
       {/* Overlay Gradiente: preto transparente → preto semi-sólido */}
       <div 
         className="absolute inset-0"

@@ -1,5 +1,6 @@
 // Veículos - Dados de exemplo para o marketplace automotivo
 import vehicleRanger from "@/assets/vehicle-ranger.jpg";
+import vehicleNissanKicks from "@/assets/vehicle-nissan-kicks.jpg";
 
 
 

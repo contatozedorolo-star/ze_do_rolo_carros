@@ -1,5 +1,6 @@
 // Veículos - Dados de exemplo para o marketplace automotivo
 import vehicleRanger from "@/assets/vehicle-ranger.jpg";
+import vehicleNissanKicks from "@/assets/vehicle-nissan-kicks.jpg";
 
 
 
@@ -25,7 +26,7 @@ export const vehicles = [
   },
   {
     id: "v2",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/2018_Nissan_Kicks_SV_front_3.30.19.jpg/2560px-2018_Nissan_Kicks_SV_front_3.30.19.jpg",
+    image: vehicleNissanKicks,
     title: "Nissan Kicks SUV Compacto",
     price: 115000,
     location: "São Paulo, SP",

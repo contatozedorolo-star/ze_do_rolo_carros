@@ -197,7 +197,7 @@ const AddProduct = () => {
     km: "", brand: "", model: "", version: "",
     year_manufacture: "", year_model: "",
     price: "", transmission: "manual", fuel: "flex",
-    plate_end: "", is_armored: false, color: "",
+    is_armored: false, color: "",
     doors: "", engine_liters: "", seats: "",
     // Campos específicos de Motos
     cylinders: "", start_type: "", motor_type: "", brake_type: "", fuel_system: "",

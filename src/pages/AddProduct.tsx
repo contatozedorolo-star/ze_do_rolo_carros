@@ -1723,6 +1723,32 @@ const AddProduct = () => {
                 )}
               </div>
 
+              {/* Documento e Sinistro */}
+              <div className="p-4 border rounded-lg space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-base">Consta no documento?</Label>
+                    <Select value={formData.consta_documento ? "sim" : "nao"} onValueChange={v => setFormData(p => ({ ...p, consta_documento: v === "sim" }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        <SelectItem value="sim">Sim</SelectItem>
+                        <SelectItem value="nao">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-base">Tem sinistro?</Label>
+                    <Select value={formData.has_sinistro ? "sim" : "nao"} onValueChange={v => setFormData(p => ({ ...p, has_sinistro: v === "sim" }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        <SelectItem value="sim">Sim</SelectItem>
+                        <SelectItem value="nao">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
               {/* Seguro */}
               <div className="p-4 border rounded-lg space-y-4">
                 <div>

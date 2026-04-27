@@ -815,8 +815,9 @@ const AddProduct = () => {
                         inputMode="numeric"
                         value={formData.price}
                         onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))}
-                        placeholder="Ex: 85.000"
+                        placeholder="Ex: 85000"
                       />
+                      <p className="text-xs text-muted-foreground mt-1">Digite o valor completo. Ex: para R$ 57 mil, digite <strong>57000</strong> (não 57).</p>
                     </div>
                   </div>
                 </>

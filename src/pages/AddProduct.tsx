@@ -714,7 +714,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* 3: Combustível (+ Câmbio) */}
+              {/* 3: Combustível */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label>Combustível</Label>
@@ -725,17 +725,6 @@ const AddProduct = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                {formData.vehicle_type !== "moto" && (
-                  <div>
-                    <Label>Câmbio</Label>
-                    <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent className="bg-card">
-                        {transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
               </div>
 
               {/* 4-5-6: Marca, Modelo, Versão */}
@@ -758,6 +747,21 @@ const AddProduct = () => {
                   <Input value={formData.version} onChange={e => setFormData(p => ({ ...p, version: e.target.value }))} placeholder="Ex: EXL 2.0" />
                 </div>
               </div>
+
+              {/* Câmbio (após os 6 principais) */}
+              {formData.vehicle_type !== "moto" && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label>Câmbio</Label>
+                    <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        {transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
 
               {/* Preço */}
               <div className="grid gap-4 md:grid-cols-2">

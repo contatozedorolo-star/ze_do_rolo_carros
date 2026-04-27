@@ -21,23 +21,11 @@ export const years = Array.from({ length: 30 }, (_, i) => (new Date().getFullYea
 export const plateEndings = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 // Motor em Litros
-export const engineLiters = [
-  { value: "1.0", label: "1.0" },
-  { value: "1.2", label: "1.2" },
-  { value: "1.3", label: "1.3" },
-  { value: "1.4", label: "1.4" },
-  { value: "1.5", label: "1.5" },
-  { value: "1.6", label: "1.6" },
-  { value: "1.8", label: "1.8" },
-  { value: "2.0", label: "2.0" },
-  { value: "2.2", label: "2.2" },
-  { value: "2.4", label: "2.4" },
-  { value: "2.5", label: "2.5" },
-  { value: "3.0", label: "3.0" },
-  { value: "3.5", label: "3.5" },
-  { value: "4.0", label: "4.0" },
-  { value: "5.0", label: "5.0+" },
-];
+// Litragens de 1.0 até 9.9 (todos os décimos)
+export const engineLiters = Array.from({ length: 90 }, (_, i) => {
+  const v = (1.0 + i * 0.1).toFixed(1);
+  return { value: v, label: v };
+});
 
 // Portas
 export const doorOptions = [

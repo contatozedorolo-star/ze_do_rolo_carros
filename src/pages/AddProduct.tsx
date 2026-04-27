@@ -313,106 +313,81 @@ const AddProduct = () => {
   };
 
   const validateStep = (stepNumber: number): boolean => {
-    // Para caminhões, a validação é diferente
-    if (formData.vehicle_type === "caminhao") {
-      switch (stepNumber) {
-        case 1:
-          if (!formData.truck_type) {
-            toast({ title: "Selecione o tipo de caminhão", variant: "destructive" });
-            return false;
-          }
-          return true;
-        case 2:
-          if (!formData.brand || !formData.model || !formData.year_manufacture || !formData.price) {
-            toast({ title: "Preencha marca, modelo, ano e preço", variant: "destructive" });
-            return false;
-          }
-          return true;
-        default:
-          return true;
-      }
-    }
-    
-    // Para vans, a validação é diferente
-    if (formData.vehicle_type === "van") {
-      switch (stepNumber) {
-        case 1:
-          if (!formData.van_subcategory) {
-            toast({ title: "Selecione o tipo de carroceria da van", variant: "destructive" });
-            return false;
-          }
-          return true;
-        case 2:
-          if (!formData.brand || !formData.model || !formData.year_manufacture || !formData.price) {
-            toast({ title: "Preencha marca, modelo, ano e preço", variant: "destructive" });
-            return false;
-          }
-          return true;
-        default:
-          return true;
-      }
-    }
-    
-    // Para ônibus, a validação é diferente
-    if (formData.vehicle_type === "onibus") {
-      switch (stepNumber) {
-        case 1:
-          if (!formData.bus_subcategory) {
-            toast({ title: "Selecione o tipo de ônibus", variant: "destructive" });
-            return false;
-          }
-          return true;
-        case 2:
-          if (!formData.brand || !formData.model || !formData.year_manufacture || !formData.price) {
-            toast({ title: "Preencha marca, modelo, ano e preço", variant: "destructive" });
-            return false;
-          }
-          return true;
-        default:
-          return true;
-      }
-    }
-    
-    // Para carros e motos
-    switch (stepNumber) {
-      case 1:
-        if (!formData.vehicle_type) {
-          toast({ title: "Selecione o tipo de veículo", variant: "destructive" });
-          return false;
-        }
-        if (formData.vehicle_type === "carro" && !formData.body_type) {
-          toast({ title: "Selecione o tipo de carroceria", variant: "destructive" });
-          return false;
-        }
-        if (formData.vehicle_type === "moto" && !formData.moto_style) {
-          toast({ title: "Selecione o estilo da moto", variant: "destructive" });
-          return false;
-        }
+    const showError = (msg: string) => {
+      toast({ title: "Todos os campos devem ser preenchidos", description: msg, variant: "destructive" });
+    };
+
+    // Step 1 — categoria/tipo
+    if (stepNumber === 1) {
+      if (formData.vehicle_type === "caminhao") {
+        if (!formData.truck_type) { showError("Selecione o tipo de caminhão"); return false; }
         return true;
-      case 2:
-        if (!formData.brand || !formData.model || !formData.year_manufacture || !formData.price) {
-          toast({ title: "Preencha marca, modelo, ano e preço", variant: "destructive" });
-          return false;
-        }
+      }
+      if (formData.vehicle_type === "van") {
+        if (!formData.van_subcategory) { showError("Selecione o tipo de carroceria da van"); return false; }
         return true;
-      default:
+      }
+      if (formData.vehicle_type === "onibus") {
+        if (!formData.bus_subcategory) { showError("Selecione o tipo de ônibus"); return false; }
         return true;
+      }
+      if (!formData.vehicle_type) { showError("Selecione o tipo de veículo"); return false; }
+      if (formData.vehicle_type === "carro" && !formData.body_type) { showError("Selecione o tipo de carroceria"); return false; }
+      if (formData.vehicle_type === "moto" && !formData.moto_style) { showError("Selecione o estilo da moto"); return false; }
+      return true;
     }
+
+    // Step 2 — Dados técnicos: localização + identificação + valores
+    if (stepNumber === 2) {
+      if (!formData.state) { showError("Selecione o estado"); return false; }
+      if (!formData.city) { showError("Selecione a cidade"); return false; }
+      if (!formData.year_manufacture) { showError("Informe o ano de fabricação"); return false; }
+      if (!formData.year_model) { showError("Informe o ano do modelo"); return false; }
+      if (!formData.fuel) { showError("Selecione o combustível"); return false; }
+      if (!formData.brand) { showError("Selecione a marca"); return false; }
+      if (!formData.model) { showError("Informe o nome/modelo"); return false; }
+      // Câmbio obrigatório, exceto moto/trator/implemento
+      if (!["moto", "trator", "implemento"].includes(formData.vehicle_type) && !formData.transmission) {
+        showError("Selecione o câmbio"); return false;
+      }
+      // Preço sempre obrigatório
+      if (!formData.price) { showError("Informe o preço"); return false; }
+      // KM obrigatório, exceto trator/implemento
+      if (!["trator", "implemento"].includes(formData.vehicle_type) && !formData.km && formData.km !== "0") {
+        showError("Informe a quilometragem (use 0 se for 0km)"); return false;
+      }
+      // Específicos de trator
+      if (formData.vehicle_type === "trator") {
+        if (!formData.hours_use) { showError("Informe as horas de uso"); return false; }
+        if (!formData.power_cv) { showError("Informe a potência (cv)"); return false; }
+        if (!formData.traction) { showError("Selecione a tração"); return false; }
+      }
+      return true;
+    }
+
+    return true;
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleNext = () => {
     if (validateStep(step)) {
       setStep(s => Math.min(s + 1, steps.length));
+      scrollToTop();
     }
   };
 
   const handleBack = () => {
     setStep(s => Math.max(s - 1, 1));
+    scrollToTop();
   };
 
   const handleStepClick = (stepId: number) => {
     if (stepId < step) {
       setStep(stepId);
+      scrollToTop();
     }
   };
 

@@ -441,7 +441,7 @@ const AddProduct = () => {
         version: formData.version || null,
         year_manufacture: parseInt(formData.year_manufacture),
         year_model: parseInt(formData.year_model || formData.year_manufacture),
-        plate_end: formData.plate_end || null,
+        plate_end: null,
         km: parseInt(formData.km) || 0, 
         color: formData.color,
         transmission: formData.vehicle_type === "moto" ? "manual" : formData.transmission, 

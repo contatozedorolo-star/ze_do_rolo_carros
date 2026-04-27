@@ -357,6 +357,7 @@ export type Database = {
           bus_subcategory: string | null
           city: string | null
           color: string
+          consta_documento: boolean | null
           created_at: string
           cylinders: number | null
           description: string | null
@@ -367,7 +368,10 @@ export type Database = {
           engine_liters: number | null
           fuel: Database["public"]["Enums"]["fuel_type"]
           fuel_system: string | null
+          has_owner_manual: boolean | null
           has_service_history: boolean | null
+          has_sinistro: boolean | null
+          has_spare_key: boolean | null
           has_warranty: boolean | null
           has_ze_seal: boolean
           hours_use: number | null
@@ -447,6 +451,7 @@ export type Database = {
           bus_subcategory?: string | null
           city?: string | null
           color: string
+          consta_documento?: boolean | null
           created_at?: string
           cylinders?: number | null
           description?: string | null
@@ -457,7 +462,10 @@ export type Database = {
           engine_liters?: number | null
           fuel?: Database["public"]["Enums"]["fuel_type"]
           fuel_system?: string | null
+          has_owner_manual?: boolean | null
           has_service_history?: boolean | null
+          has_sinistro?: boolean | null
+          has_spare_key?: boolean | null
           has_warranty?: boolean | null
           has_ze_seal?: boolean
           hours_use?: number | null
@@ -537,6 +545,7 @@ export type Database = {
           bus_subcategory?: string | null
           city?: string | null
           color?: string
+          consta_documento?: boolean | null
           created_at?: string
           cylinders?: number | null
           description?: string | null
@@ -547,7 +556,10 @@ export type Database = {
           engine_liters?: number | null
           fuel?: Database["public"]["Enums"]["fuel_type"]
           fuel_system?: string | null
+          has_owner_manual?: boolean | null
           has_service_history?: boolean | null
+          has_sinistro?: boolean | null
+          has_spare_key?: boolean | null
           has_warranty?: boolean | null
           has_ze_seal?: boolean
           hours_use?: number | null

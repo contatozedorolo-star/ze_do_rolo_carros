@@ -782,6 +782,43 @@ const AddProduct = () => {
                 </div>
               )}
 
+              {/* 1-2: Anos */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label>Ano Fabricação *</Label>
+                  <Input type="number" value={formData.year_manufacture} onChange={e => setFormData(p => ({ ...p, year_manufacture: e.target.value }))} placeholder="Ex: 2022" />
+                </div>
+                <div>
+                  <Label>Ano Modelo</Label>
+                  <Input type="number" value={formData.year_model} onChange={e => setFormData(p => ({ ...p, year_model: e.target.value }))} placeholder="Ex: 2023" />
+                </div>
+              </div>
+
+              {/* 3: Combustível */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label>Combustível</Label>
+                  <Select value={formData.fuel} onValueChange={v => setFormData(p => ({ ...p, fuel: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-card">
+                      {fuelTypes.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {formData.vehicle_type !== "moto" && (
+                  <div>
+                    <Label>Câmbio</Label>
+                    <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        {transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+
+              {/* 4-5-6: Marca, Modelo, Versão */}
               <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label>Marca *</Label>
@@ -802,20 +839,8 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* Anos */}
+              {/* Preço */}
               <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Ano Fabricação *</Label>
-                  <Input type="number" value={formData.year_manufacture} onChange={e => setFormData(p => ({ ...p, year_manufacture: e.target.value }))} placeholder="Ex: 2022" />
-                </div>
-                <div>
-                  <Label>Ano Modelo</Label>
-                  <Input type="number" value={formData.year_model} onChange={e => setFormData(p => ({ ...p, year_model: e.target.value }))} placeholder="Ex: 2023" />
-                </div>
-              </div>
-
-              {/* Preço e Combustível */}
-              <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label>Preço (R$) *</Label>
                   <Input 
@@ -825,26 +850,6 @@ const AddProduct = () => {
                     onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))} 
                     placeholder="Ex: 85.000" 
                   />
-                </div>
-                {formData.vehicle_type !== "moto" && (
-                  <div>
-                    <Label>Câmbio</Label>
-                    <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent className="bg-card">
-                        {transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-                <div>
-                  <Label>Combustível</Label>
-                  <Select value={formData.fuel} onValueChange={v => setFormData(p => ({ ...p, fuel: v }))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {fuelTypes.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
 

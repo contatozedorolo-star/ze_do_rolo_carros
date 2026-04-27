@@ -87,10 +87,6 @@ const faqCategories: FAQCategory[] = [
         q: "Posso editar meu anúncio depois de publicar?",
         a: "Sim! Você pode editar preço, descrição, fotos e todas as informações do anúncio a qualquer momento através do seu painel de controle."
       },
-      {
-        q: "Como consultar o valor do meu veículo na Tabela FIPE?",
-        a: "Temos uma página dedicada de consulta à Tabela FIPE integrada ao site. Acesse pelo menu 'Tabela FIPE' e consulte o valor de referência de carros, motos e caminhões em tempo real."
-      },
     ]
   },
   {

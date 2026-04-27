@@ -10,18 +10,19 @@ import bodyMinivan from "@/assets/body-minivan.png";
 import bodyCoupe from "@/assets/body-coupe.png";
 import bodyConversivel from "@/assets/body-conversivel.png";
 import bodyBuggy from "@/assets/body-buggy.png";
+import bodyJipe from "@/assets/body-jipe.png";
 
 const carBodyTypes = [
   { value: "buggy", label: "Buggy", image: bodyBuggy, icon: null },
   { value: "conversivel", label: "Conversível", image: bodyConversivel, icon: null },
   { value: "coupe", label: "Coupe", image: bodyCoupe, icon: null },
   { value: "hatch", label: "Hatch", image: bodyHatch, icon: null },
+  { value: "jipe", label: "Jipe", image: bodyJipe, icon: null },
   { value: "minivan", label: "Minivan", image: bodyMinivan, icon: null },
   { value: "perua", label: "Perua", image: bodyWagon, icon: null },
   { value: "pickup", label: "Picape", image: bodyPickup, icon: null },
   { value: "sedan", label: "Sedan", image: bodySedan, icon: null },
   { value: "suv", label: "SUV", image: bodySuv, icon: null },
-  { value: "van", label: "Van", image: bodyMinivan, icon: null },
 ];
 
 interface CarBodyTypeSelectorProps {

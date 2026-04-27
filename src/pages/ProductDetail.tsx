@@ -664,54 +664,6 @@ const ProductDetail = () => {
                   </CardContent>
                 </Card>
 
-                {/* FIPE Comparison */}
-                <Card className="bg-white shadow-sm border-0">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <TrendingUp className="h-5 w-5 text-[#142562]" />
-                      <h3 className="font-semibold text-[#142562]">Comparativo FIPE</h3>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-3 bg-[#29B765]/10 rounded-lg">
-                        <span className="text-sm text-slate-600">Preço Zé do Rolo</span>
-                        <span className="font-bold text-[#29B765]">
-                          {formatCurrencyShort(vehicle.price)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                        <div className="flex flex-col">
-                          <span className="text-sm text-slate-600">Preço Médio FIPE</span>
-                          {fipeData?.referenceMonth && (
-                            <span className="text-xs text-slate-400">{fipeData.referenceMonth}</span>
-                          )}
-                        </div>
-                        {fipeLoading ? (
-                          <div className="animate-pulse bg-slate-200 h-5 w-24 rounded" />
-                        ) : (
-                          <span className="font-bold text-slate-500">
-                            {fipeData?.price || `R$ ${fipePrice.toLocaleString("pt-BR")}`}
-                          </span>
-                        )}
-                      </div>
-                      {fipeData?.fipeCode && (
-                        <p className="text-xs text-slate-400 text-center">
-                          Código FIPE: {fipeData.fipeCode}
-                        </p>
-                      )}
-                      {fipeData?.note && (
-                        <p className="text-xs text-slate-400 text-center italic">
-                          {fipeData.note}
-                        </p>
-                      )}
-                      {vehicle.price < fipePrice && !fipeLoading && (
-                        <p className="text-xs text-[#29B765] text-center mt-2 font-medium">
-                          ✓ Este veículo está abaixo da tabela FIPE!
-                        </p>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-
                 {/* Seller Info */}
                 <Card className="bg-white shadow-sm border-0">
                   <CardContent className="p-4">

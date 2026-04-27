@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2, Car, Trash2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import LocationSelector from "@/components/LocationSelector";
 import {
   AlertDialog,
   AlertDialogAction,

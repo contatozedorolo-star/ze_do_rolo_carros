@@ -336,8 +336,9 @@ const EditProduct = () => {
                     type="number"
                     value={km}
                     onChange={(e) => setKm(e.target.value)}
-                    placeholder="Ex: 45000"
+                    placeholder="Ex: 318000"
                   />
+                  <p className="text-xs text-muted-foreground">Digite o número completo, sem abreviar. Ex: para 318 mil km, digite <strong>318000</strong> (não 318). Se for 0km, deixe em branco ou 0.</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="price">Preço (R$)</Label>
@@ -346,8 +347,9 @@ const EditProduct = () => {
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    placeholder="Ex: 95000"
+                    placeholder="Ex: 57000"
                   />
+                  <p className="text-xs text-muted-foreground">Digite o valor completo. Ex: para R$ 57 mil, digite <strong>57000</strong> (não 57).</p>
                 </div>
               </div>
 

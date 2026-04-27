@@ -73,6 +73,52 @@ export const LocationSelector = ({
   const [cities, setCities] = useState<string[]>([]);
   const [loadingCities, setLoadingCities] = useState(false);
   const [open, setOpen] = useState(false);
+  const [cep, setCep] = useState("");
+  const [loadingCep, setLoadingCep] = useState(false);
+  const { toast } = useToast();
+
+  const handleCepLookup = async () => {
+    const clean = cep.replace(/\D/g, "");
+    if (clean.length !== 8) {
+      toast({
+        title: "CEP inválido",
+        description: "Digite um CEP com 8 dígitos.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLoadingCep(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const data = await res.json();
+      if (data.erro) {
+        toast({
+          title: "CEP não encontrado",
+          description: "Verifique o CEP digitado.",
+          variant: "destructive",
+        });
+        return;
+      }
+      const uf = data.uf as string;
+      const cityName = data.localidade as string;
+      onStateChange(uf);
+      // Wait for cities to load before setting city, but city can be set immediately
+      // since the cidade combobox's value isn't validated against the list
+      onCityChange(cityName);
+      toast({
+        title: "Endereço encontrado",
+        description: `${cityName} - ${uf}`,
+      });
+    } catch {
+      toast({
+        title: "Erro ao buscar CEP",
+        description: "Tente novamente em instantes.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCep(false);
+    }
+  };
 
   useEffect(() => {
     if (!state) {

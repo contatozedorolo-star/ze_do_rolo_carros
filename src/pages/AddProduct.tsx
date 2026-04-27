@@ -739,7 +739,7 @@ const AddProduct = () => {
               {/* 5-6-7: Modelo, Versão, Câmbio */}
               <div className={`grid gap-4 ${formData.vehicle_type !== "moto" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
                 <div>
-                  <Label>Modelo *</Label>
+                  <Label>Nome/Modelo *</Label>
                   <Input value={formData.model} onChange={e => setFormData(p => ({ ...p, model: e.target.value }))} placeholder="Ex: Civic" />
                 </div>
                 <div>

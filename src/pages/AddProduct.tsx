@@ -470,6 +470,10 @@ const AddProduct = () => {
         // History
         is_auction: formData.is_auction, 
         auction_reason: formData.is_auction ? formData.auction_reason : null,
+        consta_documento: formData.consta_documento,
+        has_sinistro: formData.has_sinistro,
+        has_spare_key: formData.has_spare_key,
+        has_owner_manual: formData.has_owner_manual,
         is_single_owner: formData.is_single_owner,
         ipva_paid: formData.ipva_paid, 
         has_service_history: formData.has_warranty,

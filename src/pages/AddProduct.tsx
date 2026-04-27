@@ -40,6 +40,7 @@ import TratorTypeSelector from "@/components/add-product/TratorTypeSelector";
 import ImplementoTypeSelector from "@/components/add-product/ImplementoTypeSelector";
 import { formatPriceInput, parsePriceInput } from "@/lib/formatters";
 import KYCRequiredModal from "@/components/KYCRequiredModal";
+import LocationSelector from "@/components/LocationSelector";
 
 const vehicleTypes = [
   { value: "carro", label: "Carro", icon: Car },
@@ -694,25 +695,12 @@ const AddProduct = () => {
               </div>
 
               {/* Localização */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Cidade</Label>
-                  <Input 
-                    value={formData.city} 
-                    onChange={e => setFormData(p => ({ ...p, city: e.target.value }))} 
-                    placeholder="Ex: São Paulo"
-                  />
-                </div>
-                <div>
-                  <Label>Estado</Label>
-                  <Select value={formData.state} onValueChange={v => setFormData(p => ({ ...p, state: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {brazilianStates.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              <LocationSelector
+                state={formData.state}
+                city={formData.city}
+                onStateChange={(v) => setFormData((p) => ({ ...p, state: v }))}
+                onCityChange={(v) => setFormData((p) => ({ ...p, city: v }))}
+              />
 
               {/* Quilometragem / Horas de Uso */}
               {formData.vehicle_type === "implemento" ? null : formData.vehicle_type === "trator" ? (

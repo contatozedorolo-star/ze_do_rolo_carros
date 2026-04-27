@@ -213,9 +213,11 @@ const AddProduct = () => {
     
     // Etapa 3 - Histórico
     is_auction: false, auction_reason: "",
+    consta_documento: false, has_sinistro: false,
     insurance_covers_100: "", insurance_coverage_percent: "",
     accepts_trade: true, is_financed: false, has_warranty: false,
     ipva_paid: false, is_single_owner: false,
+    has_spare_key: false, has_owner_manual: false,
     is_chassis_remarked: false,
     moto_optionals: [] as string[],
     
@@ -468,6 +470,10 @@ const AddProduct = () => {
         // History
         is_auction: formData.is_auction, 
         auction_reason: formData.is_auction ? formData.auction_reason : null,
+        consta_documento: formData.consta_documento,
+        has_sinistro: formData.has_sinistro,
+        has_spare_key: formData.has_spare_key,
+        has_owner_manual: formData.has_owner_manual,
         is_single_owner: formData.is_single_owner,
         ipva_paid: formData.ipva_paid, 
         has_service_history: formData.has_warranty,
@@ -1717,6 +1723,32 @@ const AddProduct = () => {
                 )}
               </div>
 
+              {/* Documento e Sinistro */}
+              <div className="p-4 border rounded-lg space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-base">Consta no documento?</Label>
+                    <Select value={formData.consta_documento ? "sim" : "nao"} onValueChange={v => setFormData(p => ({ ...p, consta_documento: v === "sim" }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        <SelectItem value="sim">Sim</SelectItem>
+                        <SelectItem value="nao">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-base">Tem sinistro?</Label>
+                    <Select value={formData.has_sinistro ? "sim" : "nao"} onValueChange={v => setFormData(p => ({ ...p, has_sinistro: v === "sim" }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        <SelectItem value="sim">Sim</SelectItem>
+                        <SelectItem value="nao">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
               {/* Seguro */}
               <div className="p-4 border rounded-lg space-y-4">
                 <div>
@@ -1768,6 +1800,14 @@ const AddProduct = () => {
                   <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
                     <Label>Único Dono</Label>
                     <Switch checked={formData.is_single_owner} onCheckedChange={v => setFormData(p => ({ ...p, is_single_owner: v }))} />
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                    <Label>Possui chave reserva</Label>
+                    <Switch checked={formData.has_spare_key} onCheckedChange={v => setFormData(p => ({ ...p, has_spare_key: v }))} />
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                    <Label>Possui manual do proprietário</Label>
+                    <Switch checked={formData.has_owner_manual} onCheckedChange={v => setFormData(p => ({ ...p, has_owner_manual: v }))} />
                   </div>
                 </div>
               </div>

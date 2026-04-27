@@ -702,7 +702,77 @@ const AddProduct = () => {
                 onCityChange={(v) => setFormData((p) => ({ ...p, city: v }))}
               />
 
-              {/* Quilometragem / Horas de Uso */}
+              {/* 1-2: Anos */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label>Ano Fabricação *</Label>
+                  <Input type="number" value={formData.year_manufacture} onChange={e => setFormData(p => ({ ...p, year_manufacture: e.target.value }))} placeholder="Ex: 2022" />
+                </div>
+                <div>
+                  <Label>Ano Modelo</Label>
+                  <Input type="number" value={formData.year_model} onChange={e => setFormData(p => ({ ...p, year_model: e.target.value }))} placeholder="Ex: 2023" />
+                </div>
+              </div>
+
+              {/* 3: Combustível (+ Câmbio) */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label>Combustível</Label>
+                  <Select value={formData.fuel} onValueChange={v => setFormData(p => ({ ...p, fuel: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-card">
+                      {fuelTypes.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {formData.vehicle_type !== "moto" && (
+                  <div>
+                    <Label>Câmbio</Label>
+                    <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        {transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+
+              {/* 4-5-6: Marca, Modelo, Versão */}
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <Label>Marca *</Label>
+                  <Select value={formData.brand} onValueChange={v => setFormData(p => ({ ...p, brand: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectContent className="bg-card max-h-60">
+                      {currentBrands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Modelo *</Label>
+                  <Input value={formData.model} onChange={e => setFormData(p => ({ ...p, model: e.target.value }))} placeholder="Ex: Civic" />
+                </div>
+                <div>
+                  <Label>Versão</Label>
+                  <Input value={formData.version} onChange={e => setFormData(p => ({ ...p, version: e.target.value }))} placeholder="Ex: EXL 2.0" />
+                </div>
+              </div>
+
+              {/* Preço */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label>Preço (R$) *</Label>
+                  <Input 
+                    type="text" 
+                    inputMode="numeric"
+                    value={formData.price} 
+                    onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))} 
+                    placeholder="Ex: 85.000" 
+                  />
+                </div>
+              </div>
+
               {formData.vehicle_type === "implemento" ? null : formData.vehicle_type === "trator" ? (
                 <div className="grid gap-4 md:grid-cols-3">
                   <div>
@@ -781,77 +851,6 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
-
-              {/* 1-2: Anos */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Ano Fabricação *</Label>
-                  <Input type="number" value={formData.year_manufacture} onChange={e => setFormData(p => ({ ...p, year_manufacture: e.target.value }))} placeholder="Ex: 2022" />
-                </div>
-                <div>
-                  <Label>Ano Modelo</Label>
-                  <Input type="number" value={formData.year_model} onChange={e => setFormData(p => ({ ...p, year_model: e.target.value }))} placeholder="Ex: 2023" />
-                </div>
-              </div>
-
-              {/* 3: Combustível */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Combustível</Label>
-                  <Select value={formData.fuel} onValueChange={v => setFormData(p => ({ ...p, fuel: v }))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {fuelTypes.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                {formData.vehicle_type !== "moto" && (
-                  <div>
-                    <Label>Câmbio</Label>
-                    <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent className="bg-card">
-                        {transmissionTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-              </div>
-
-              {/* 4-5-6: Marca, Modelo, Versão */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <Label>Marca *</Label>
-                  <Select value={formData.brand} onValueChange={v => setFormData(p => ({ ...p, brand: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card max-h-60">
-                      {currentBrands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Modelo *</Label>
-                  <Input value={formData.model} onChange={e => setFormData(p => ({ ...p, model: e.target.value }))} placeholder="Ex: Civic" />
-                </div>
-                <div>
-                  <Label>Versão</Label>
-                  <Input value={formData.version} onChange={e => setFormData(p => ({ ...p, version: e.target.value }))} placeholder="Ex: EXL 2.0" />
-                </div>
-              </div>
-
-              {/* Preço */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Preço (R$) *</Label>
-                  <Input 
-                    type="text" 
-                    inputMode="numeric"
-                    value={formData.price} 
-                    onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))} 
-                    placeholder="Ex: 85.000" 
-                  />
-                </div>
-              </div>
 
               {/* Campos específicos para MOTO */}
               {formData.vehicle_type === "moto" && (

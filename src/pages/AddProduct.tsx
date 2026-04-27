@@ -213,9 +213,11 @@ const AddProduct = () => {
     
     // Etapa 3 - Histórico
     is_auction: false, auction_reason: "",
+    consta_documento: false, has_sinistro: false,
     insurance_covers_100: "", insurance_coverage_percent: "",
     accepts_trade: true, is_financed: false, has_warranty: false,
     ipva_paid: false, is_single_owner: false,
+    has_spare_key: false, has_owner_manual: false,
     is_chassis_remarked: false,
     moto_optionals: [] as string[],
     

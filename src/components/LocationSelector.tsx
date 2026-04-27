@@ -171,7 +171,50 @@ export const LocationSelector = ({
   );
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="space-y-4">
+      {/* CEP shortcut */}
+      <div className="p-3 bg-muted/40 border border-border rounded-lg">
+        <Label className="text-sm">Buscar por CEP (opcional)</Label>
+        <div className="flex gap-2 mt-2">
+          <Input
+            value={cep}
+            onChange={(e) => {
+              const v = e.target.value.replace(/\D/g, "").slice(0, 8);
+              const formatted = v.length > 5 ? `${v.slice(0, 5)}-${v.slice(5)}` : v;
+              setCep(formatted);
+            }}
+            placeholder="00000-000"
+            inputMode="numeric"
+            maxLength={9}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleCepLookup();
+              }
+            }}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCepLookup}
+            disabled={loadingCep}
+          >
+            {loadingCep ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <Search className="h-4 w-4 mr-2" />
+                Buscar
+              </>
+            )}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          Preenche estado e cidade automaticamente
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
       <div className="space-y-2">
         <Label>Estado{required ? " *" : ""}</Label>
         <Select

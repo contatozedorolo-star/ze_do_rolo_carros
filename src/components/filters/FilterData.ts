@@ -44,7 +44,6 @@ export const doorOptions = [
   { value: "2", label: "2 portas" },
   { value: "3", label: "3 portas" },
   { value: "4", label: "4 portas" },
-  { value: "5", label: "5 portas" },
 ];
 
 // Lugares
@@ -117,8 +116,6 @@ export const ratingRanges = [
 export const transmissionTypes = [
   { value: "manual", label: "Manual" },
   { value: "automatico", label: "Automático" },
-  { value: "cvt", label: "CVT" },
-  { value: "semi-automatico", label: "Semi-Automático" },
 ];
 
 export const fuelTypes = [

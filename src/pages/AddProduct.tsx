@@ -197,7 +197,7 @@ const AddProduct = () => {
     km: "", brand: "", model: "", version: "",
     year_manufacture: "", year_model: "",
     price: "", transmission: "manual", fuel: "flex",
-    plate_end: "", is_armored: false, color: "",
+    is_armored: false, color: "",
     doors: "", engine_liters: "", seats: "",
     // Campos específicos de Motos
     cylinders: "", start_type: "", motor_type: "", brake_type: "", fuel_system: "",
@@ -441,7 +441,7 @@ const AddProduct = () => {
         version: formData.version || null,
         year_manufacture: parseInt(formData.year_manufacture),
         year_model: parseInt(formData.year_model || formData.year_manufacture),
-        plate_end: formData.plate_end || null,
+        plate_end: null,
         km: parseInt(formData.km) || 0, 
         color: formData.color,
         transmission: formData.vehicle_type === "moto" ? "manual" : formData.transmission, 
@@ -739,7 +739,7 @@ const AddProduct = () => {
               {/* 5-6-7: Modelo, Versão, Câmbio */}
               <div className={`grid gap-4 ${formData.vehicle_type !== "moto" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
                 <div>
-                  <Label>Modelo *</Label>
+                  <Label>Nome/Modelo *</Label>
                   <Input value={formData.model} onChange={e => setFormData(p => ({ ...p, model: e.target.value }))} placeholder="Ex: Civic" />
                 </div>
                 <div>
@@ -769,8 +769,9 @@ const AddProduct = () => {
                       inputMode="numeric"
                       value={formData.price}
                       onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))}
-                      placeholder="Ex: 85.000"
+                      placeholder="Ex: 85000"
                     />
+                    <p className="text-xs text-muted-foreground mt-1">Digite o valor completo. Ex: para R$ 57 mil, digite <strong>57000</strong> (não 57).</p>
                   </div>
                 </div>
               ) : formData.vehicle_type === "trator" ? (
@@ -814,8 +815,9 @@ const AddProduct = () => {
                         inputMode="numeric"
                         value={formData.price}
                         onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))}
-                        placeholder="Ex: 85.000"
+                        placeholder="Ex: 85000"
                       />
+                      <p className="text-xs text-muted-foreground mt-1">Digite o valor completo. Ex: para R$ 57 mil, digite <strong>57000</strong> (não 57).</p>
                     </div>
                   </div>
                 </>
@@ -827,9 +829,9 @@ const AddProduct = () => {
                       type="number"
                       value={formData.km}
                       onChange={e => setFormData(p => ({ ...p, km: e.target.value }))}
-                      placeholder="Ex: 45000"
+                      placeholder="Ex: 318000"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">Se 0km, deixe em branco ou 0</p>
+                    <p className="text-xs text-muted-foreground mt-1">Digite o número completo, sem abreviar. Ex: para 318 mil km, digite <strong>318000</strong> (não 318). Se for 0km, deixe em branco ou 0.</p>
                   </div>
                   <div>
                     <Label>Preço (R$) *</Label>
@@ -838,8 +840,9 @@ const AddProduct = () => {
                       inputMode="numeric"
                       value={formData.price}
                       onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))}
-                      placeholder="Ex: 85.000"
+                      placeholder="Ex: 85000"
                     />
+                    <p className="text-xs text-muted-foreground mt-1">Digite o valor completo. Ex: para R$ 57 mil, digite <strong>57000</strong> (não 57).</p>
                   </div>
                 </div>
               )}
@@ -961,17 +964,8 @@ const AddProduct = () => {
                 </>
               )}
 
-              {/* Final da Placa, Blindagem, Cor */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <Label>Final da Placa</Label>
-                  <Select value={formData.plate_end} onValueChange={v => setFormData(p => ({ ...p, plate_end: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {[0,1,2,3,4,5,6,7,8,9].map(n => <SelectItem key={n} value={n.toString()}>{n}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Blindagem, Cor */}
+              <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label>Blindagem</Label>
                   <div className="flex items-center gap-3 h-10 px-3 border rounded-md bg-background">
@@ -1120,16 +1114,7 @@ const AddProduct = () => {
               </div>
 
               {/* Detalhes básicos */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <Label>Final da Placa</Label>
-                  <Select value={formData.plate_end} onValueChange={v => setFormData(p => ({ ...p, plate_end: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {[0,1,2,3,4,5,6,7,8,9].map(n => <SelectItem key={n} value={n.toString()}>{n}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label>Cor</Label>
                   <Select value={formData.color} onValueChange={v => setFormData(p => ({ ...p, color: v }))}>

@@ -117,8 +117,6 @@ export const ratingRanges = [
 export const transmissionTypes = [
   { value: "manual", label: "Manual" },
   { value: "automatico", label: "Automático" },
-  { value: "cvt", label: "CVT" },
-  { value: "semi-automatico", label: "Semi-Automático" },
 ];
 
 export const fuelTypes = [

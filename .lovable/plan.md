@@ -1,35 +1,44 @@
+## Ajustes no formulário de veículos
 
+### 1. Renomear labels
+- **Modelo** → **Nome/Modelo** (em `AddProduct.tsx` e `EditProduct.tsx`)
+- **Versão** mantém apenas "Versão" (já está; remover "(opcional)" no `EditProduct.tsx`)
 
-## Corrigir erro "null value in column url" ao enviar documentos KYC
+### 2. Quilometragem — aviso claro
+Substituir o texto auxiliar atual por um aviso destacado:
+> "Digite o número completo, sem abreviar. Ex: para 318 mil km, digite **318000** (não 318). Se for 0km, deixe em branco ou 0."
 
-### Problema
-Ao submeter documentos para verificacao, o erro ocorre:
-`null value in column "url" of relation "http_request_queue" violates not-null constraint`
+Aplicar em `AddProduct.tsx` e `EditProduct.tsx`.
 
-### Causa raiz
-Existem **dois triggers** que disparam quando o status muda para `under_review`:
+### 3. Preço — aviso claro
+Adicionar texto auxiliar logo abaixo do campo Preço:
+> "Digite o valor completo. Ex: para R$ 57 mil, digite **57000** (não 57)."
 
-1. `on_kyc_status_under_review` -> chama `handle_kyc_under_review()` (URL hardcoded - funciona)
-2. `on_kyc_under_review_send_email` -> chama `notify_document_under_review()` (usa `current_setting('app.settings.supabase_url')` que retorna NULL)
+Aplicar em `AddProduct.tsx` e `EditProduct.tsx`.
 
-O trigger `notify_document_under_review()` tenta construir a URL com `supabase_url || '/functions/v1/send-document-status-email'`, mas como `app.settings.supabase_url` nao esta configurado no banco, a URL fica NULL e causa o erro.
-
-Alem disso, os dois triggers fazem a mesma coisa (enviar email de status), entao ha duplicidade.
-
-### Solucao
-Remover o trigger duplicado `on_kyc_under_review_send_email` que usa a funcao com URL nula. O trigger `on_kyc_status_under_review` (que usa `handle_kyc_under_review` com URL hardcoded) ja cobre essa funcionalidade.
-
-### Detalhes tecnicos
-
-**Migration SQL:**
-
-```sql
--- Remover o trigger duplicado que causa o erro de URL nula
-DROP TRIGGER IF EXISTS on_kyc_under_review_send_email ON public.kyc_verifications;
-
--- Opcional: remover a funcao orfao tambem
-DROP FUNCTION IF EXISTS public.notify_document_under_review();
+### 4. Câmbio — apenas Manual e Automático
+Em `src/components/filters/FilterData.ts`, reduzir `transmissionTypes` para:
+```ts
+[{ value: "manual", label: "Manual" }, { value: "automatico", label: "Automático" }]
 ```
+Isso afeta também os filtros (Carros/Caminhões/Vans/Ônibus/Cavalo) — é o comportamento desejado para padronizar.
 
-Isso resolve o erro imediatamente sem alterar nenhum codigo frontend.
+### 5. Remover "Final da Placa" — TODOS os veículos
+- Remover os 3 blocos de "Final da Placa" em `AddProduct.tsx` (linhas ~964-995 do bloco carros, ~1125 caminhões, e onde aparecer em outros tipos).
+- Ajustar o grid restante (Blindagem + Cor) para `md:grid-cols-2`.
+- Remover `plate_end` do `formData` inicial e do payload de insert.
+- Remover também do `EditProduct.tsx` se existir lá.
+- (Manter a coluna `plate_end` no banco — apenas parar de gravar/exibir, sem migração.)
 
+### 6. Portas — apenas 2, 3 ou 4
+Nos 3 selects de "Portas" em `AddProduct.tsx` (linhas ~999, ~1164, ~1474) e no `EditProduct.tsx` se houver, deixar apenas as opções:
+- 2 portas
+- 3 portas
+- 4 portas
+
+Remover quaisquer outras (5, etc.).
+
+### Arquivos editados
+- `src/pages/AddProduct.tsx`
+- `src/pages/EditProduct.tsx`
+- `src/components/filters/FilterData.ts`

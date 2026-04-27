@@ -829,9 +829,9 @@ const AddProduct = () => {
                       type="number"
                       value={formData.km}
                       onChange={e => setFormData(p => ({ ...p, km: e.target.value }))}
-                      placeholder="Ex: 45000"
+                      placeholder="Ex: 318000"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">Se 0km, deixe em branco ou 0</p>
+                    <p className="text-xs text-muted-foreground mt-1">Digite o número completo, sem abreviar. Ex: para 318 mil km, digite <strong>318000</strong> (não 318). Se for 0km, deixe em branco ou 0.</p>
                   </div>
                   <div>
                     <Label>Preço (R$) *</Label>
@@ -840,8 +840,9 @@ const AddProduct = () => {
                       inputMode="numeric"
                       value={formData.price}
                       onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))}
-                      placeholder="Ex: 85.000"
+                      placeholder="Ex: 85000"
                     />
+                    <p className="text-xs text-muted-foreground mt-1">Digite o valor completo. Ex: para R$ 57 mil, digite <strong>57000</strong> (não 57).</p>
                   </div>
                 </div>
               )}

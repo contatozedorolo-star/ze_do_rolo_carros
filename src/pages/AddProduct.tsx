@@ -693,25 +693,6 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Preencha as informações do veículo</p>
               </div>
 
-              {/* FIPE Consultation Link */}
-              <div className="p-4 bg-secondary/10 border border-secondary/30 rounded-lg">
-                <div className="flex items-center justify-between flex-wrap gap-3">
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="h-5 w-5 text-secondary" />
-                    <div>
-                      <p className="font-medium text-sm">Não sabe o preço do seu veículo?</p>
-                      <p className="text-xs text-muted-foreground">Consulte a Tabela FIPE para obter o valor de referência</p>
-                    </div>
-                  </div>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to="/tabela-fipe" target="_blank">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Consultar FIPE
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-
               {/* Localização */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div>

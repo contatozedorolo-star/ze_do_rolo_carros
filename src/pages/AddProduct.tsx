@@ -1114,16 +1114,7 @@ const AddProduct = () => {
               </div>
 
               {/* Detalhes básicos */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <Label>Final da Placa</Label>
-                  <Select value={formData.plate_end} onValueChange={v => setFormData(p => ({ ...p, plate_end: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {[0,1,2,3,4,5,6,7,8,9].map(n => <SelectItem key={n} value={n.toString()}>{n}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label>Cor</Label>
                   <Select value={formData.color} onValueChange={v => setFormData(p => ({ ...p, color: v }))}>

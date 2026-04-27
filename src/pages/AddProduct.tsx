@@ -368,19 +368,26 @@ const AddProduct = () => {
     return true;
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleNext = () => {
     if (validateStep(step)) {
       setStep(s => Math.min(s + 1, steps.length));
+      scrollToTop();
     }
   };
 
   const handleBack = () => {
     setStep(s => Math.max(s - 1, 1));
+    scrollToTop();
   };
 
   const handleStepClick = (stepId: number) => {
     if (stepId < step) {
       setStep(stepId);
+      scrollToTop();
     }
   };
 

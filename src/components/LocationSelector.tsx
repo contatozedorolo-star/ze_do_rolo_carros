@@ -1,8 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
-import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import {
   Command,
   CommandEmpty,
@@ -71,6 +73,52 @@ export const LocationSelector = ({
   const [cities, setCities] = useState<string[]>([]);
   const [loadingCities, setLoadingCities] = useState(false);
   const [open, setOpen] = useState(false);
+  const [cep, setCep] = useState("");
+  const [loadingCep, setLoadingCep] = useState(false);
+  const { toast } = useToast();
+
+  const handleCepLookup = async () => {
+    const clean = cep.replace(/\D/g, "");
+    if (clean.length !== 8) {
+      toast({
+        title: "CEP inválido",
+        description: "Digite um CEP com 8 dígitos.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLoadingCep(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const data = await res.json();
+      if (data.erro) {
+        toast({
+          title: "CEP não encontrado",
+          description: "Verifique o CEP digitado.",
+          variant: "destructive",
+        });
+        return;
+      }
+      const uf = data.uf as string;
+      const cityName = data.localidade as string;
+      onStateChange(uf);
+      // Wait for cities to load before setting city, but city can be set immediately
+      // since the cidade combobox's value isn't validated against the list
+      onCityChange(cityName);
+      toast({
+        title: "Endereço encontrado",
+        description: `${cityName} - ${uf}`,
+      });
+    } catch {
+      toast({
+        title: "Erro ao buscar CEP",
+        description: "Tente novamente em instantes.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCep(false);
+    }
+  };
 
   useEffect(() => {
     if (!state) {
@@ -123,7 +171,50 @@ export const LocationSelector = ({
   );
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="space-y-4">
+      {/* CEP shortcut */}
+      <div className="p-3 bg-muted/40 border border-border rounded-lg">
+        <Label className="text-sm">Buscar por CEP (opcional)</Label>
+        <div className="flex gap-2 mt-2">
+          <Input
+            value={cep}
+            onChange={(e) => {
+              const v = e.target.value.replace(/\D/g, "").slice(0, 8);
+              const formatted = v.length > 5 ? `${v.slice(0, 5)}-${v.slice(5)}` : v;
+              setCep(formatted);
+            }}
+            placeholder="00000-000"
+            inputMode="numeric"
+            maxLength={9}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleCepLookup();
+              }
+            }}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCepLookup}
+            disabled={loadingCep}
+          >
+            {loadingCep ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <Search className="h-4 w-4 mr-2" />
+                Buscar
+              </>
+            )}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          Preenche estado e cidade automaticamente
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
       <div className="space-y-2">
         <Label>Estado{required ? " *" : ""}</Label>
         <Select
@@ -208,6 +299,7 @@ export const LocationSelector = ({
             </Command>
           </PopoverContent>
         </Popover>
+      </div>
       </div>
     </div>
   );

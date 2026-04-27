@@ -374,7 +374,7 @@ const AssistenteIA = () => {
                 <Clock className="w-5 h-5 md:w-6 md:h-6 text-[#FF8C36] flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="text-white font-semibold text-xs md:text-sm">Rapidez</h3>
-                  <p className="text-white/70 text-xs md:text-sm">Respostas instantâneas sobre preços FIPE e condições de troca.</p>
+                  <p className="text-white/70 text-xs md:text-sm">Respostas instantâneas sobre preços e condições de troca.</p>
                 </div>
               </div>
             </div>

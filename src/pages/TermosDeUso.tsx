@@ -41,7 +41,7 @@ const TermosDeUso = () => {
                 <li>Publicação de anúncios de veículos para venda ou troca;</li>
                 <li>Sistema de busca e filtros para encontrar veículos;</li>
                 <li>Ferramentas de comunicação entre compradores e vendedores;</li>
-                <li>Consulta de valores da Tabela FIPE;</li>
+                
                 <li>Sistema de propostas e negociação;</li>
                 <li>Verificação de identidade dos usuários (KYC).</li>
               </ul>

@@ -117,16 +117,6 @@ const ProductDetail = () => {
   // Get view count
   const { data: viewCount } = useVehicleViewCount(vehicle?.id);
 
-  // FIPE data
-  const [fipeData, setFipeData] = useState<{
-    price: string;
-    priceNumber: number;
-    fipeCode?: string;
-    referenceMonth?: string;
-    note?: string;
-  } | null>(null);
-  const [fipeLoading, setFipeLoading] = useState(false);
-
   useEffect(() => {
     const fetchVehicle = async () => {
       if (!id) return;
@@ -269,73 +259,6 @@ const ProductDetail = () => {
 
     fetchVehicle();
   }, [id]);
-
-  // Fetch FIPE price when vehicle is loaded
-  useEffect(() => {
-    const fetchFipePrice = async () => {
-      if (!vehicle) return;
-
-      // Skip FIPE for vehicle types not supported by the API
-      const unsupportedTypes = ["trator", "implemento", "onibus"];
-      if (unsupportedTypes.includes(vehicle.vehicle_type)) {
-        setFipeData({
-          price: formatCurrencyShort(Math.round(vehicle.price * 1.05)),
-          priceNumber: Math.round(vehicle.price * 1.05),
-          note: "Estimativa baseada no mercado (FIPE indisponível para esta categoria)",
-        });
-        setFipeLoading(false);
-        return;
-      }
-
-      setFipeLoading(true);
-      try {
-        // Determine vehicle type for FIPE API
-        let vehicleType: "carros" | "motos" | "caminhoes" = "carros";
-
-        if (vehicle.vehicle_type === "moto") {
-          vehicleType = "motos";
-        } else if (vehicle.vehicle_type === "caminhao") {
-          vehicleType = "caminhoes";
-        }
-
-        const response = await supabase.functions.invoke("fipe-lookup", {
-          body: {
-            vehicleType,
-            brand: vehicle.brand,
-            model: vehicle.model || vehicle.title.split(" ").slice(1, 3).join(" "),
-            year: vehicle.year_model,
-          },
-        });
-
-        if (response.data?.success && response.data?.data?.priceNumber) {
-          setFipeData(response.data.data);
-        } else {
-          console.log("FIPE lookup failed or no price:", response.data);
-          // Fallback: estimate based on vehicle price
-          setFipeData({
-            price: formatCurrencyShort(Math.round(vehicle.price * 1.05)),
-            priceNumber: Math.round(vehicle.price * 1.05),
-            note: "Estimativa baseada no mercado (FIPE indisponível para este modelo)",
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching FIPE:", error);
-        // Fallback
-        setFipeData({
-          price: formatCurrencyShort(Math.round(vehicle.price * 1.05)),
-          priceNumber: Math.round(vehicle.price * 1.05),
-          note: "Estimativa baseada no mercado",
-        });
-      } finally {
-        setFipeLoading(false);
-      }
-    };
-
-    fetchFipePrice();
-  }, [vehicle]);
-
-  // Fallback FIPE price for display
-  const fipePrice = fipeData?.priceNumber || (vehicle ? Math.round(vehicle.price * 1.05) : 0);
 
   const getRatingItems = () => {
     if (!vehicle) return [];
@@ -737,54 +660,6 @@ const ProductDetail = () => {
                           FALAR COM CONSULTOR ZÉ
                         </Button>
                       </a>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* FIPE Comparison */}
-                <Card className="bg-white shadow-sm border-0">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <TrendingUp className="h-5 w-5 text-[#142562]" />
-                      <h3 className="font-semibold text-[#142562]">Comparativo FIPE</h3>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-3 bg-[#29B765]/10 rounded-lg">
-                        <span className="text-sm text-slate-600">Preço Zé do Rolo</span>
-                        <span className="font-bold text-[#29B765]">
-                          {formatCurrencyShort(vehicle.price)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                        <div className="flex flex-col">
-                          <span className="text-sm text-slate-600">Preço Médio FIPE</span>
-                          {fipeData?.referenceMonth && (
-                            <span className="text-xs text-slate-400">{fipeData.referenceMonth}</span>
-                          )}
-                        </div>
-                        {fipeLoading ? (
-                          <div className="animate-pulse bg-slate-200 h-5 w-24 rounded" />
-                        ) : (
-                          <span className="font-bold text-slate-500">
-                            {fipeData?.price || `R$ ${fipePrice.toLocaleString("pt-BR")}`}
-                          </span>
-                        )}
-                      </div>
-                      {fipeData?.fipeCode && (
-                        <p className="text-xs text-slate-400 text-center">
-                          Código FIPE: {fipeData.fipeCode}
-                        </p>
-                      )}
-                      {fipeData?.note && (
-                        <p className="text-xs text-slate-400 text-center italic">
-                          {fipeData.note}
-                        </p>
-                      )}
-                      {vehicle.price < fipePrice && !fipeLoading && (
-                        <p className="text-xs text-[#29B765] text-center mt-2 font-medium">
-                          ✓ Este veículo está abaixo da tabela FIPE!
-                        </p>
-                      )}
                     </div>
                   </CardContent>
                 </Card>

@@ -736,8 +736,21 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* 5-6: Modelo, Versão */}
+              {/* 4: Marca */}
               <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label>Marca *</Label>
+                  <Select value={formData.brand} onValueChange={v => setFormData(p => ({ ...p, brand: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectContent className="bg-card max-h-60">
+                      {currentBrands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* 5-6-7: Modelo, Versão, Câmbio */}
+              <div className={`grid gap-4 ${formData.vehicle_type !== "moto" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
                 <div>
                   <Label>Modelo *</Label>
                   <Input value={formData.model} onChange={e => setFormData(p => ({ ...p, model: e.target.value }))} placeholder="Ex: Civic" />
@@ -746,11 +759,7 @@ const AddProduct = () => {
                   <Label>Versão</Label>
                   <Input value={formData.version} onChange={e => setFormData(p => ({ ...p, version: e.target.value }))} placeholder="Ex: EXL 2.0" />
                 </div>
-              </div>
-
-              {/* Câmbio + Preço */}
-              {formData.vehicle_type !== "moto" && (
-                <div className="grid gap-4 md:grid-cols-2">
+                {formData.vehicle_type !== "moto" && (
                   <div>
                     <Label>Câmbio</Label>
                     <Select value={formData.transmission} onValueChange={v => setFormData(p => ({ ...p, transmission: v }))}>
@@ -760,66 +769,90 @@ const AddProduct = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-              )}
-
-              {/* Preço */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Preço (R$) *</Label>
-                  <Input 
-                    type="text" 
-                    inputMode="numeric"
-                    value={formData.price} 
-                    onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))} 
-                    placeholder="Ex: 85.000" 
-                  />
-                </div>
+                )}
               </div>
 
-              {formData.vehicle_type === "implemento" ? null : formData.vehicle_type === "trator" ? (
-                <div className="grid gap-4 md:grid-cols-3">
+              {/* Quilometragem + Preço (ou específicos de trator/implemento) */}
+              {formData.vehicle_type === "implemento" ? (
+                <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <Label>Horas de Uso *</Label>
-                    <Input 
-                      type="number" 
-                      value={formData.hours_use} 
-                      onChange={e => setFormData(p => ({ ...p, hours_use: e.target.value }))} 
-                      placeholder="Ex: 3500"
+                    <Label>Preço (R$) *</Label>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={formData.price}
+                      onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))}
+                      placeholder="Ex: 85.000"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">Horímetro do trator</p>
-                  </div>
-                  <div>
-                    <Label>Potência (cv) *</Label>
-                    <Input 
-                      type="number" 
-                      value={formData.power_cv} 
-                      onChange={e => setFormData(p => ({ ...p, power_cv: e.target.value }))} 
-                      placeholder="Ex: 150"
-                    />
-                  </div>
-                  <div>
-                    <Label>Tração *</Label>
-                    <Select value={formData.traction} onValueChange={v => setFormData(p => ({ ...p, traction: v }))}>
-                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                      <SelectContent className="bg-card">
-                        <SelectItem value="4x2">4x2</SelectItem>
-                        <SelectItem value="4x4">4x4</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
                 </div>
+              ) : formData.vehicle_type === "trator" ? (
+                <>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <div>
+                      <Label>Horas de Uso *</Label>
+                      <Input
+                        type="number"
+                        value={formData.hours_use}
+                        onChange={e => setFormData(p => ({ ...p, hours_use: e.target.value }))}
+                        placeholder="Ex: 3500"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Horímetro do trator</p>
+                    </div>
+                    <div>
+                      <Label>Potência (cv) *</Label>
+                      <Input
+                        type="number"
+                        value={formData.power_cv}
+                        onChange={e => setFormData(p => ({ ...p, power_cv: e.target.value }))}
+                        placeholder="Ex: 150"
+                      />
+                    </div>
+                    <div>
+                      <Label>Tração *</Label>
+                      <Select value={formData.traction} onValueChange={v => setFormData(p => ({ ...p, traction: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          <SelectItem value="4x2">4x2</SelectItem>
+                          <SelectItem value="4x4">4x4</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <Label>Preço (R$) *</Label>
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        value={formData.price}
+                        onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))}
+                        placeholder="Ex: 85.000"
+                      />
+                    </div>
+                  </div>
+                </>
               ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <Label>Quilometragem *</Label>
-                    <Input 
-                      type="number" 
-                      value={formData.km} 
-                      onChange={e => setFormData(p => ({ ...p, km: e.target.value }))} 
+                    <Input
+                      type="number"
+                      value={formData.km}
+                      onChange={e => setFormData(p => ({ ...p, km: e.target.value }))}
                       placeholder="Ex: 45000"
                     />
                     <p className="text-xs text-muted-foreground mt-1">Se 0km, deixe em branco ou 0</p>
+                  </div>
+                  <div>
+                    <Label>Preço (R$) *</Label>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={formData.price}
+                      onChange={e => setFormData(p => ({ ...p, price: formatPriceInput(e.target.value) }))}
+                      placeholder="Ex: 85.000"
+                    />
                   </div>
                 </div>
               )}

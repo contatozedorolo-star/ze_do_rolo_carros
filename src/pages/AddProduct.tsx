@@ -1801,6 +1801,14 @@ const AddProduct = () => {
                     <Label>Único Dono</Label>
                     <Switch checked={formData.is_single_owner} onCheckedChange={v => setFormData(p => ({ ...p, is_single_owner: v }))} />
                   </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                    <Label>Possui chave reserva</Label>
+                    <Switch checked={formData.has_spare_key} onCheckedChange={v => setFormData(p => ({ ...p, has_spare_key: v }))} />
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                    <Label>Possui manual do proprietário</Label>
+                    <Switch checked={formData.has_owner_manual} onCheckedChange={v => setFormData(p => ({ ...p, has_owner_manual: v }))} />
+                  </div>
                 </div>
               </div>
             </div>

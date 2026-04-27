@@ -19,7 +19,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminNotificacoes from "./pages/AdminNotificacoes";
 import AdminDashboard from "./pages/AdminDashboard";
-import TabelaFipe from "./pages/TabelaFipe";
+
 import FAQ from "./pages/FAQ";
 import TermosDeUso from "./pages/TermosDeUso";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
@@ -64,7 +64,7 @@ const App = () => (
             <Route path="/admin/usuarios" element={<AdminUsers />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/notificacoes" element={<AdminNotificacoes />} />
-            <Route path="/tabela-fipe" element={<TabelaFipe />} />
+            
             <Route path="/faq" element={<FAQ />} />
             <Route path="/termos-de-uso" element={<TermosDeUso />} />
             <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />

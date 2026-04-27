@@ -714,7 +714,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* 3: Combustível */}
+              {/* 3-4: Combustível + Marca */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label>Combustível</Label>
@@ -725,10 +725,6 @@ const AddProduct = () => {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-
-              {/* 4-5-6: Marca, Modelo, Versão */}
-              <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label>Marca *</Label>
                   <Select value={formData.brand} onValueChange={v => setFormData(p => ({ ...p, brand: v }))}>
@@ -738,6 +734,10 @@ const AddProduct = () => {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              {/* 5-6: Modelo, Versão */}
+              <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label>Modelo *</Label>
                   <Input value={formData.model} onChange={e => setFormData(p => ({ ...p, model: e.target.value }))} placeholder="Ex: Civic" />
@@ -748,7 +748,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* Câmbio (após os 6 principais) */}
+              {/* Câmbio + Preço */}
               {formData.vehicle_type !== "moto" && (
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>

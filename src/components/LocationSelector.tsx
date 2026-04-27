@@ -300,6 +300,7 @@ export const LocationSelector = ({
           </PopoverContent>
         </Popover>
       </div>
+      </div>
     </div>
   );
 };

@@ -736,19 +736,6 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* 4: Marca */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Marca *</Label>
-                  <Select value={formData.brand} onValueChange={v => setFormData(p => ({ ...p, brand: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card max-h-60">
-                      {currentBrands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
               {/* 5-6-7: Modelo, Versão, Câmbio */}
               <div className={`grid gap-4 ${formData.vehicle_type !== "moto" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
                 <div>

@@ -282,7 +282,7 @@ const EditProduct = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="model">Modelo</Label>
+                  <Label htmlFor="model">Nome/Modelo</Label>
                   <Input
                     id="model"
                     value={model}
@@ -294,7 +294,7 @@ const EditProduct = () => {
 
               {/* Version */}
               <div className="space-y-2">
-                <Label htmlFor="version">Versão (opcional)</Label>
+                <Label htmlFor="version">Versão</Label>
                 <Input
                   id="version"
                   value={version}

@@ -362,27 +362,12 @@ const EditProduct = () => {
               </div>
 
               {/* Location */}
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="city">Cidade</Label>
-                  <Input
-                    id="city"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="Ex: São Paulo"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="state">Estado</Label>
-                  <Input
-                    id="state"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    placeholder="Ex: SP"
-                    maxLength={2}
-                  />
-                </div>
-              </div>
+              <LocationSelector
+                state={state}
+                city={city}
+                onStateChange={setState}
+                onCityChange={setCity}
+              />
 
               {/* Description */}
               <div className="space-y-2">

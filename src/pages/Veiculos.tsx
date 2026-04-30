@@ -37,7 +37,7 @@ const vehicleTypes = [
   { value: "moto", label: "Motos" },
   { value: "caminhao", label: "Caminhões" },
   { value: "van", label: "Vans" },
-  { value: "camionete", label: "Picapes" },
+  
   { value: "onibus", label: "Ônibus" },
 ];
 

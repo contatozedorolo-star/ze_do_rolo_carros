@@ -33,7 +33,7 @@ const vehicleTypeLabels: Record<string, string> = {
   moto: "Motos",
   caminhao: "Caminhões",
   van: "Vans",
-  camionete: "Picapes",
+  
   onibus: "Ônibus",
 };
 
@@ -252,7 +252,7 @@ const SearchResults = () => {
                   <SelectItem value="moto">Motos</SelectItem>
                   <SelectItem value="caminhao">Caminhões</SelectItem>
                   <SelectItem value="van">Vans</SelectItem>
-                  <SelectItem value="camionete">Picapes</SelectItem>
+                  
                   <SelectItem value="onibus">Ônibus</SelectItem>
                 </SelectContent>
               </Select>

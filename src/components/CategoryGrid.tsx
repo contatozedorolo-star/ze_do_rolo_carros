@@ -26,12 +26,6 @@ const vehicleCategories = [
     href: "/veiculos?tipo=moto" 
   },
   { 
-    id: "camionete", 
-    name: "Picapes", 
-    image: picapeImg, 
-    href: "/veiculos?tipo=camionete" 
-  },
-  { 
     id: "caminhao", 
     name: "Caminhões", 
     image: caminhaoImg, 

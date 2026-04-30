@@ -15,6 +15,7 @@ interface VehicleSectionProps {
 }
 
 const VehicleSection = ({ title, description, vehicles, icon }: VehicleSectionProps) => {
+  if (!vehicles || vehicles.length === 0) return null;
   return (
     <section className="py-8">
       <div className="flex items-center gap-2 mb-2">

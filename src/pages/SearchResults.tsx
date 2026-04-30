@@ -33,7 +33,7 @@ const vehicleTypeLabels: Record<string, string> = {
   moto: "Motos",
   caminhao: "Caminhões",
   van: "Vans",
-  camionete: "Picapes",
+  
   onibus: "Ônibus",
 };
 

@@ -252,7 +252,7 @@ const SearchResults = () => {
                   <SelectItem value="moto">Motos</SelectItem>
                   <SelectItem value="caminhao">Caminhões</SelectItem>
                   <SelectItem value="van">Vans</SelectItem>
-                  <SelectItem value="camionete">Picapes</SelectItem>
+                  
                   <SelectItem value="onibus">Ônibus</SelectItem>
                 </SelectContent>
               </Select>

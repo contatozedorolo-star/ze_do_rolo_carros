@@ -908,17 +908,19 @@ const AddProduct = () => {
               )}
 
               {/* Blindagem, Cor */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Blindagem</Label>
-                  <div className="flex items-center gap-3 h-10 px-3 border rounded-md bg-background">
-                    <Switch 
-                      checked={formData.is_armored} 
-                      onCheckedChange={v => setFormData(p => ({ ...p, is_armored: v }))} 
-                    />
-                    <span className="text-sm">{formData.is_armored ? "Blindado" : "Não blindado"}</span>
+              <div className={`grid gap-4 ${formData.vehicle_type === "moto" ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
+                {formData.vehicle_type !== "moto" && (
+                  <div>
+                    <Label>Blindagem</Label>
+                    <div className="flex items-center gap-3 h-10 px-3 border rounded-md bg-background">
+                      <Switch 
+                        checked={formData.is_armored} 
+                        onCheckedChange={v => setFormData(p => ({ ...p, is_armored: v }))} 
+                      />
+                      <span className="text-sm">{formData.is_armored ? "Blindado" : "Não blindado"}</span>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div>
                   <Label>Cor</Label>
                   <Select value={formData.color} onValueChange={v => setFormData(p => ({ ...p, color: v }))}>

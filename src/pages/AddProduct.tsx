@@ -863,7 +863,7 @@ const AddProduct = () => {
               {/* Campos específicos para MOTO */}
               {formData.vehicle_type === "moto" && (
                 <>
-                  <div className="grid gap-4 md:grid-cols-3">
+                  <div className="grid gap-4 md:grid-cols-2">
                     <div>
                       <Label>Cilindradas *</Label>
                       <Select value={formData.cylinders} onValueChange={v => setFormData(p => ({ ...p, cylinders: v }))}>
@@ -879,44 +879,6 @@ const AddProduct = () => {
                         <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                         <SelectContent className="bg-card">
                           {motoStartTypes.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label>Tipo de Motor</Label>
-                      <Select value={formData.motor_type} onValueChange={v => setFormData(p => ({ ...p, motor_type: v }))}>
-                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                        <SelectContent className="bg-card">
-                          {motoMotorTypes.map(m => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <div>
-                      <Label>Freios</Label>
-                      <Select value={formData.brake_type} onValueChange={v => setFormData(p => ({ ...p, brake_type: v }))}>
-                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                        <SelectContent className="bg-card">
-                          {motoBrakeTypes.map(b => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label>Alimentação</Label>
-                      <Select value={formData.fuel_system} onValueChange={v => setFormData(p => ({ ...p, fuel_system: v }))}>
-                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                        <SelectContent className="bg-card">
-                          {motoFuelSystems.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label>Cor</Label>
-                      <Select value={formData.color} onValueChange={v => setFormData(p => ({ ...p, color: v }))}>
-                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                        <SelectContent className="bg-card max-h-60">
-                          {colorOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -946,17 +908,19 @@ const AddProduct = () => {
               )}
 
               {/* Blindagem, Cor */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Blindagem</Label>
-                  <div className="flex items-center gap-3 h-10 px-3 border rounded-md bg-background">
-                    <Switch 
-                      checked={formData.is_armored} 
-                      onCheckedChange={v => setFormData(p => ({ ...p, is_armored: v }))} 
-                    />
-                    <span className="text-sm">{formData.is_armored ? "Blindado" : "Não blindado"}</span>
+              <div className={`grid gap-4 ${formData.vehicle_type === "moto" ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
+                {formData.vehicle_type !== "moto" && (
+                  <div>
+                    <Label>Blindagem</Label>
+                    <div className="flex items-center gap-3 h-10 px-3 border rounded-md bg-background">
+                      <Switch 
+                        checked={formData.is_armored} 
+                        onCheckedChange={v => setFormData(p => ({ ...p, is_armored: v }))} 
+                      />
+                      <span className="text-sm">{formData.is_armored ? "Blindado" : "Não blindado"}</span>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div>
                   <Label>Cor</Label>
                   <Select value={formData.color} onValueChange={v => setFormData(p => ({ ...p, color: v }))}>
@@ -969,35 +933,37 @@ const AddProduct = () => {
               </div>
 
               {/* Portas, Motor, Lugares */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <Label>Portas</Label>
-                  <Select value={formData.doors} onValueChange={v => setFormData(p => ({ ...p, doors: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {doorOptions.map(d => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+              {formData.vehicle_type !== "moto" && (
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <Label>Portas</Label>
+                    <Select value={formData.doors} onValueChange={v => setFormData(p => ({ ...p, doors: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        {doorOptions.map(d => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Motor (Litragem)</Label>
+                    <Select value={formData.engine_liters} onValueChange={v => setFormData(p => ({ ...p, engine_liters: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent className="bg-card max-h-60">
+                        {engineLiters.map(e => <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Lugares</Label>
+                    <Select value={formData.seats} onValueChange={v => setFormData(p => ({ ...p, seats: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent className="bg-card">
+                        {seatOptions.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                <div>
-                  <Label>Motor (Litragem)</Label>
-                  <Select value={formData.engine_liters} onValueChange={v => setFormData(p => ({ ...p, engine_liters: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card max-h-60">
-                      {engineLiters.map(e => <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Lugares</Label>
-                  <Select value={formData.seats} onValueChange={v => setFormData(p => ({ ...p, seats: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent className="bg-card">
-                      {seatOptions.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              )}
             </div>
           )}
 

@@ -33,7 +33,32 @@
   <url>
     <loc>https://zedorolo.com/blog</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/blog/suvs-dominar-ruas-brasileiras-2026</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/blog/mercado-usados-2026-precos-alta</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/blog/duelo-gigantes-corolla-cross-vs-renault-boreal</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/blog/icone-popular-reliquia-evolucao-vw-gol</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/blog/checklist-2026-manutencao-preventiva-carro</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/mitsubishi-pajero-full-2008-hpe-38-v6-b14a674b-2196-403a-867e-a2b4dcaf9981</loc>

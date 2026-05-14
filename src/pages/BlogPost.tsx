@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -149,8 +150,42 @@ const BlogPost = () => {
     return elements;
   };
 
+  const canonicalUrl = `https://zedorolo.com/blog/${post.slug}`;
+  const imageUrl = typeof post.image === "string" && post.image.startsWith("http")
+    ? post.image
+    : `https://zedorolo.com${post.image}`;
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    image: imageUrl,
+    datePublished: post.date,
+    author: { "@type": "Organization", name: "Zé do Rolo" },
+    publisher: {
+      "@type": "Organization",
+      name: "Zé do Rolo",
+      logo: { "@type": "ImageObject", url: "https://zedorolo.com/logo-zedorolo.png" },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+    articleSection: post.category,
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{`${post.title} | Blog Zé do Rolo`}</title>
+        <meta name="description" content={post.excerpt} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.excerpt} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="article:section" content={post.category} />
+        <meta property="article:published_time" content={post.date} />
+        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
+      </Helmet>
       <Header />
       <main>
         {/* Hero Image */}

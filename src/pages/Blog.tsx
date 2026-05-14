@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/BlogCard";
@@ -6,6 +7,15 @@ import { blogPosts } from "@/data/blogData";
 const Blog = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Blog do Zé do Rolo — Mercado de Veículos, Dicas e Lançamentos</title>
+        <meta name="description" content="Notícias, comparativos, dicas de manutenção e análises do mercado de carros, caminhões e veículos comerciais no Brasil." />
+        <link rel="canonical" href="https://zedorolo.com/blog" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Blog do Zé do Rolo" />
+        <meta property="og:description" content="Notícias, comparativos e dicas do mercado automotivo brasileiro." />
+        <meta property="og:url" content="https://zedorolo.com/blog" />
+      </Helmet>
       <Header />
       <main className="container py-8">
         <div className="mb-8">

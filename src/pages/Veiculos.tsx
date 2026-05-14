@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { SlidersHorizontal, Grid3X3, List, ChevronDown, MapPin, Search } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
+import { SEO } from "@/components/SEO";
 import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
 import { AdvancedVehicleFilters } from "@/components/filters";
@@ -197,6 +198,7 @@ const Veiculos = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Veículos | Zé do Rolo" description="Encontre o veículo ideal para você no Zé do Rolo. Milhares de carros, caminhões, vans e tratores à venda com segurança." />
       <Header />
       
       {/* Restricted Access Modal */}

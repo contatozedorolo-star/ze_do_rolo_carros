@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Veiculos from "./pages/Veiculos";
 import SearchResults from "./pages/SearchResults";
@@ -39,48 +40,50 @@ const GTMTracker = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/busca" element={<SearchResults />} />
-            <Route path="/veiculos" element={<Veiculos />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/editar-anuncio/:id" element={<EditProduct />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/vehicle/:id" element={<ProductDetail />} />
-            <Route path="/veiculo/:slug" element={<ProductDetail />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/como-funciona" element={<HowItWorks />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/kyc" element={<AdminKYC />} />
-            <Route path="/admin/usuarios" element={<AdminUsers />} />
-            <Route path="/admin/analytics" element={<AdminAnalytics />} />
-            <Route path="/admin/notificacoes" element={<AdminNotificacoes />} />
-            
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/termos-de-uso" element={<TermosDeUso />} />
-            <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
-            <Route path="/politica-de-cookies" element={<PoliticaCookies />} />
-            <Route path="/assistente-ia" element={<AssistenteIA />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <GTMTracker />
-          <FloatingAssistantButton />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/busca" element={<SearchResults />} />
+              <Route path="/veiculos" element={<Veiculos />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/editar-anuncio/:id" element={<EditProduct />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/vehicle/:id" element={<ProductDetail />} />
+              <Route path="/veiculo/:slug" element={<ProductDetail />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/como-funciona" element={<HowItWorks />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/kyc" element={<AdminKYC />} />
+              <Route path="/admin/usuarios" element={<AdminUsers />} />
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
+              <Route path="/admin/notificacoes" element={<AdminNotificacoes />} />
+              
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/termos-de-uso" element={<TermosDeUso />} />
+              <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
+              <Route path="/politica-de-cookies" element={<PoliticaCookies />} />
+              <Route path="/assistente-ia" element={<AssistenteIA />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <GTMTracker />
+            <FloatingAssistantButton />
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

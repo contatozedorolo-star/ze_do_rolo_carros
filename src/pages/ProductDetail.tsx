@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
+import { SEO } from "@/components/SEO";
 import Footer from "@/components/Footer";
 import ProposalDialog from "@/components/ProposalDialog";
 import { Button } from "@/components/ui/button";
@@ -331,6 +332,12 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
+      <SEO 
+        title={`${vehicle.brand} ${vehicle.model} - Zé do Rolo`} 
+        description={vehicle.description ? vehicle.description.substring(0, 150) + "..." : `Confira este excelente ${vehicle.brand} ${vehicle.model} disponível no Zé do Rolo.`}
+        type="product"
+        image={images.length > 0 ? images[0].image_url : undefined}
+      />
       <Header />
       
       {/* Mobile Action Dock (Sticky Bottom) */}

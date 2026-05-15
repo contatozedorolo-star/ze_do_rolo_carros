@@ -9,7 +9,7 @@ import motoImg from "@/assets/category-moto.jpg";
 import caminhaoImg from "@/assets/category-caminhao.jpg";
 import carretaImg from "@/assets/category-carreta.jpg";
 import vanImg from "@/assets/category-van.jpg";
-import busImg from "@/assets/category-cavalo.jpg";
+import busImg from "@/assets/category-onibus.jpg";
 import tratorImg from "@/assets/category-trator.jpg";
 import implementoImg from "@/assets/category-implemento.jpg";
 

@@ -8,9 +8,10 @@ interface CategoryTabsProps {
 const categories = [
   { value: "carro", label: "Carros", icon: Car },
   { value: "moto", label: "Motos", icon: Bike },
-  { value: "caminhao", label: "Caminhões", icon: Truck },
   { value: "van", label: "Vans", icon: Bus },
-  
+  { value: "onibus", label: "Ônibus", icon: Bus },
+  { value: "caminhao", label: "Caminhões", icon: Truck },
+  { value: "carreta", label: "Carretas", icon: Truck },
   { value: "trator", label: "Tratores", icon: Tractor },
   { value: "implemento", label: "Implementos", icon: Cog },
 ];

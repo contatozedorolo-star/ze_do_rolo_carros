@@ -240,7 +240,7 @@ const AddProduct = () => {
 
   // Seleciona os steps baseado no tipo de veículo
   const getSteps = () => {
-    if (formData.vehicle_type === "caminhao") return truckSteps;
+    if ((formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta")) return truckSteps;
     if (formData.vehicle_type === "van") return vanSteps;
     if (formData.vehicle_type === "onibus") return busSteps;
     return carSteps;
@@ -248,7 +248,7 @@ const AddProduct = () => {
   const steps = getSteps();
   
   const getDiagnosticItems = () => {
-    if (formData.vehicle_type === "caminhao") return truckDiagnosticItems;
+    if ((formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta")) return truckDiagnosticItems;
     if (formData.vehicle_type === "van") return vanDiagnosticItems;
     if (formData.vehicle_type === "onibus") return busDiagnosticItems;
     return diagnosticItems;
@@ -294,7 +294,7 @@ const AddProduct = () => {
         .flatMap((cat) => cat.photos)
         .filter((p) => p.required);
     }
-    if (formData.vehicle_type === "caminhao") {
+    if ((formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta")) {
       return Object.values(truckPhotoCategories)
         .flatMap((cat) => cat.photos)
         .filter((p) => p.required);
@@ -321,7 +321,7 @@ const AddProduct = () => {
 
     // Step 1 — categoria/tipo
     if (stepNumber === 1) {
-      if (formData.vehicle_type === "caminhao") {
+      if ((formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta")) {
         if (!formData.truck_type) { showError("Selecione o tipo de caminhão"); return false; }
         return true;
       }
@@ -611,7 +611,7 @@ const AddProduct = () => {
                 </div>
               )}
 
-              {formData.vehicle_type === "caminhao" && (
+              {(formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta") && (
                 <div className="pt-4 border-t">
                   <Label className="text-base font-semibold">Tipo de Caminhão/Pesado *</Label>
                   <p className="text-sm text-muted-foreground mb-3">Selecione a categoria que melhor descreve seu veículo</p>
@@ -893,8 +893,8 @@ const AddProduct = () => {
               )}
 
               {/* Blindagem, Cor */}
-              <div className={`grid gap-4 ${(formData.vehicle_type === "moto" || formData.vehicle_type === "caminhao") ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
-                {formData.vehicle_type !== "moto" && formData.vehicle_type !== "caminhao" && (
+              <div className={`grid gap-4 ${(formData.vehicle_type === "moto" || (formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta")) ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
+                {formData.vehicle_type !== "moto" && (formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "carreta") && (
                   <div>
                     <Label>Blindagem</Label>
                     <div className="flex items-center gap-3 h-10 px-3 border rounded-md bg-background">
@@ -918,7 +918,7 @@ const AddProduct = () => {
               </div>
 
               {/* Portas, Motor, Lugares - caminhão preenche na etapa 4 */}
-              {formData.vehicle_type !== "moto" && formData.vehicle_type !== "caminhao" && (
+              {formData.vehicle_type !== "moto" && (formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "carreta") && (
                 <div className="grid gap-4 md:grid-cols-3">
                   <div>
                     <Label>Portas</Label>
@@ -954,7 +954,7 @@ const AddProduct = () => {
 
 
           {/* Etapa 3 - Configuração de Carga (SOMENTE CAMINHÕES) */}
-          {step === 3 && formData.vehicle_type === "caminhao" && (
+          {step === 3 && (formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta") && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Configuração de Carga</h2>
@@ -1039,7 +1039,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 4 - Detalhes e Opcionais (SOMENTE CAMINHÕES) */}
-          {step === 4 && formData.vehicle_type === "caminhao" && (
+          {step === 4 && (formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta") && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Detalhes e Opcionais</h2>
@@ -1124,7 +1124,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 5 - Histórico e Segurança (CAMINHÕES) */}
-          {step === 5 && formData.vehicle_type === "caminhao" && (
+          {step === 5 && (formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta") && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Histórico e Segurança</h2>
@@ -1199,7 +1199,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 6 - Diagnóstico (CAMINHÕES) */}
-          {step === 6 && formData.vehicle_type === "caminhao" && (
+          {step === 6 && (formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta") && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Diagnóstico Zé do Rolo - Pesados</h2>
@@ -1252,7 +1252,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 7 - Negócio Ideal (CAMINHÕES) */}
-          {step === 7 && formData.vehicle_type === "caminhao" && (
+          {step === 7 && (formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta") && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">O Negócio Ideal - Alto Valor</h2>
@@ -1339,7 +1339,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 8 - Fotos (CAMINHÕES) */}
-          {step === 8 && formData.vehicle_type === "caminhao" && (
+          {step === 8 && (formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta") && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Galeria 360° - Pesados</h2>
@@ -1639,7 +1639,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 3 - Histórico (CARROS E MOTOS) */}
-          {step === 3 && formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "onibus" && (
+          {step === 3 && (formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "carreta") && formData.vehicle_type !== "onibus" && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Checklist e Histórico</h2>
@@ -1767,7 +1767,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 4 - Diagnóstico (CARROS E MOTOS) */}
-          {step === 4 && formData.vehicle_type !== "caminhao" && (
+          {step === 4 && (formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "carreta") && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Diagnóstico Zé do Rolo</h2>
@@ -1820,7 +1820,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 5 - Negócio Ideal (CARROS E MOTOS) */}
-          {step === 5 && formData.vehicle_type !== "caminhao" && (
+          {step === 5 && (formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "carreta") && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">O Negócio Ideal</h2>
@@ -1908,7 +1908,7 @@ const AddProduct = () => {
           )}
 
           {/* Etapa 6 - Fotos (CARROS E MOTOS) */}
-          {step === 6 && formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "van" && formData.vehicle_type !== "onibus" && (
+          {step === 6 && (formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "carreta") && formData.vehicle_type !== "van" && formData.vehicle_type !== "onibus" && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Galeria de Fotos</h2>

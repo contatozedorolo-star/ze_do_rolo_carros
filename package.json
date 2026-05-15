@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "sitemap": "node --env-file=.env scripts/generate-sitemap.js"
+    "sitemap": "node --env-file=.env scripts/generate-sitemap.js",
+    "predev": "node --env-file-if-exists=.env scripts/generate-sitemap.js || true",
+    "prebuild": "node --env-file-if-exists=.env scripts/generate-sitemap.js || true"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -33,31 +33,36 @@
   <url>
     <loc>https://zedorolo.com/blog</loc>
     <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/volkswagen-constellation-2011-17250-8e0949fa-cb49-4955-ab4d-bf4497781fe9</loc>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/blog/suvs-dominar-ruas-brasileiras-2026</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://zedorolo.com/veiculo/toyota-hilux-sw4-2007-srv-43337f55-baf5-4f6b-b113-426c69c8a4e5</loc>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/blog/mercado-usados-2026-precos-alta</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://zedorolo.com/veiculo/toyota-corolla-2010-xei-8457664c-8c9e-4ec1-bbf2-b9280742690b</loc>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/blog/duelo-gigantes-corolla-cross-vs-renault-boreal</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://zedorolo.com/veiculo/mercedes-benz-sprinter-2013-415-056fbf15-2097-4240-b4a9-07f75a3eaba8</loc>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/blog/icone-popular-reliquia-evolucao-vw-gol</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://zedorolo.com/veiculo/chevrolet-onix-2019-lt-d52b67b8-f77a-48c8-8295-e8a9cf2cae8d</loc>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/blog/checklist-2026-manutencao-preventiva-carro</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://zedorolo.com/veiculo/honda-cg-2010-fan-es-78cc0d33-e0c7-41bd-b13e-07e1a8b255cf</loc>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
@@ -66,7 +71,17 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://zedorolo.com/veiculo/troller-troller-2011-t4-7ed78f24-16a2-4c19-8f13-00c9dc4d048d</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://zedorolo.com/veiculo/renault-sandero-2012-authentique-354e0ab1-6fe1-42d0-be05-5a5ef5fe9bcb</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/volvo-vm-2012-330-3796a7cb-284a-444b-8577-a4aecb46fa4d</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -87,6 +102,31 @@
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/jeep-renegade-2016-longitude-05833f7a-a0c0-4016-bb46-f90e02933adb</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/honda-bros-2023-esdd-aa40abe9-181c-473c-8c1a-b124af6a05fe</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/volvo-vm-330-2012-330-f51f4d21-7178-4d9d-9b8d-77040e13e302</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/ford-ranger-2025-v6-limited-plus-9da7652e-57d9-4c6a-90c5-4a3c2176e970</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/volkswagen-virtus-2025-exclusive-582cb1fd-e5dc-4694-9d66-4dbc6bc81eb9</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/ford-ranger-2015-limited-29e0896e-7c26-483b-84a5-c6b9b283ff48</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>

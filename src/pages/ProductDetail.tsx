@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { SEO } from "@/components/SEO";
+import { Helmet } from "react-helmet-async";
 import Footer from "@/components/Footer";
 import ProposalDialog from "@/components/ProposalDialog";
 import { Button } from "@/components/ui/button";

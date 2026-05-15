@@ -332,12 +332,50 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <SEO 
-        title={`${vehicle.brand} ${vehicle.model} - Zé do Rolo`} 
-        description={vehicle.description ? vehicle.description.substring(0, 150) + "..." : `Confira este excelente ${vehicle.brand} ${vehicle.model} disponível no Zé do Rolo.`}
-        type="product"
-        image={images.length > 0 ? images[0].image_url : undefined}
-      />
+      {(() => {
+        const slugFull = `${vehicle.brand}-${vehicle.model}-${vehicle.year_model}-${vehicle.id}`
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9-]/g, "-")
+          .replace(/-+/g, "-");
+        const canonical = `https://zedorolo.com/veiculo/${slugFull}`;
+        const priceFmt = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(vehicle.price);
+        const locStr = vehicle.city && vehicle.state ? ` em ${vehicle.city}/${vehicle.state}` : "";
+        const seoTitle = `${vehicle.brand} ${vehicle.model} ${vehicle.year_model}${locStr} - ${priceFmt} | Zé do Rolo`.slice(0, 70);
+        const seoDesc = (vehicle.description?.replace(/\s+/g, " ").trim().slice(0, 155)) ||
+          `${vehicle.brand} ${vehicle.model} ${vehicle.year_model}, ${vehicle.km.toLocaleString("pt-BR")} km, ${vehicle.fuel}, ${vehicle.transmission}${locStr}. Compre por ${priceFmt} no Zé do Rolo.`.slice(0, 155);
+        const seoImage = images[0]?.image_url || "https://zedorolo.com/logo-zedorolo.png";
+        const productSchema = {
+          "@context": "https://schema.org",
+          "@type": "Vehicle",
+          name: `${vehicle.brand} ${vehicle.model} ${vehicle.year_model}`,
+          brand: { "@type": "Brand", name: vehicle.brand },
+          model: vehicle.model,
+          vehicleModelDate: String(vehicle.year_model),
+          mileageFromOdometer: { "@type": "QuantitativeValue", value: vehicle.km, unitCode: "KMT" },
+          fuelType: vehicle.fuel,
+          vehicleTransmission: vehicle.transmission,
+          color: vehicle.color,
+          image: seoImage,
+          description: seoDesc,
+          offers: {
+            "@type": "Offer",
+            price: vehicle.price,
+            priceCurrency: "BRL",
+            availability: "https://schema.org/InStock",
+            url: canonical,
+          },
+        };
+        return (
+          <>
+            <SEO title={seoTitle} description={seoDesc} canonical={canonical} type="product" image={seoImage} />
+            <Helmet>
+              <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+            </Helmet>
+          </>
+        );
+      })()}
       <Header />
       
       {/* Mobile Action Dock (Sticky Bottom) */}

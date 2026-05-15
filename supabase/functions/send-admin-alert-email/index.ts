@@ -4,7 +4,7 @@ import { Resend } from "npm:resend@2.0.0";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version, x-internal-secret",
 };
 
 interface AdminAlertRequest {
@@ -20,6 +20,16 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    const expectedSecret = Deno.env.get("INTERNAL_FUNCTION_SECRET");
+    const providedSecret = req.headers.get("x-internal-secret");
+    if (!expectedSecret || providedSecret !== expectedSecret) {
+      console.warn("Forbidden: invalid or missing x-internal-secret");
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     if (!resendApiKey) {
       console.error("RESEND_API_KEY not found in environment");

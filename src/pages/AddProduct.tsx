@@ -949,6 +949,9 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
 
           {/* Etapa 3 - Configuração de Carga (SOMENTE CAMINHÕES) */}
           {step === 3 && formData.vehicle_type === "caminhao" && (

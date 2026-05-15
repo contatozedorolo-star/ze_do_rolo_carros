@@ -46,6 +46,7 @@ const vehicleTypes = [
   { value: "carro", label: "Carro", icon: Car },
   { value: "moto", label: "Moto", icon: Bike },
   { value: "caminhao", label: "Caminhão", icon: Truck },
+  { value: "carreta", label: "Carreta", icon: Truck },
   { value: "van", label: "Van", icon: Bus },
   { value: "onibus", label: "Ônibus", icon: Bus },
   { value: "trator", label: "Trator", icon: Tractor },

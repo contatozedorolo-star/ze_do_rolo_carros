@@ -6,49 +6,22 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 // Import category images
 import suvImg from "@/assets/category-suv.jpg";
 import motoImg from "@/assets/category-moto.jpg";
-import picapeImg from "@/assets/category-picape.jpg";
 import caminhaoImg from "@/assets/category-caminhao.jpg";
+import carretaImg from "@/assets/category-carreta.jpg";
 import vanImg from "@/assets/category-van.jpg";
+import busImg from "@/assets/category-cavalo.jpg";
 import tratorImg from "@/assets/category-trator.jpg";
 import implementoImg from "@/assets/category-implemento.jpg";
 
 const vehicleCategories = [
-  { 
-    id: "carro", 
-    name: "Carros", 
-    image: suvImg, 
-    href: "/veiculos?tipo=carro" 
-  },
-  { 
-    id: "moto", 
-    name: "Motos", 
-    image: motoImg, 
-    href: "/veiculos?tipo=moto" 
-  },
-  { 
-    id: "caminhao", 
-    name: "Caminhões", 
-    image: caminhaoImg, 
-    href: "/veiculos?tipo=caminhao" 
-  },
-  { 
-    id: "van", 
-    name: "Vans", 
-    image: vanImg, 
-    href: "/veiculos?tipo=van" 
-  },
-  { 
-    id: "trator", 
-    name: "Tratores",
-    image: tratorImg, 
-    href: "/veiculos?tipo=trator" 
-  },
-  { 
-    id: "implemento", 
-    name: "Implementos", 
-    image: implementoImg, 
-    href: "/veiculos?tipo=implemento" 
-  },
+  { id: "carro", name: "Carros", image: suvImg, href: "/veiculos?tipo=carro" },
+  { id: "moto", name: "Motos", image: motoImg, href: "/veiculos?tipo=moto" },
+  { id: "van", name: "Vans", image: vanImg, href: "/veiculos?tipo=van" },
+  { id: "onibus", name: "Ônibus", image: busImg, href: "/veiculos?tipo=onibus" },
+  { id: "caminhao", name: "Caminhões", image: caminhaoImg, href: "/veiculos?tipo=caminhao" },
+  { id: "carreta", name: "Carretas", image: carretaImg, href: "/veiculos?tipo=carreta" },
+  { id: "trator", name: "Tratores", image: tratorImg, href: "/veiculos?tipo=trator" },
+  { id: "implemento", name: "Implementos", image: implementoImg, href: "/veiculos?tipo=implemento" },
 ];
 
 // Memoized category card for better performance
@@ -70,12 +43,9 @@ const CategoryCard = memo(({ category, index }: { category: typeof vehicleCatego
         "bg-muted"
       )}
     >
-      {/* Loading placeholder */}
       {!imageLoaded && (
         <div className="absolute inset-0 bg-muted animate-pulse" />
       )}
-      
-      {/* Background Image */}
       <img
         src={category.image}
         alt={category.name}
@@ -89,8 +59,6 @@ const CategoryCard = memo(({ category, index }: { category: typeof vehicleCatego
           imageLoaded ? "opacity-100" : "opacity-0"
         )}
       />
-      
-      {/* Gradient Overlay */}
       <div 
         className={cn(
           "absolute inset-0",
@@ -99,8 +67,6 @@ const CategoryCard = memo(({ category, index }: { category: typeof vehicleCatego
           "group-hover:from-[#142562]/95 group-hover:via-[#142562]/50"
         )}
       />
-      
-      {/* Orange glow effect on hover */}
       <div 
         className={cn(
           "absolute inset-0 opacity-0 group-hover:opacity-100",
@@ -109,8 +75,6 @@ const CategoryCard = memo(({ category, index }: { category: typeof vehicleCatego
           "pointer-events-none"
         )}
       />
-      
-      {/* Category Name */}
       <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-center">
         <span 
           className={cn(
@@ -166,7 +130,6 @@ const CategoryGrid = () => {
       </h2>
       
       <div className="relative">
-        {/* Left Arrow */}
         {canScrollLeft && (
           <button
             onClick={() => scroll("left")}
@@ -184,7 +147,6 @@ const CategoryGrid = () => {
           </button>
         )}
 
-        {/* Right Arrow */}
         {canScrollRight && (
           <button
             onClick={() => scroll("right")}
@@ -202,7 +164,6 @@ const CategoryGrid = () => {
           </button>
         )}
 
-        {/* Categories Container */}
         <div 
           ref={scrollRef}
           onScroll={checkScrollPosition}

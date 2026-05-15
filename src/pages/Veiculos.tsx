@@ -36,10 +36,12 @@ import {
 const vehicleTypes = [
   { value: "carro", label: "Carros" },
   { value: "moto", label: "Motos" },
-  { value: "caminhao", label: "Caminhões" },
   { value: "van", label: "Vans" },
-  
   { value: "onibus", label: "Ônibus" },
+  { value: "caminhao", label: "Caminhões" },
+  { value: "carreta", label: "Carretas" },
+  { value: "trator", label: "Tratores" },
+  { value: "implemento", label: "Implementos" },
 ];
 
 type SortOption = "relevance" | "price_asc" | "price_desc" | "year_desc" | "km_asc";

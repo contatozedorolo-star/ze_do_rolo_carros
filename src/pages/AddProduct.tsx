@@ -843,22 +843,7 @@ const AddProduct = () => {
                 </div>
               )}
 
-              {/* Tipo de Carroceria - Caminhões */}
-              {formData.vehicle_type === "caminhao" && (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <Label>Tipo de Carroceria</Label>
-                    <Select value={formData.truck_body} onValueChange={v => setFormData(p => ({ ...p, truck_body: v }))}>
-                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                      <SelectContent className="bg-card">
-                        {["Baú", "Sider", "Caçamba", "Prancha", "Tanque", "Graneleiro"].map(t => (
-                          <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              )}
+              {/* Tipo de Carroceria para caminhão é solicitada na Etapa 3 */}
 
               {/* Campos específicos para MOTO */}
               {formData.vehicle_type === "moto" && (

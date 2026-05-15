@@ -843,22 +843,7 @@ const AddProduct = () => {
                 </div>
               )}
 
-              {/* Tipo de Carroceria - Caminhões */}
-              {formData.vehicle_type === "caminhao" && (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <Label>Tipo de Carroceria</Label>
-                    <Select value={formData.truck_body} onValueChange={v => setFormData(p => ({ ...p, truck_body: v }))}>
-                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                      <SelectContent className="bg-card">
-                        {["Baú", "Sider", "Caçamba", "Prancha", "Tanque", "Graneleiro"].map(t => (
-                          <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              )}
+              {/* Tipo de Carroceria para caminhão é solicitada na Etapa 3 */}
 
               {/* Campos específicos para MOTO */}
               {formData.vehicle_type === "moto" && (
@@ -908,8 +893,8 @@ const AddProduct = () => {
               )}
 
               {/* Blindagem, Cor */}
-              <div className={`grid gap-4 ${formData.vehicle_type === "moto" ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
-                {formData.vehicle_type !== "moto" && (
+              <div className={`grid gap-4 ${(formData.vehicle_type === "moto" || formData.vehicle_type === "caminhao") ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
+                {formData.vehicle_type !== "moto" && formData.vehicle_type !== "caminhao" && (
                   <div>
                     <Label>Blindagem</Label>
                     <div className="flex items-center gap-3 h-10 px-3 border rounded-md bg-background">
@@ -932,8 +917,8 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* Portas, Motor, Lugares */}
-              {formData.vehicle_type !== "moto" && (
+              {/* Portas, Motor, Lugares - caminhão preenche na etapa 4 */}
+              {formData.vehicle_type !== "moto" && formData.vehicle_type !== "caminhao" && (
                 <div className="grid gap-4 md:grid-cols-3">
                   <div>
                     <Label>Portas</Label>
@@ -966,6 +951,7 @@ const AddProduct = () => {
               )}
             </div>
           )}
+
 
           {/* Etapa 3 - Configuração de Carga (SOMENTE CAMINHÕES) */}
           {step === 3 && formData.vehicle_type === "caminhao" && (

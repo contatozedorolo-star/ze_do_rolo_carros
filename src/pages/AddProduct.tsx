@@ -893,8 +893,8 @@ const AddProduct = () => {
               )}
 
               {/* Blindagem, Cor */}
-              <div className={`grid gap-4 ${formData.vehicle_type === "moto" ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
-                {formData.vehicle_type !== "moto" && (
+              <div className={`grid gap-4 ${(formData.vehicle_type === "moto" || formData.vehicle_type === "caminhao") ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
+                {formData.vehicle_type !== "moto" && formData.vehicle_type !== "caminhao" && (
                   <div>
                     <Label>Blindagem</Label>
                     <div className="flex items-center gap-3 h-10 px-3 border rounded-md bg-background">
@@ -917,8 +917,8 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* Portas, Motor, Lugares */}
-              {formData.vehicle_type !== "moto" && (
+              {/* Portas, Motor, Lugares - caminhão preenche na etapa 4 */}
+              {formData.vehicle_type !== "moto" && formData.vehicle_type !== "caminhao" && (
                 <div className="grid gap-4 md:grid-cols-3">
                   <div>
                     <Label>Portas</Label>
@@ -949,8 +949,6 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
-            </div>
-          )}
 
           {/* Etapa 3 - Configuração de Carga (SOMENTE CAMINHÕES) */}
           {step === 3 && formData.vehicle_type === "caminhao" && (

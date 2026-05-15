@@ -13,7 +13,7 @@ export function SEO({
   description = "A melhor plataforma para compra e venda de caminhões, vans, ônibus e tratores.",
   canonical = "https://zedorolo.com",
   type = "website",
-  image = "https://zedorolo.com/og-image.webp" // Otimizado para WebP conforme auditoria
+  image = "https://zedorolo.com/logo-zedorolo.png"
 }: SEOProps) {
   
   // JSON-LD (Schema Markup) para Organização
@@ -22,7 +22,7 @@ export function SEO({
     "@type": "Organization",
     "name": "Zé do Rolo",
     "url": "https://zedorolo.com",
-    "logo": "https://zedorolo.com/logo.webp",
+    "logo": "https://zedorolo.com/logo-zedorolo.png",
     "description": "A melhor plataforma para compra e venda de caminhões, vans, ônibus e tratores."
   };
 

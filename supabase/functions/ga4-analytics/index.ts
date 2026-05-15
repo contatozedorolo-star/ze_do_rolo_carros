@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,6 +8,33 @@ const corsHeaders = {
 };
 
 const GA4_PROPERTY_ID = "1361498115";
+
+async function requireAdmin(req: Request): Promise<{ ok: true } | { ok: false; res: Response }> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return { ok: false, res: new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }) };
+  }
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_ANON_KEY")!,
+    { global: { headers: { Authorization: authHeader } } },
+  );
+  const { data: userData, error: userErr } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+  if (userErr || !userData?.user) {
+    return { ok: false, res: new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }) };
+  }
+  const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const { data: roleRow } = await admin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userData.user.id)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (!roleRow) {
+    return { ok: false, res: new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }) };
+  }
+  return { ok: true };
+}
 
 async function getAccessToken(): Promise<string> {
   const clientId = Deno.env.get("GOOGLE_CLIENT_ID");
@@ -74,18 +102,16 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Require authenticated admin
+  const authCheck = await requireAdmin(req);
+  if (!authCheck.ok) return authCheck.res;
+
   try {
     const accessToken = await getAccessToken();
 
-    // Run all reports in parallel
     const [activeUsersReport, pageViewsReport, trafficSourceReport, dailyReport, topPagesReport] =
       await Promise.all([
-        // 1. Active users (realtime)
-        runRealtimeReport(accessToken, {
-          metrics: [{ name: "activeUsers" }],
-        }),
-
-        // 2. Page views for /veiculo/ pages (last 30 days)
+        runRealtimeReport(accessToken, { metrics: [{ name: "activeUsers" }] }),
         runReport(accessToken, {
           dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
           metrics: [{ name: "screenPageViews" }],
@@ -96,8 +122,6 @@ serve(async (req) => {
             },
           },
         }),
-
-        // 3. Traffic sources (last 30 days)
         runReport(accessToken, {
           dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
           dimensions: [{ name: "sessionSource" }],
@@ -105,19 +129,12 @@ serve(async (req) => {
           limit: 10,
           orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
         }),
-
-        // 4. Daily visits (last 7 days)
         runReport(accessToken, {
           dateRanges: [{ startDate: "7daysAgo", endDate: "today" }],
           dimensions: [{ name: "date" }],
-          metrics: [
-            { name: "screenPageViews" },
-            { name: "activeUsers" },
-          ],
+          metrics: [{ name: "screenPageViews" }, { name: "activeUsers" }],
           orderBys: [{ dimension: { dimensionName: "date" } }],
         }),
-
-        // 5. Top pages (last 30 days)
         runReport(accessToken, {
           dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
           dimensions: [{ name: "pagePath" }, { name: "pageTitle" }],
@@ -127,23 +144,14 @@ serve(async (req) => {
         }),
       ]);
 
-    // Parse active users
-    const activeUsers =
-      activeUsersReport?.rows?.[0]?.metricValues?.[0]?.value ?? "0";
-
-    // Parse vehicle page views
-    const vehiclePageViews =
-      pageViewsReport?.rows?.[0]?.metricValues?.[0]?.value ?? "0";
-
-    // Parse traffic sources
+    const activeUsers = activeUsersReport?.rows?.[0]?.metricValues?.[0]?.value ?? "0";
+    const vehiclePageViews = pageViewsReport?.rows?.[0]?.metricValues?.[0]?.value ?? "0";
     const trafficSources = (trafficSourceReport?.rows || []).map(
       (row: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }) => ({
         source: row.dimensionValues[0].value,
         sessions: parseInt(row.metricValues[0].value, 10),
       })
     );
-
-    // Parse daily visits
     const dailyVisits = (dailyReport?.rows || []).map(
       (row: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }) => ({
         date: row.dimensionValues[0].value,
@@ -151,8 +159,6 @@ serve(async (req) => {
         users: parseInt(row.metricValues[1].value, 10),
       })
     );
-
-    // Parse top pages
     const topPages = (topPagesReport?.rows || []).map(
       (row: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }) => ({
         path: row.dimensionValues[0].value,
@@ -161,7 +167,6 @@ serve(async (req) => {
       })
     );
 
-    // Calculate totals
     const totalViews = topPages.reduce((sum: number, p: { views: number }) => sum + p.views, 0);
 
     return new Response(
@@ -173,9 +178,7 @@ serve(async (req) => {
         dailyVisits,
         topPages,
       }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
     console.error("GA4 analytics error:", error);

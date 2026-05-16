@@ -451,6 +451,7 @@ export type Database = {
           seats: number | null
           start_type: string | null
           state: string | null
+          status_preference: string | null
           title: string
           traction: string | null
           trade_description: string | null
@@ -545,6 +546,7 @@ export type Database = {
           seats?: number | null
           start_type?: string | null
           state?: string | null
+          status_preference?: string | null
           title: string
           traction?: string | null
           trade_description?: string | null
@@ -639,6 +641,7 @@ export type Database = {
           seats?: number | null
           start_type?: string | null
           state?: string | null
+          status_preference?: string | null
           title?: string
           traction?: string | null
           trade_description?: string | null

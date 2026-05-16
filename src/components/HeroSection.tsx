@@ -32,40 +32,44 @@ const HeroSection = () => {
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in text-white" style={{ animationDelay: "0.1s" }}>
-            <span className="block">Negocie tudo!</span>
-            <span className="block">Menos a sua <span style={{ color: "#FF8C36" }}>segurança.</span></span>
+          <h1 className="font-bold leading-tight animate-fade-in text-white" style={{ animationDelay: "0.1s" }}>
+            <span className="block text-5xl md:text-6xl lg:text-7xl">Negocie tudo!</span>
+            <span className="block text-4xl md:text-5xl lg:text-6xl mt-2">
+              Menos a sua <span className="uppercase" style={{ color: "#FF8C36" }}>SEGURANÇA!</span>
+            </span>
           </h1>
 
-          {/* Sub-headline */}
-          <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <span className="block">Somos seus consultores de negócios pessoais focados em veículos em geral.</span>
-            <span className="block">Diga o que você tem e o que você precisa que nós encontramos o negócio quase perfeito para você!</span>
-          </p>
+          {/* Consultor de Negócios - Benefits List */}
+          <div className="max-w-2xl mx-auto animate-fade-in space-y-3 text-white" style={{ animationDelay: "0.2s" }}>
+            <p className="text-xl md:text-2xl font-extrabold tracking-wide uppercase" style={{ color: "#FF8C36" }}>
+              Consultor de Negócios
+            </p>
+            <ul className="space-y-2.5 text-base md:text-lg text-white/90">
+              <li className="flex items-start gap-2 justify-center">
+                <CheckCircle className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                <span>O que você <strong className="text-white">tem</strong>? E o que você <strong className="text-white">precisa</strong>?</span>
+              </li>
+              <li className="flex items-start gap-2 justify-center">
+                <CheckCircle className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                <span>Intermediação de forma <strong className="text-white">segura e verificada</strong>.</span>
+              </li>
+              <li className="flex items-start gap-2 justify-center">
+                <CheckCircle className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                <span>Nós buscamos <strong className="text-white">O MELHOR</strong> negócio <strong className="text-white">PARA VOCÊ</strong>!</span>
+              </li>
+              <li className="flex items-start gap-2 justify-center">
+                <CheckCircle className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                <span>Troca com compensação financeira <strong className="text-white">JUSTA</strong>!</span>
+              </li>
+            </ul>
+          </div>
 
           {/* Highlight Block */}
-          <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.25s" }}>
-            Compra, venda e principalmente{" "}
-            <span className="text-2xl md:text-3xl font-extrabold uppercase" style={{ color: "#FF8C36" }}>TROCA!</span>
+          <p className="text-lg md:text-xl text-white max-w-2xl mx-auto animate-fade-in leading-snug" style={{ animationDelay: "0.25s" }}>
+            <span className="block">Compra, venda e nossa especialidade,</span>
+            <span className="block text-2xl md:text-3xl font-extrabold uppercase mt-1" style={{ color: "#FF8C36" }}>TROCAS!</span>
           </p>
 
-          {/* Trust Points */}
-          <div className="flex flex-wrap justify-center gap-4 text-sm text-primary-foreground/70 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle className="h-4 w-4 text-accent" />
-              <span>Verificação</span>
-            </div>
-            <span className="text-primary-foreground/50">+</span>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle className="h-4 w-4 text-accent" />
-              <span>Transparência</span>
-            </div>
-            <span className="text-primary-foreground/50">=</span>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle className="h-4 w-4 text-accent" />
-              <span>SEGURANÇA</span>
-            </div>
-          </div>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>

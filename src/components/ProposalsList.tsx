@@ -274,6 +274,59 @@ const ProposalsList = () => {
             </div>
           )}
 
+          {/* Match: KYC gating + contact reveal */}
+          {proposal.status === "accepted" && (() => {
+            const otherCompleted = type === "received" ? proposal.buyer_kyc_completed : proposal.seller_kyc_completed;
+            const bothDone = proposal.buyer_kyc_completed && proposal.seller_kyc_completed;
+            const contact = contacts[proposal.id];
+            if (bothDone && contact) {
+              return (
+                <div className="mt-3 p-3 rounded-lg bg-accent/10 border border-accent/30 space-y-2">
+                  <div className="flex items-center gap-2 text-accent font-medium text-sm">
+                    <ShieldCheck className="h-4 w-4" />
+                    Identidades verificadas — contato liberado
+                  </div>
+                  <div className="text-sm">
+                    <p className="text-foreground font-medium">{contact.name}</p>
+                    {contact.phone && (
+                      <a
+                        href={`https://wa.me/55${contact.phone.replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-primary hover:underline"
+                      >
+                        <Phone className="h-3 w-3" />
+                        {contact.phone}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <div className="mt-3 p-3 rounded-lg bg-secondary/10 border border-secondary/30 space-y-2">
+                <div className="flex items-center gap-2 text-secondary font-medium text-sm">
+                  <ShieldAlert className="h-4 w-4" />
+                  Aguardando verificação de identidade
+                </div>
+                {!isUserKYCApproved ? (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      Para liberar o contato direto com a outra parte, envie seus documentos.
+                    </p>
+                    <Button asChild size="sm" variant="default" className="bg-secondary hover:bg-secondary/90">
+                      <Link to="/profile?tab=verificacao">Verificar minha identidade</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Sua verificação está aprovada. Aguardando a outra parte enviar os documentos para liberar o contato.
+                  </p>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Chat Section */}
           <Collapsible className="mt-3">
             <CollapsibleTrigger asChild>

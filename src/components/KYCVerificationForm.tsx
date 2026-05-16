@@ -153,10 +153,10 @@ const KYCVerificationForm = () => {
     }
     setCpfCnpjError("");
 
-    if (!user || !documentType || !documentNumber || !documentFront || !selfie) {
+    if (!user || !documentType || !documentNumber || !documentFront || !selfie || !selfieWithDocument || !residenceProof) {
       toast({
         title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos e faça upload dos arquivos necessários.",
+        description: "Envie selfie, foto do documento, selfie com documento e comprovante de residência.",
         variant: "destructive",
       });
       return;
@@ -167,13 +167,14 @@ const KYCVerificationForm = () => {
     try {
       const timestamp = Date.now();
       const cleanValue = cpfCnpj.replace(/\D/g, '');
-      
-      // Upload files
+
       const frontPath = await uploadFile(documentFront, `${user.id}/doc_front_${timestamp}.${documentFront.name.split('.').pop()}`);
       const backPath = documentBack ? await uploadFile(documentBack, `${user.id}/doc_back_${timestamp}.${documentBack.name.split('.').pop()}`) : null;
       const selfiePath = await uploadFile(selfie, `${user.id}/selfie_${timestamp}.${selfie.name.split('.').pop()}`);
+      const selfieDocPath = await uploadFile(selfieWithDocument, `${user.id}/selfie_doc_${timestamp}.${selfieWithDocument.name.split('.').pop()}`);
+      const residencePath = await uploadFile(residenceProof, `${user.id}/residence_${timestamp}.${residenceProof.name.split('.').pop()}`);
 
-      if (!frontPath || !selfiePath) {
+      if (!frontPath || !selfiePath || !selfieDocPath || !residencePath) {
         throw new Error("Erro ao fazer upload dos arquivos");
       }
 

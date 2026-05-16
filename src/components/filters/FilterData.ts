@@ -88,9 +88,8 @@ export const insuranceOptions = [
 
 // Prioridade de Negócio
 export const tradePriorityOptions = [
-  { value: "dinheiro", label: "Prefiro dinheiro" },
-  { value: "troca", label: "Prefiro troca" },
-  { value: "indiferente", label: "Tanto faz" },
+  { value: "apenas_venda", label: "Apenas venda 100% dinheiro sem nada de trocas" },
+  { value: "troca_menor", label: "Aceito troca de menor valor (com volta para mim)" },
 ];
 
 // Faixas de Nota para Filtro

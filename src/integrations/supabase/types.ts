@@ -667,6 +667,14 @@ export type Database = {
     }
     Functions: {
       cleanup_old_chatwoot_messages: { Args: never; Returns: undefined }
+      get_proposal_contact: {
+        Args: { _proposal_id: string }
+        Returns: {
+          other_name: string
+          other_phone: string
+          other_user_id: string
+        }[]
+      }
       has_approved_kyc: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {

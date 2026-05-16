@@ -572,6 +572,9 @@ const AddProduct = () => {
         trade_restrictions: formData.trade_restrictions.length > 0 ? formData.trade_restrictions : null,
         trade_vehicle_preference: formData.trade_vehicle_preference || null,
         trade_unaccepted_description: formData.trade_unaccepted_description || null,
+        perfect_deal_description: formData.perfect_deal_description || null,
+        negative_filters_description: formData.negative_filters_description || null,
+        trade_cash_offer: formData.trade_cash_offer ? parsePriceInput(formData.trade_cash_offer) : null,
         
         // Trator / Implemento
         hours_use: formData.hours_use ? parseInt(formData.hours_use) : null,
@@ -1633,6 +1636,41 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
+
+              {formData.trade_priority === "troca_maior" && (
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Qual valor você deseja colocar no negócio?</Label>
+                    <Input type="text" inputMode="numeric" value={formData.trade_cash_offer} onChange={e => setFormData(p => ({ ...p, trade_cash_offer: formatPriceInput(e.target.value) }))} placeholder="R$ 0,00" />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Qual é a sua preferência no valor da troca?</Label>
+                    <Input type="text" value={formData.trade_vehicle_preference} onChange={e => setFormData(p => ({ ...p, trade_vehicle_preference: e.target.value }))} placeholder="Ex: Carro, moto" />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Escreva aqui o que gostaria de receber na troca</Label>
+                    <Textarea value={formData.ideal_trade_description} onChange={e => setFormData(p => ({ ...p, ideal_trade_description: e.target.value }))} placeholder="Ex: Quero um caminhão mais novo, cavalo mecânico 6x4..." rows={4} />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">O que você não aceita de jeito nenhum que não adianta nem oferecerem?</Label>
+                    <Textarea value={formData.trade_unaccepted_description} onChange={e => setFormData(p => ({ ...p, trade_unaccepted_description: e.target.value }))} placeholder="Ex: Não pego caminhão, imóveis, leilão, etc" rows={3} />
+                  </div>
+                </div>
+              )}
+
+              {formData.trade_priority === "chave_chave" && (
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Descreva com detalhes qual seria o "negócio perfeito" para você?</Label>
+                    <p className="text-xs text-muted-foreground">Coloque o máximo de detalhes como marca, modelo, versão, até que km, se aceita leilão ou não, cor, motorização, câmbio...</p>
+                    <Textarea value={formData.perfect_deal_description} onChange={e => setFormData(p => ({ ...p, perfect_deal_description: e.target.value }))} placeholder="Ex: Scania R450 2020, automático, até 500.000 km, sem leilão..." rows={6} />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Filtros Negativos — Coloque aqui detalhes do que NÃO GOSTARIA de receber de jeito nenhum</Label>
+                    <Textarea value={formData.negative_filters_description} onChange={e => setFormData(p => ({ ...p, negative_filters_description: e.target.value }))} placeholder="Ex: Câmbio manual, veículo de leilão, marcas chinesas, imóvel, etc" rows={4} />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -1903,6 +1941,41 @@ const AddProduct = () => {
                   <div className="p-4 border rounded-lg space-y-2">
                     <Label className="text-base font-semibold">O que você não aceita de jeito nenhum que não adianta nem oferecerem?</Label>
                     <Textarea value={formData.trade_unaccepted_description} onChange={e => setFormData(p => ({ ...p, trade_unaccepted_description: e.target.value }))} placeholder="Ex: Não pego caminhão, van, ônibus, trator, imóveis, leilão, moto Biz, etc" rows={3} />
+                  </div>
+                </div>
+              )}
+
+              {formData.trade_priority === "troca_maior" && (
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Qual valor você deseja colocar no negócio?</Label>
+                    <Input type="text" inputMode="numeric" value={formData.trade_cash_offer} onChange={e => setFormData(p => ({ ...p, trade_cash_offer: formatPriceInput(e.target.value) }))} placeholder="R$ 0,00" />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Qual é a sua preferência no valor da troca?</Label>
+                    <Input type="text" value={formData.trade_vehicle_preference} onChange={e => setFormData(p => ({ ...p, trade_vehicle_preference: e.target.value }))} placeholder="Ex: Carro, moto" />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Escreva aqui o que gostaria de receber na troca</Label>
+                    <Textarea value={formData.ideal_trade_description} onChange={e => setFormData(p => ({ ...p, ideal_trade_description: e.target.value }))} placeholder="Ex: Quero um ônibus mais novo, rodoviário, ar condicionado..." rows={4} />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">O que você não aceita de jeito nenhum que não adianta nem oferecerem?</Label>
+                    <Textarea value={formData.trade_unaccepted_description} onChange={e => setFormData(p => ({ ...p, trade_unaccepted_description: e.target.value }))} placeholder="Ex: Não pego caminhão, imóveis, leilão, etc" rows={3} />
+                  </div>
+                </div>
+              )}
+
+              {formData.trade_priority === "chave_chave" && (
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Descreva com detalhes qual seria o "negócio perfeito" para você?</Label>
+                    <p className="text-xs text-muted-foreground">Coloque o máximo de detalhes como marca, modelo, versão, até que km, se aceita leilão ou não, cor, motorização, câmbio...</p>
+                    <Textarea value={formData.perfect_deal_description} onChange={e => setFormData(p => ({ ...p, perfect_deal_description: e.target.value }))} placeholder="Ex: Mercedes O500 2019+, rodoviário, ar, até 700.000 km, sem leilão..." rows={6} />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Filtros Negativos — Coloque aqui detalhes do que NÃO GOSTARIA de receber de jeito nenhum</Label>
+                    <Textarea value={formData.negative_filters_description} onChange={e => setFormData(p => ({ ...p, negative_filters_description: e.target.value }))} placeholder="Ex: Veículo de leilão, câmbio manual, marcas chinesas, imóvel, etc" rows={4} />
                   </div>
                 </div>
               )}
@@ -2229,6 +2302,72 @@ const AddProduct = () => {
                       onChange={e => setFormData(p => ({ ...p, trade_unaccepted_description: e.target.value }))}
                       placeholder="Ex: Não pego caminhão, van, ônibus, trator, imóveis, leilão, moto Biz, etc"
                       rows={3}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {formData.trade_priority === "troca_maior" && (
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Qual valor você deseja colocar no negócio?</Label>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={formData.trade_cash_offer}
+                      onChange={e => setFormData(p => ({ ...p, trade_cash_offer: formatPriceInput(e.target.value) }))}
+                      placeholder="R$ 0,00"
+                    />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Qual é a sua preferência no valor da troca?</Label>
+                    <Input
+                      type="text"
+                      value={formData.trade_vehicle_preference}
+                      onChange={e => setFormData(p => ({ ...p, trade_vehicle_preference: e.target.value }))}
+                      placeholder="Ex: Carro, moto"
+                    />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Escreva aqui o que gostaria de receber na troca</Label>
+                    <Textarea
+                      value={formData.ideal_trade_description}
+                      onChange={e => setFormData(p => ({ ...p, ideal_trade_description: e.target.value }))}
+                      placeholder="Ex: Quero um SUV mais novo, motor 2.0, automático, baixa quilometragem..."
+                      rows={4}
+                    />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">O que você não aceita de jeito nenhum que não adianta nem oferecerem?</Label>
+                    <Textarea
+                      value={formData.trade_unaccepted_description}
+                      onChange={e => setFormData(p => ({ ...p, trade_unaccepted_description: e.target.value }))}
+                      placeholder="Ex: Não pego caminhão, imóveis, leilão, etc"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {formData.trade_priority === "chave_chave" && (
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Descreva com detalhes qual seria o "negócio perfeito" para você?</Label>
+                    <p className="text-xs text-muted-foreground">Coloque o máximo de detalhes como marca, modelo, versão, até que km, se aceita leilão ou não, cor, motorização, câmbio...</p>
+                    <Textarea
+                      value={formData.perfect_deal_description}
+                      onChange={e => setFormData(p => ({ ...p, perfect_deal_description: e.target.value }))}
+                      placeholder="Ex: Honda Civic EXL 2020-2022, prata ou branco, até 60.000 km, automático, sem histórico de leilão..."
+                      rows={6}
+                    />
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Filtros Negativos — Coloque aqui detalhes do que NÃO GOSTARIA de receber de jeito nenhum</Label>
+                    <Textarea
+                      value={formData.negative_filters_description}
+                      onChange={e => setFormData(p => ({ ...p, negative_filters_description: e.target.value }))}
+                      placeholder="Ex: Cores preta/vermelha, marcas JAC/BYD, câmbio manual, banco de tecido, veículo de leilão, carro 2 portas, imóvel, etc"
+                      rows={4}
                     />
                   </div>
                 </div>

@@ -462,6 +462,7 @@ export type Database = {
           status_preference: string | null
           title: string
           traction: string | null
+          trade_cash_offer: number | null
           trade_description: string | null
           trade_priority: string | null
           trade_restrictions: string[] | null
@@ -568,6 +569,7 @@ export type Database = {
           status_preference?: string | null
           title: string
           traction?: string | null
+          trade_cash_offer?: number | null
           trade_description?: string | null
           trade_priority?: string | null
           trade_restrictions?: string[] | null
@@ -674,6 +676,7 @@ export type Database = {
           status_preference?: string | null
           title?: string
           traction?: string | null
+          trade_cash_offer?: number | null
           trade_description?: string | null
           trade_priority?: string | null
           trade_restrictions?: string[] | null

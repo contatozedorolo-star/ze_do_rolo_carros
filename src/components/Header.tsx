@@ -85,6 +85,12 @@ const Header = () => {
           <img src={logo} alt="Logotipo Zé do Rolo - Compra e Venda de Veículos" className="h-16 md:h-20 w-auto" width={160} height={80} />
         </Link>
 
+        {/* Mobile brand text - centered between logo and hamburger */}
+        <div className="md:hidden flex-1 flex flex-col items-center justify-center leading-tight select-none">
+          <span className="text-sm font-bold tracking-[0.18em] text-primary">ZÉ DO ROLO</span>
+          <span className="text-[10px] italic text-accent/90 mt-0.5">Em busca do rolo perfeito!</span>
+        </div>
+
         {/* Search Bar - Desktop */}
         <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl">
           <div className="relative w-full">

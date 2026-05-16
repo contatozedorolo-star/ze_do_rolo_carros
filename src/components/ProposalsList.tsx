@@ -60,11 +60,13 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 
 const ProposalsList = () => {
   const { user } = useAuth();
+  const { isApproved: isUserKYCApproved } = useKYCStatus();
   const { toast } = useToast();
-  
+
   const [receivedProposals, setReceivedProposals] = useState<Proposal[]>([]);
   const [sentProposals, setSentProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [contacts, setContacts] = useState<Record<string, { name: string; phone: string | null }>>({});
 
   const fetchProposals = async () => {
     if (!user) return;

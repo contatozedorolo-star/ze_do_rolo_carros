@@ -1647,8 +1647,8 @@ const AddProduct = () => {
             </div>
           )}
 
-          {/* Etapa 8 - Fotos (VANS) */}
-          {step === 8 && formData.vehicle_type === "van" && (
+          {/* Etapa 6 - Fotos (VANS) */}
+          {step === 6 && formData.vehicle_type === "van" && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Galeria 360° - Vans</h2>

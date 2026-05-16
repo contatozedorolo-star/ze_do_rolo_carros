@@ -98,8 +98,8 @@ const SearchResults = () => {
   // Get count
   const { data: vehicleCount = 0 } = useVehicleCount(supabaseFilters);
 
-  // Show modal if not logged in
-  const showRestrictedModal = !authLoading && !user;
+  // Site open to visitors — no auth restriction
+  const showRestrictedModal = false;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

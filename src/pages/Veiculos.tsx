@@ -118,8 +118,8 @@ const Veiculos = () => {
     }
   }, [urlCategory, urlSearch]);
 
-  // Show modal if not logged in
-  const showRestrictedModal = !authLoading && !user;
+  // Site open to visitors — no auth restriction
+  const showRestrictedModal = false;
 
   const handleFiltersChange = (newFilters: VehicleFilters) => {
     // Convert to typed filters

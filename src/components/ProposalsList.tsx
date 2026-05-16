@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useKYCStatus } from "@/hooks/useKYCStatus";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,15 +12,19 @@ import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import MessageChat from "./MessageChat";
-import { 
-  Check, 
-  X, 
-  Clock, 
-  ArrowLeftRight, 
+import {
+  Check,
+  X,
+  Clock,
+  ArrowLeftRight,
   MessageCircle,
   Package,
   User,
-  ChevronDown
+  ChevronDown,
+  ShieldCheck,
+  ShieldAlert,
+  Phone,
+  Heart,
 } from "lucide-react";
 
 interface Proposal {

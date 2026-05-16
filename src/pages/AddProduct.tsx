@@ -76,12 +76,10 @@ const truckSteps = [
 const vanSteps = [
   { id: 1, title: "Carroceria", description: "Tipo da van" },
   { id: 2, title: "Especificações", description: "Dados técnicos" },
-  { id: 3, title: "Detalhes", description: "Opcionais e acabamento" },
-  { id: 4, title: "Conforto", description: "Itens de conforto" },
-  { id: 5, title: "Histórico", description: "Procedência e segurança" },
-  { id: 6, title: "Diagnóstico", description: "Avaliação Zé do Rolo" },
-  { id: 7, title: "Negócio Ideal", description: "Preferências de troca" },
-  { id: 8, title: "Fotos", description: "Galeria 360° vans" },
+  { id: 3, title: "Histórico", description: "Procedência e segurança" },
+  { id: 4, title: "Diagnóstico", description: "Avaliação Zé do Rolo" },
+  { id: 5, title: "Negócio Ideal", description: "Preferências de troca" },
+  { id: 6, title: "Fotos", description: "Galeria 360° vans" },
 ];
 
 const busSteps = [

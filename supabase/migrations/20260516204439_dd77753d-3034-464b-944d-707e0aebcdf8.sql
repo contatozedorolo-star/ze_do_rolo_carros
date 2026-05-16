@@ -1,0 +1,1 @@
+ALTER TABLE public.vehicles ADD COLUMN status_preference TEXT DEFAULT NULL;

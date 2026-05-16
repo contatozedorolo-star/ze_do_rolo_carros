@@ -567,6 +567,8 @@ const AddProduct = () => {
         trade_priority: formData.trade_priority,
         max_cash_return: formData.max_cash_return ? parsePriceInput(formData.max_cash_return) : null,
         trade_restrictions: formData.trade_restrictions.length > 0 ? formData.trade_restrictions : null,
+        trade_vehicle_preference: formData.trade_vehicle_preference || null,
+        trade_unaccepted_description: formData.trade_unaccepted_description || null,
         
         // Trator / Implemento
         hours_use: formData.hours_use ? parseInt(formData.hours_use) : null,

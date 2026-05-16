@@ -90,6 +90,8 @@ export const insuranceOptions = [
 export const tradePriorityOptions = [
   { value: "apenas_venda", label: "Apenas venda 100% dinheiro sem nada de trocas" },
   { value: "troca_menor", label: "Aceito troca de menor valor (com volta para mim)" },
+  { value: "troca_maior", label: "Aceito troca de maior valor (com volta minha)" },
+  { value: "chave_chave", label: "Aceito trocar um pelo outro (Chave na chave / Na orelha)" },
 ];
 
 // Faixas de Nota para Filtro

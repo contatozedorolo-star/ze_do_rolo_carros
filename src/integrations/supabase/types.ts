@@ -82,9 +82,11 @@ export type Database = {
           document_type: string
           id: string
           rejection_reason: string | null
+          residence_proof_url: string | null
           reviewed_at: string | null
           reviewed_by: string | null
           selfie_url: string | null
+          selfie_with_document_url: string | null
           status: Database["public"]["Enums"]["kyc_status"]
           updated_at: string
           user_id: string
@@ -97,9 +99,11 @@ export type Database = {
           document_type: string
           id?: string
           rejection_reason?: string | null
+          residence_proof_url?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           selfie_url?: string | null
+          selfie_with_document_url?: string | null
           status?: Database["public"]["Enums"]["kyc_status"]
           updated_at?: string
           user_id: string
@@ -112,9 +116,11 @@ export type Database = {
           document_type?: string
           id?: string
           rejection_reason?: string | null
+          residence_proof_url?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           selfie_url?: string | null
+          selfie_with_document_url?: string | null
           status?: Database["public"]["Enums"]["kyc_status"]
           updated_at?: string
           user_id?: string
@@ -158,7 +164,12 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address_complement: string | null
+          address_neighborhood: string | null
+          address_number: string | null
+          address_street: string | null
           avatar_url: string | null
+          birth_date: string | null
           cep: string | null
           city: string | null
           cnpj: string | null
@@ -171,7 +182,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          address_complement?: string | null
+          address_neighborhood?: string | null
+          address_number?: string | null
+          address_street?: string | null
           avatar_url?: string | null
+          birth_date?: string | null
           cep?: string | null
           city?: string | null
           cnpj?: string | null
@@ -184,7 +200,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          address_complement?: string | null
+          address_neighborhood?: string | null
+          address_number?: string | null
+          address_street?: string | null
           avatar_url?: string | null
+          birth_date?: string | null
           cep?: string | null
           city?: string | null
           cnpj?: string | null
@@ -200,12 +221,15 @@ export type Database = {
       }
       proposals: {
         Row: {
+          buyer_kyc_completed: boolean
           created_at: string
           id: string
+          matched_at: string | null
           message: string | null
           offer_amount: number | null
           proposer_id: string
           seller_id: string
+          seller_kyc_completed: boolean
           status: Database["public"]["Enums"]["proposal_status"]
           trade_plus_amount: number | null
           trade_vehicle_id: string | null
@@ -213,12 +237,15 @@ export type Database = {
           vehicle_id: string
         }
         Insert: {
+          buyer_kyc_completed?: boolean
           created_at?: string
           id?: string
+          matched_at?: string | null
           message?: string | null
           offer_amount?: number | null
           proposer_id: string
           seller_id: string
+          seller_kyc_completed?: boolean
           status?: Database["public"]["Enums"]["proposal_status"]
           trade_plus_amount?: number | null
           trade_vehicle_id?: string | null
@@ -226,12 +253,15 @@ export type Database = {
           vehicle_id: string
         }
         Update: {
+          buyer_kyc_completed?: boolean
           created_at?: string
           id?: string
+          matched_at?: string | null
           message?: string | null
           offer_amount?: number | null
           proposer_id?: string
           seller_id?: string
+          seller_kyc_completed?: boolean
           status?: Database["public"]["Enums"]["proposal_status"]
           trade_plus_amount?: number | null
           trade_vehicle_id?: string | null

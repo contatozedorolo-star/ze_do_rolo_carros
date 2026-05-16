@@ -594,6 +594,7 @@ const AddProduct = () => {
         title: "Veículo cadastrado!", 
         description: "Seu anúncio foi enviado para aprovação e estará disponível em breve." 
       });
+      try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Error:", error);

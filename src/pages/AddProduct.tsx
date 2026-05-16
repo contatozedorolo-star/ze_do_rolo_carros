@@ -239,6 +239,29 @@ const AddProduct = () => {
     description: "",
   });
 
+  // ---- Persistência do rascunho em localStorage ----
+  const DRAFT_KEY = "zedorolo:add-product-draft:v1";
+  const draftLoadedRef = useRef(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.formData) setFormData((prev) => ({ ...prev, ...parsed.formData }));
+        if (typeof parsed?.step === "number") setStep(parsed.step);
+      }
+    } catch { /* ignora json inválido */ }
+    draftLoadedRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!draftLoadedRef.current) return;
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ formData, step }));
+    } catch { /* quota cheia, ignora */ }
+  }, [formData, step]);
+
   // Seleciona os steps baseado no tipo de veículo
   const getSteps = () => {
     if ((formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta")) return truckSteps;

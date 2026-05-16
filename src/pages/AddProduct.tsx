@@ -195,6 +195,7 @@ const AddProduct = () => {
     traction: "",
     
     // Etapa 2 - Dados Técnicos
+    status_preference: "",
     city: "", state: "",
     km: "", brand: "", model: "", version: "",
     year_manufacture: "", year_model: "",

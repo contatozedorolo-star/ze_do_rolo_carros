@@ -1025,6 +1025,45 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
+
+              {/* Preferência de Status do veículo desejado */}
+              <div className="p-4 border rounded-lg space-y-3 bg-card">
+                <div>
+                  <Label className="text-base font-semibold">
+                    Pensando na questão do STATUS do veículo que quer, qual opção mais se enquadra?
+                  </Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Essa resposta nos ajuda a sugerir o melhor negócio pra você.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { value: "maxima_atencao", label: "Quero chamar o máximo de atenção possível, gosto de chegar chegando." },
+                    { value: "minima_atencao", label: "Quero chamar o mínimo de atenção possível, prefiro ser mais discreto(a)." },
+                    { value: "tanto_faz", label: "Pra mim tanto faz, só quero fazer um bom negócio." },
+                  ].map((opt) => {
+                    const checked = formData.status_preference === opt.value;
+                    return (
+                      <label
+                        key={opt.value}
+                        className={`flex items-start gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
+                          checked ? "border-accent bg-accent/10" : "border-border hover:bg-muted/40"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="status_preference"
+                          value={opt.value}
+                          checked={checked}
+                          onChange={() => setFormData((p) => ({ ...p, status_preference: opt.value }))}
+                          className="mt-1 h-4 w-4 accent-accent"
+                        />
+                        <span className="text-sm text-foreground">{opt.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
 

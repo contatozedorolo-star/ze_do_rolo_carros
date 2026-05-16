@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useKYCStatus } from "@/hooks/useKYCStatus";
@@ -239,6 +239,29 @@ const AddProduct = () => {
     description: "",
   });
 
+  // ---- Persistência do rascunho em localStorage ----
+  const DRAFT_KEY = "zedorolo:add-product-draft:v1";
+  const draftLoadedRef = useRef(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.formData) setFormData((prev) => ({ ...prev, ...parsed.formData }));
+        if (typeof parsed?.step === "number") setStep(parsed.step);
+      }
+    } catch { /* ignora json inválido */ }
+    draftLoadedRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!draftLoadedRef.current) return;
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ formData, step }));
+    } catch { /* quota cheia, ignora */ }
+  }, [formData, step]);
+
   // Seleciona os steps baseado no tipo de veículo
   const getSteps = () => {
     if ((formData.vehicle_type === "caminhao" || formData.vehicle_type === "carreta")) return truckSteps;
@@ -408,7 +431,17 @@ const AddProduct = () => {
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Roda após o React renderizar a próxima etapa
+    requestAnimationFrame(() => {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      } catch {
+        window.scrollTo(0, 0);
+      }
+      if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
   };
 
   const handleNext = () => {
@@ -561,6 +594,7 @@ const AddProduct = () => {
         title: "Veículo cadastrado!", 
         description: "Seu anúncio foi enviado para aprovação e estará disponível em breve." 
       });
+      try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Error:", error);

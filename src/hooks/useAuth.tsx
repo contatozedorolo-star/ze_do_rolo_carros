@@ -24,6 +24,13 @@ interface AuthContextType {
     phone?: string;
     cpf?: string;
     state?: string;
+    birth_date?: string;
+    cep?: string;
+    address_street?: string;
+    address_number?: string;
+    address_complement?: string;
+    address_neighborhood?: string;
+    city?: string;
   }) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signInWithGoogle: (redirectPath?: string) => Promise<{ error: Error | null }>;

@@ -249,8 +249,8 @@ const ProposalsList = () => {
                     className="flex-1 bg-accent hover:bg-accent/90"
                     onClick={() => updateProposalStatus(proposal.id, "accepted")}
                   >
-                    <Check className="h-4 w-4 mr-1" />
-                    Aceitar
+                    <Heart className="h-4 w-4 mr-1" />
+                    Tenho Interesse
                   </Button>
                   <Button
                     variant="outline"

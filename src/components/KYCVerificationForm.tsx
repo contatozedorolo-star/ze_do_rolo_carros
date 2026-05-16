@@ -70,6 +70,8 @@ const KYCVerificationForm = () => {
   const [documentFront, setDocumentFront] = useState<File | null>(null);
   const [documentBack, setDocumentBack] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
+  const [selfieWithDocument, setSelfieWithDocument] = useState<File | null>(null);
+  const [residenceProof, setResidenceProof] = useState<File | null>(null);
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');

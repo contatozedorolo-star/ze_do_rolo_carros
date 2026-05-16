@@ -38,23 +38,21 @@ interface Proposal {
   trade_items: string | null;
   status: string;
   created_at: string;
+  buyer_kyc_completed?: boolean;
+  seller_kyc_completed?: boolean;
+  matched_at?: string | null;
   products?: {
     id: string;
     title: string;
     price_estimate: number;
   };
-  proposer?: {
-    name: string;
-    user_level: string;
-  };
-  seller?: {
-    name: string;
-  };
+  proposer?: { name: string; user_level: string; phone?: string };
+  seller?: { name: string; phone?: string };
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pendente", color: "bg-secondary/20 text-secondary", icon: Clock },
-  accepted: { label: "Aceita", color: "bg-accent/20 text-accent", icon: Check },
+  accepted: { label: "Match", color: "bg-accent/20 text-accent", icon: Heart },
   rejected: { label: "Recusada", color: "bg-destructive/20 text-destructive", icon: X },
   counter: { label: "Contraproposta", color: "bg-primary/20 text-primary", icon: MessageCircle },
   cancelled: { label: "Cancelada", color: "bg-muted text-muted-foreground", icon: X },

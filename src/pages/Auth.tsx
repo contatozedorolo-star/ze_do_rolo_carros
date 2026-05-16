@@ -9,7 +9,7 @@ import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car, Lock, Sparkles } from
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
-import { isValidPhone } from "@/lib/validators";
+import { isValidPhone, isValidCPF, formatCPF } from "@/lib/validators";
 
 
 const signUpSchema = z.object({
@@ -18,9 +18,22 @@ const signUpSchema = z.object({
   phone: z.string()
     .min(10, "Telefone inválido")
     .max(15, "Telefone inválido")
-    .refine((val) => isValidPhone(val), {
-      message: "Telefone inválido. Use o formato (XX) XXXXX-XXXX"
-    }),
+    .refine((val) => isValidPhone(val), { message: "Telefone inválido. Use o formato (XX) XXXXX-XXXX" }),
+  cpf: z.string().refine((val) => isValidCPF(val), { message: "CPF inválido" }),
+  birth_date: z.string().refine((val) => {
+    if (!val) return false;
+    const d = new Date(val);
+    if (isNaN(d.getTime())) return false;
+    const age = (Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000);
+    return age >= 18 && age <= 120;
+  }, { message: "Você precisa ter pelo menos 18 anos" }),
+  cep: z.string().refine((v) => v.replace(/\D/g, "").length === 8, { message: "CEP inválido" }),
+  address_street: z.string().min(2, "Informe a rua"),
+  address_number: z.string().min(1, "Informe o número"),
+  address_complement: z.string().optional(),
+  address_neighborhood: z.string().min(2, "Informe o bairro"),
+  city: z.string().min(2, "Informe a cidade"),
+  state: z.string().length(2, "UF deve ter 2 letras"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   confirmPassword: z.string(),
   acceptedTerms: z.literal(true, {

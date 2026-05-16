@@ -573,6 +573,12 @@ const AddProduct = () => {
         status_preference: formData.status_preference || null,
         origin_preference: formData.origin_preference || null,
         powertrain_preference: formData.powertrain_preference || null,
+        seat_material: formData.seat_material || null,
+        car_traction: formData.car_traction || null,
+        car_steering: formData.car_steering || null,
+        car_windows: formData.car_windows || null,
+        wheel_type: formData.wheel_type || null,
+        optionals: formData.car_optionals.length > 0 ? formData.car_optionals : null,
       };
 
       const { data: vehicle, error: vehicleError } = await supabase

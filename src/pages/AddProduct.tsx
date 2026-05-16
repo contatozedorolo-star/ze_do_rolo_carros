@@ -566,6 +566,7 @@ const AddProduct = () => {
         power_cv: formData.power_cv ? parseInt(formData.power_cv) : null,
         traction: formData.traction || null,
         status_preference: formData.status_preference || null,
+        origin_preference: formData.origin_preference || null,
       };
 
       const { data: vehicle, error: vehicleError } = await supabase

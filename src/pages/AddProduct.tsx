@@ -172,6 +172,8 @@ const AddProduct = () => {
   const [images, setImages] = useState<{ [key: string]: File | null }>({});
   const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({});
   const [showKYCModal, setShowKYCModal] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(true);
 
   // Handle KYC modal close - redirect user away since they can't access this page
   const handleKYCModalClose = () => {
@@ -260,12 +262,48 @@ const AddProduct = () => {
     if (!loading && !user) navigate("/auth");
   }, [user, loading, navigate]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const checkAdminRole = async () => {
+      if (loading) return;
+
+      if (!user) {
+        setIsAdmin(false);
+        setAdminLoading(false);
+        return;
+      }
+
+      setAdminLoading(true);
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+
+      if (!cancelled) {
+        if (error) console.error("Error checking admin role:", error);
+        setIsAdmin(Boolean(data));
+        setAdminLoading(false);
+      }
+    };
+
+    checkAdminRole();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, loading]);
+
   // Show KYC modal if user is not verified
   useEffect(() => {
-    if (!loading && !kycLoading && user && !isVerified) {
+    if (loading || kycLoading || adminLoading) return;
+
+    if (user && !isVerified && !isAdmin) {
       setShowKYCModal(true);
+    } else {
+      setShowKYCModal(false);
     }
-  }, [loading, kycLoading, user, isVerified]);
+  }, [loading, kycLoading, adminLoading, user, isVerified, isAdmin]);
 
   const handleImageUpload = (photoId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -536,7 +574,7 @@ const AddProduct = () => {
 
   const currentBrands = brands[formData.vehicle_type as keyof typeof brands] || brands.carro;
 
-  if (loading || kycLoading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
+  if (loading || kycLoading || adminLoading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
 
   return (
     <div className="min-h-screen bg-background">

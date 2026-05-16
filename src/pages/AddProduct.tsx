@@ -887,13 +887,15 @@ const AddProduct = () => {
                 <>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <Label>Cilindradas *</Label>
-                      <Select value={formData.cylinders} onValueChange={v => setFormData(p => ({ ...p, cylinders: v }))}>
-                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                        <SelectContent className="bg-card">
-                          {cylinderRanges.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
+                      <Label>Cilindradas (cc) *</Label>
+                      <Input
+                        type="number"
+                        inputMode="numeric"
+                        min="0"
+                        placeholder="Ex: 160"
+                        value={formData.cylinders}
+                        onChange={e => setFormData(p => ({ ...p, cylinders: e.target.value }))}
+                      />
                     </div>
                     <div>
                       <Label>Tipo de Partida</Label>

@@ -437,6 +437,7 @@ export type Database = {
           plate: string | null
           plate_end: string | null
           power_cv: number | null
+          powertrain_preference: string | null
           price: number
           rating_cambio: number | null
           rating_documentacao: number | null
@@ -533,6 +534,7 @@ export type Database = {
           plate?: string | null
           plate_end?: string | null
           power_cv?: number | null
+          powertrain_preference?: string | null
           price: number
           rating_cambio?: number | null
           rating_documentacao?: number | null
@@ -629,6 +631,7 @@ export type Database = {
           plate?: string | null
           plate_end?: string | null
           power_cv?: number | null
+          powertrain_preference?: string | null
           price?: number
           rating_cambio?: number | null
           rating_documentacao?: number | null

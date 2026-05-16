@@ -244,6 +244,9 @@ const AddProduct = () => {
     ideal_trade_description: "",
     trade_vehicle_preference: "",
     trade_unaccepted_description: "",
+    perfect_deal_description: "",
+    negative_filters_description: "",
+    trade_cash_offer: "",
     
     // Etapa 6 - Fotos
     description: "",

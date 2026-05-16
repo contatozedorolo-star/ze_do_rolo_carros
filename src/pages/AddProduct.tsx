@@ -37,6 +37,7 @@ import VanTypeSelector from "@/components/add-product/VanTypeSelector";
 import VanPhotoUploadGrid, { vanPhotoCategories } from "@/components/add-product/VanPhotoUploadGrid";
 import BusTypeSelector from "@/components/add-product/BusTypeSelector";
 import BusPhotoUploadGrid, { busPhotoCategories } from "@/components/add-product/BusPhotoUploadGrid";
+import PhotoTipsCard from "@/components/add-product/PhotoTipsCard";
 import ExitIntentAssistant from "@/components/ExitIntentAssistant";
 import TratorTypeSelector from "@/components/add-product/TratorTypeSelector";
 import ImplementoTypeSelector from "@/components/add-product/ImplementoTypeSelector";

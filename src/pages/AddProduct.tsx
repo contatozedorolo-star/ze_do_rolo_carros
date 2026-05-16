@@ -408,7 +408,17 @@ const AddProduct = () => {
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Roda após o React renderizar a próxima etapa
+    requestAnimationFrame(() => {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      } catch {
+        window.scrollTo(0, 0);
+      }
+      if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
   };
 
   const handleNext = () => {

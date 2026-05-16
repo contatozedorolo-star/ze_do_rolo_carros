@@ -2116,14 +2116,21 @@ const AddProduct = () => {
 
               {/* Prioridade */}
               <div className="p-4 border rounded-lg space-y-3">
-                <Label className="text-base font-semibold">Qual sua prioridade?</Label>
-                <div className="grid grid-cols-3 gap-3">
+                <Label className="text-base font-semibold">Qual é sua prioridade?</Label>
+                <div className="rounded-md bg-secondary/10 border border-secondary/30 p-3 text-sm text-foreground/80">
+                  <strong>Obs:</strong> Segundo nossos dados, quando aceita algum tipo de troca, a negociação acontece melhor e mais rápido 90% das vezes. Então caso a prioridade seja dinheiro, aconselhamos a selecionar que aceita troca de menor valor, até x % do valor do bem, por exemplo: 10%, 20%, 50%, 80%, a escolha é sua. Caso realmente não aceite NENHUMA troca, selecione a opção <strong>"APENAS VENDA"</strong>, tendo em mente que isso limita um pouco as negociações.
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
                   {tradePriorityOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => setFormData(p => ({ ...p, trade_priority: opt.value }))}
-                      className={`p-4 rounded-lg border-2 text-center transition-all ${
+                      onClick={() => setFormData(p => ({
+                        ...p,
+                        trade_priority: opt.value,
+                        accepts_trade: opt.value !== "apenas_venda",
+                      }))}
+                      className={`p-4 rounded-lg border-2 text-left transition-all ${
                         formData.trade_priority === opt.value
                           ? "border-primary bg-primary/5"
                           : "border-border hover:border-primary/50"
@@ -2137,60 +2144,66 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              {/* Valores de volta */}
-              {formData.accepts_trade && (
-                <div className="p-4 border rounded-lg space-y-4">
-                  <Label className="text-base font-semibold">Valores de Volta em Dinheiro</Label>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                      <Label>Valor mínimo de volta (R$)</Label>
-                      <Input 
-                        type="number" 
-                        value={formData.min_cash_return} 
-                        onChange={e => setFormData(p => ({ ...p, min_cash_return: e.target.value }))} 
-                        placeholder="Ex: 5000"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">Mínimo que aceita de volta</p>
-                    </div>
-                    <div>
-                      <Label>Valor máximo de volta (R$)</Label>
-                      <Input 
-                        type="number" 
-                        value={formData.max_cash_return} 
-                        onChange={e => setFormData(p => ({ ...p, max_cash_return: e.target.value }))} 
-                        placeholder="Ex: 20000"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">Máximo que aceita de volta</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Restrições de troca */}
-              {formData.accepts_trade && (
-                <div className="p-4 border rounded-lg space-y-4">
-                  <div>
-                    <Label className="text-base font-semibold">O que você NÃO aceita?</Label>
-                    <p className="text-sm text-muted-foreground">Adicione restrições para filtrar propostas indesejadas</p>
-                  </div>
-                  <TradeRestrictionsInput
-                    value={formData.trade_restrictions}
-                    onChange={(v) => setFormData(p => ({ ...p, trade_restrictions: v }))}
+              {/* Opção 1: Apenas venda — valor mínimo */}
+              {formData.trade_priority === "apenas_venda" && (
+                <div className="p-4 border rounded-lg space-y-2">
+                  <Label className="text-base font-semibold">Coloque o valor mínimo que faz no veículo!</Label>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={formData.min_cash_return}
+                    onChange={e => setFormData(p => ({ ...p, min_cash_return: formatPriceInput(e.target.value) }))}
+                    placeholder="R$ 0,00"
                   />
+                  <p className="text-xs text-muted-foreground">Valor mínimo aceito na venda</p>
                 </div>
               )}
 
-              {/* Descrição da troca ideal */}
-              <div>
-                <Label className="text-base font-semibold">Descreva a troca ideal</Label>
-                <p className="text-sm text-muted-foreground mb-2">Explique o que você está buscando</p>
-                <Textarea 
-                  value={formData.ideal_trade_description} 
-                  onChange={e => setFormData(p => ({ ...p, ideal_trade_description: e.target.value }))} 
-                  placeholder="Ex: Aceito moto até R$ 15.000 e o restante em dinheiro, ou carro popular do mesmo valor. Tenho interesse em SUVs de menor valor..."
-                  rows={4}
-                />
-              </div>
+              {/* Opção 2: Aceito troca de menor valor */}
+              {formData.trade_priority === "troca_menor" && (
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Qual valor você deseja de volta para você?</Label>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={formData.max_cash_return}
+                      onChange={e => setFormData(p => ({ ...p, max_cash_return: formatPriceInput(e.target.value) }))}
+                      placeholder="R$ 0,00"
+                    />
+                  </div>
+
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Qual é a sua preferência no tipo do veículo da troca?</Label>
+                    <Input
+                      type="text"
+                      value={formData.trade_vehicle_preference}
+                      onChange={e => setFormData(p => ({ ...p, trade_vehicle_preference: e.target.value }))}
+                      placeholder="Ex: Carro, moto"
+                    />
+                  </div>
+
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">Escreva aqui o que gostaria de receber na troca</Label>
+                    <Textarea
+                      value={formData.ideal_trade_description}
+                      onChange={e => setFormData(p => ({ ...p, ideal_trade_description: e.target.value }))}
+                      placeholder="Ex: Gostaria de uma moto com partida elétrica, pelo menos 150cc, de preferência Honda ou Yamaha"
+                      rows={4}
+                    />
+                  </div>
+
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <Label className="text-base font-semibold">O que você não aceita de jeito nenhum que não adianta nem oferecerem?</Label>
+                    <Textarea
+                      value={formData.trade_unaccepted_description}
+                      onChange={e => setFormData(p => ({ ...p, trade_unaccepted_description: e.target.value }))}
+                      placeholder="Ex: Não pego caminhão, van, ônibus, trator, imóveis, leilão, moto Biz, etc"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

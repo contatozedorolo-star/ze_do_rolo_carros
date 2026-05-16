@@ -463,7 +463,9 @@ export type Database = {
           trade_description: string | null
           trade_priority: string | null
           trade_restrictions: string[] | null
+          trade_unaccepted_description: string | null
           trade_value_accepted: number | null
+          trade_vehicle_preference: string | null
           transmission: Database["public"]["Enums"]["transmission_type"]
           trator_subcategory: string | null
           truck_body: string | null
@@ -565,7 +567,9 @@ export type Database = {
           trade_description?: string | null
           trade_priority?: string | null
           trade_restrictions?: string[] | null
+          trade_unaccepted_description?: string | null
           trade_value_accepted?: number | null
+          trade_vehicle_preference?: string | null
           transmission?: Database["public"]["Enums"]["transmission_type"]
           trator_subcategory?: string | null
           truck_body?: string | null
@@ -667,7 +671,9 @@ export type Database = {
           trade_description?: string | null
           trade_priority?: string | null
           trade_restrictions?: string[] | null
+          trade_unaccepted_description?: string | null
           trade_value_accepted?: number | null
+          trade_vehicle_preference?: string | null
           transmission?: Database["public"]["Enums"]["transmission_type"]
           trator_subcategory?: string | null
           truck_body?: string | null

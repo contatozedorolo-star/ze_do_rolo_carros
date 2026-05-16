@@ -60,7 +60,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 
 const ProposalsList = () => {
   const { user } = useAuth();
-  const { isApproved: isUserKYCApproved } = useKYCStatus();
+  const { isVerified: isUserKYCApproved } = useKYCStatus();
   const { toast } = useToast();
 
   const [receivedProposals, setReceivedProposals] = useState<Proposal[]>([]);

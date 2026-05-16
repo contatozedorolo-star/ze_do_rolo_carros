@@ -124,6 +124,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     phone?: string;
     cpf?: string;
     state?: string;
+    birth_date?: string;
+    cep?: string;
+    address_street?: string;
+    address_number?: string;
+    address_complement?: string;
+    address_neighborhood?: string;
+    city?: string;
   }) => {
     // Usa a URL dinâmica para redirecionamentos
     const redirectUrl = `${window.location.origin}/`;

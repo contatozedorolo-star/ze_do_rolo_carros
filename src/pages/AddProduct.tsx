@@ -1979,6 +1979,10 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Etapa 8 - Fotos (ÔNIBUS) */}
           {step === 8 && formData.vehicle_type === "onibus" && (
             <div className="space-y-6">
               <div>

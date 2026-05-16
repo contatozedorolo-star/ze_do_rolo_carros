@@ -205,6 +205,9 @@ const AddProduct = () => {
     price: "", transmission: "manual", fuel: "flex",
     is_armored: false, color: "",
     doors: "", engine_liters: "", seats: "",
+    // Especificações de Carro
+    seat_material: "", car_traction: "", car_steering: "", car_windows: "", wheel_type: "",
+    car_optionals: [] as string[],
     // Campos específicos de Motos
     cylinders: "", start_type: "", motor_type: "", brake_type: "", fuel_system: "",
     // Campos específicos de Caminhões

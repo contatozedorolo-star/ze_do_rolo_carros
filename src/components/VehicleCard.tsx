@@ -51,11 +51,7 @@ const VehicleCard = ({
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const goToDetail = () => {
-    if (requiresAuth) {
-      navigate("/auth", { state: { from: `/product/${id}` } });
-    } else {
-      navigate(`/product/${id}`);
-    }
+    navigate(`/product/${id}`);
   };
 
   return (

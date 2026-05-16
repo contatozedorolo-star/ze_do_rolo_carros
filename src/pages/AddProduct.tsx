@@ -479,13 +479,12 @@ const AddProduct = () => {
   const handleSubmit = async () => {
     if (!user) return;
     
-    const requiredPhotos = getRequiredPhotos();
-    const missingPhotos = requiredPhotos.filter(p => !images[p.id]);
-    if (missingPhotos.length > 0) {
-      toast({ 
-        title: "Fotos obrigatórias faltando", 
-        description: `Adicione: ${missingPhotos.slice(0, 3).map(p => p.label).join(", ")}${missingPhotos.length > 3 ? ` e mais ${missingPhotos.length - 3}` : ""}`, 
-        variant: "destructive" 
+    const totalImages = Object.keys(images).length;
+    if (totalImages === 0) {
+      toast({
+        title: "Envie ao menos uma foto",
+        description: "Anúncios com fotos têm muito mais chances de fechar negócio. Capriche e envie quantas puder!",
+        variant: "destructive"
       });
       return;
     }

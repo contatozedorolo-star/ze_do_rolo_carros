@@ -96,6 +96,17 @@ const ProposalsList = () => {
     if (received) setReceivedProposals(received as unknown as Proposal[]);
     if (sent) setSentProposals(sent as unknown as Proposal[]);
 
+    const matched = [...(received || []), ...(sent || [])].filter(
+      (p: any) => p.status === "accepted" && p.buyer_kyc_completed && p.seller_kyc_completed
+    );
+    const next: Record<string, { name: string; phone: string | null }> = {};
+    await Promise.all(matched.map(async (p: any) => {
+      const { data } = await supabase.rpc("get_proposal_contact", { _proposal_id: p.id });
+      const row = Array.isArray(data) ? data[0] : null;
+      if (row) next[p.id] = { name: row.other_name, phone: row.other_phone };
+    }));
+    setContacts(next);
+
     setLoading(false);
   };
 

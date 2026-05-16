@@ -572,6 +572,9 @@ const AddProduct = () => {
         trade_restrictions: formData.trade_restrictions.length > 0 ? formData.trade_restrictions : null,
         trade_vehicle_preference: formData.trade_vehicle_preference || null,
         trade_unaccepted_description: formData.trade_unaccepted_description || null,
+        perfect_deal_description: formData.perfect_deal_description || null,
+        negative_filters_description: formData.negative_filters_description || null,
+        trade_cash_offer: formData.trade_cash_offer ? parsePriceInput(formData.trade_cash_offer) : null,
         
         // Trator / Implemento
         hours_use: formData.hours_use ? parseInt(formData.hours_use) : null,

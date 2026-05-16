@@ -21,7 +21,8 @@ import {
   motoStartTypes, motoMotorTypes, motoBrakeTypes, motoOptionals, cylinderRanges, motoFuelSystems,
   truckTractions, truckBodies, truckCabins, truckOptionals, truckSeatOptions,
   vanOptionals, vanTractions, steeringTypes, windowTypes, vanEngineLiters,
-  busOptionals, busTractions, busSeatRanges
+  busOptionals, busTractions, busSeatRanges,
+  carSeatMaterials, carTractions, carSteeringTypes, carWindowTypes, carWheelTypes, carOptionals
 } from "@/components/filters/FilterData";
 import StepIndicator from "@/components/add-product/StepIndicator";
 import CarBodyTypeSelector from "@/components/add-product/CarBodyTypeSelector";

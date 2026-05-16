@@ -196,6 +196,7 @@ const AddProduct = () => {
     
     // Etapa 2 - Dados Técnicos
     status_preference: "",
+    origin_preference: "",
     city: "", state: "",
     km: "", brand: "", model: "", version: "",
     year_manufacture: "", year_model: "",

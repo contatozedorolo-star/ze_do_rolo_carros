@@ -431,6 +431,7 @@ export type Database = {
           motor_type: string | null
           need_type: string[] | null
           optionals: string[] | null
+          origin_preference: string | null
           ownership_time: string | null
           photo_checklist: Json | null
           plate: string | null
@@ -526,6 +527,7 @@ export type Database = {
           motor_type?: string | null
           need_type?: string[] | null
           optionals?: string[] | null
+          origin_preference?: string | null
           ownership_time?: string | null
           photo_checklist?: Json | null
           plate?: string | null
@@ -621,6 +623,7 @@ export type Database = {
           motor_type?: string | null
           need_type?: string[] | null
           optionals?: string[] | null
+          origin_preference?: string | null
           ownership_time?: string | null
           photo_checklist?: Json | null
           plate?: string | null

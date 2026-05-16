@@ -196,6 +196,7 @@ const AddProduct = () => {
     
     // Etapa 2 - Dados Técnicos
     status_preference: "",
+    origin_preference: "",
     city: "", state: "",
     km: "", brand: "", model: "", version: "",
     year_manufacture: "", year_model: "",
@@ -565,6 +566,7 @@ const AddProduct = () => {
         power_cv: formData.power_cv ? parseInt(formData.power_cv) : null,
         traction: formData.traction || null,
         status_preference: formData.status_preference || null,
+        origin_preference: formData.origin_preference || null,
       };
 
       const { data: vehicle, error: vehicleError } = await supabase
@@ -1057,6 +1059,39 @@ const AddProduct = () => {
                           checked={checked}
                           onChange={() => setFormData((p) => ({ ...p, status_preference: opt.value }))}
                           className="mt-1 h-4 w-4 accent-accent"
+                        />
+                        <span className="text-sm text-foreground">{opt.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Preferência de origem do veículo */}
+              <div className="p-4 border rounded-lg space-y-3 bg-card">
+                <Label className="text-base font-semibold">
+                  Qual tipo de veículo você prefere?
+                </Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: "nacional", label: "Nacional" },
+                    { value: "importado", label: "Importado" },
+                  ].map((opt) => {
+                    const checked = formData.origin_preference === opt.value;
+                    return (
+                      <label
+                        key={opt.value}
+                        className={`flex items-center gap-2 p-3 rounded-md border cursor-pointer transition-colors ${
+                          checked ? "border-accent bg-accent/10" : "border-border hover:bg-muted/40"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="origin_preference"
+                          value={opt.value}
+                          checked={checked}
+                          onChange={() => setFormData((p) => ({ ...p, origin_preference: opt.value }))}
+                          className="h-4 w-4 accent-accent"
                         />
                         <span className="text-sm text-foreground">{opt.label}</span>
                       </label>

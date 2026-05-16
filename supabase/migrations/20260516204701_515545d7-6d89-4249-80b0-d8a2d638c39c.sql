@@ -1,0 +1,1 @@
+ALTER TABLE public.vehicles ADD COLUMN origin_preference TEXT DEFAULT NULL;

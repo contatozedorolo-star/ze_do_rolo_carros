@@ -209,6 +209,8 @@ const KYCVerificationForm = () => {
             document_front_url: frontPath,
             document_back_url: backPath,
             selfie_url: selfiePath,
+            selfie_with_document_url: selfieDocPath,
+            residence_proof_url: residencePath,
             status: 'under_review',
             rejection_reason: null,
           })
@@ -225,6 +227,8 @@ const KYCVerificationForm = () => {
             document_front_url: frontPath,
             document_back_url: backPath,
             selfie_url: selfiePath,
+            selfie_with_document_url: selfieDocPath,
+            residence_proof_url: residencePath,
             status: 'under_review',
           });
 
@@ -236,15 +240,15 @@ const KYCVerificationForm = () => {
         description: "Sua solicitação de verificação foi enviada e será analisada em breve.",
       });
 
-      // Refresh data
       setShowForm(false);
       await fetchKYCVerification();
       refreshProfile();
-      
-      // Clear form
+
       setDocumentFront(null);
       setDocumentBack(null);
       setSelfie(null);
+      setSelfieWithDocument(null);
+      setResidenceProof(null);
     } catch (error: any) {
       toast({
         title: "Erro ao enviar",

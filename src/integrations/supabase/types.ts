@@ -385,6 +385,9 @@ export type Database = {
           brand: string
           bus_optionals: string[] | null
           bus_subcategory: string | null
+          car_steering: string | null
+          car_traction: string | null
+          car_windows: string | null
           city: string | null
           color: string
           consta_documento: boolean | null
@@ -450,6 +453,7 @@ export type Database = {
           rating_motor: number | null
           rating_pneus: number | null
           rating_suspensao: number | null
+          seat_material: string | null
           seats: number | null
           start_type: string | null
           state: string | null
@@ -471,6 +475,7 @@ export type Database = {
           van_subcategory: string | null
           vehicle_type: Database["public"]["Enums"]["vehicle_type"]
           version: string | null
+          wheel_type: string | null
           year_manufacture: number
           year_model: number
         }
@@ -482,6 +487,9 @@ export type Database = {
           brand: string
           bus_optionals?: string[] | null
           bus_subcategory?: string | null
+          car_steering?: string | null
+          car_traction?: string | null
+          car_windows?: string | null
           city?: string | null
           color: string
           consta_documento?: boolean | null
@@ -547,6 +555,7 @@ export type Database = {
           rating_motor?: number | null
           rating_pneus?: number | null
           rating_suspensao?: number | null
+          seat_material?: string | null
           seats?: number | null
           start_type?: string | null
           state?: string | null
@@ -568,6 +577,7 @@ export type Database = {
           van_subcategory?: string | null
           vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
           version?: string | null
+          wheel_type?: string | null
           year_manufacture: number
           year_model: number
         }
@@ -579,6 +589,9 @@ export type Database = {
           brand?: string
           bus_optionals?: string[] | null
           bus_subcategory?: string | null
+          car_steering?: string | null
+          car_traction?: string | null
+          car_windows?: string | null
           city?: string | null
           color?: string
           consta_documento?: boolean | null
@@ -644,6 +657,7 @@ export type Database = {
           rating_motor?: number | null
           rating_pneus?: number | null
           rating_suspensao?: number | null
+          seat_material?: string | null
           seats?: number | null
           start_type?: string | null
           state?: string | null
@@ -665,6 +679,7 @@ export type Database = {
           van_subcategory?: string | null
           vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
           version?: string | null
+          wheel_type?: string | null
           year_manufacture?: number
           year_model?: number
         }

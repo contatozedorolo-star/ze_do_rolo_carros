@@ -2302,6 +2302,10 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Etapa 6 - Fotos (CARROS E MOTOS) */}
           {step === 6 && (formData.vehicle_type !== "caminhao" && formData.vehicle_type !== "carreta") && formData.vehicle_type !== "van" && formData.vehicle_type !== "onibus" && (
             <div className="space-y-6">
               <div>

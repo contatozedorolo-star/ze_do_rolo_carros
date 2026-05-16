@@ -2053,6 +2053,7 @@ const AddProduct = () => {
         </div>
       </main>
       <Footer />
+      <ExitIntentAssistant enabled={step > 1 || Boolean(formData.brand || formData.model || formData.price)} />
     </div>
   );
 };

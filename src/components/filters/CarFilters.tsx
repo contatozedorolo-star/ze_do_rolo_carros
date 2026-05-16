@@ -11,6 +11,12 @@ import {
   ratingRanges,
   engineLiters,
   doorOptions,
+  carSeatMaterials,
+  carTractions,
+  carSteeringTypes,
+  carWindowTypes,
+  carWheelTypes,
+  carOptionals,
 } from "./FilterData";
 
 interface CarFiltersProps {

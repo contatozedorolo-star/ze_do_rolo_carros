@@ -1,4 +1,5 @@
-import { Shield, ArrowRight, CheckCircle } from "lucide-react";
+import { Shield, ArrowRight, CheckCircle, Repeat, Tag, ShoppingCart, HelpCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 import heroBackground from "@/assets/hero-background.gif";
@@ -71,8 +72,37 @@ const HeroSection = () => {
           </p>
 
 
+          {/* Action Cards Grid 2x2 */}
+          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-xl mx-auto animate-fade-in" style={{ animationDelay: "0.35s" }}>
+            {[
+              { top: "Quero", bottom: "trocar", href: "/add-product", Icon: Repeat },
+              { top: "Quero", bottom: "vender", href: "/add-product", Icon: Tag },
+              { top: "Quero", bottom: "comprar", href: "/veiculos", Icon: ShoppingCart },
+              { top: "Como", bottom: "funciona?", href: "/como-funciona", Icon: HelpCircle },
+            ].map(({ top, bottom, href, Icon }) => (
+              <Link
+                key={bottom}
+                to={href}
+                className="group flex flex-col items-center justify-center gap-1 py-5 px-3 rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-accent hover:border-accent transition-all hover:scale-[1.03]"
+              >
+                <Icon className="h-6 w-6 text-accent group-hover:text-white transition-colors" />
+                <span className="text-white text-base md:text-lg font-semibold leading-tight">{top}</span>
+                <span className="text-white text-xl md:text-2xl font-extrabold uppercase leading-tight">{bottom}</span>
+              </Link>
+            ))}
+          </div>
+
+          {/* Trust formula */}
+          <p className="text-sm md:text-base text-white/80 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <span className="font-semibold text-accent">Verificação</span>
+            {" + "}
+            <span className="font-semibold text-accent">Transparência</span>
+            {" = "}
+            <span className="font-extrabold uppercase" style={{ color: "#FF8C36" }}>Segurança</span>
+          </p>
+
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 animate-fade-in" style={{ animationDelay: "0.45s" }}>
             <Button variant="hero" size="xl" className="group" asChild>
               <a href="/auth?mode=signup">
                 Cadastre-se Agora

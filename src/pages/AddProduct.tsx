@@ -21,7 +21,8 @@ import {
   motoStartTypes, motoMotorTypes, motoBrakeTypes, motoOptionals, cylinderRanges, motoFuelSystems,
   truckTractions, truckBodies, truckCabins, truckOptionals, truckSeatOptions,
   vanOptionals, vanTractions, steeringTypes, windowTypes, vanEngineLiters,
-  busOptionals, busTractions, busSeatRanges
+  busOptionals, busTractions, busSeatRanges,
+  carSeatMaterials, carTractions, carSteeringTypes, carWindowTypes, carWheelTypes, carOptionals
 } from "@/components/filters/FilterData";
 import StepIndicator from "@/components/add-product/StepIndicator";
 import CarBodyTypeSelector from "@/components/add-product/CarBodyTypeSelector";
@@ -204,6 +205,9 @@ const AddProduct = () => {
     price: "", transmission: "manual", fuel: "flex",
     is_armored: false, color: "",
     doors: "", engine_liters: "", seats: "",
+    // Especificações de Carro
+    seat_material: "", car_traction: "", car_steering: "", car_windows: "", wheel_type: "",
+    car_optionals: [] as string[],
     // Campos específicos de Motos
     cylinders: "", start_type: "", motor_type: "", brake_type: "", fuel_system: "",
     // Campos específicos de Caminhões
@@ -569,6 +573,12 @@ const AddProduct = () => {
         status_preference: formData.status_preference || null,
         origin_preference: formData.origin_preference || null,
         powertrain_preference: formData.powertrain_preference || null,
+        seat_material: formData.seat_material || null,
+        car_traction: formData.car_traction || null,
+        car_steering: formData.car_steering || null,
+        car_windows: formData.car_windows || null,
+        wheel_type: formData.wheel_type || null,
+        optionals: formData.car_optionals.length > 0 ? formData.car_optionals : null,
       };
 
       const { data: vehicle, error: vehicleError } = await supabase
@@ -1135,6 +1145,93 @@ const AddProduct = () => {
                   })}
                 </div>
               </div>
+
+              {/* Especificações detalhadas (apenas carros) */}
+              {formData.vehicle_type === "carro" && (
+                <>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <Label>Bancos</Label>
+                      <Select value={formData.seat_material} onValueChange={v => setFormData(p => ({ ...p, seat_material: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {carSeatMaterials.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Tração</Label>
+                      <Select value={formData.car_traction} onValueChange={v => setFormData(p => ({ ...p, car_traction: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {carTractions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Direção</Label>
+                      <Select value={formData.car_steering} onValueChange={v => setFormData(p => ({ ...p, car_steering: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {carSteeringTypes.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Vidros</Label>
+                      <Select value={formData.car_windows} onValueChange={v => setFormData(p => ({ ...p, car_windows: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {carWindowTypes.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Rodas</Label>
+                      <Select value={formData.wheel_type} onValueChange={v => setFormData(p => ({ ...p, wheel_type: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent className="bg-card">
+                          {carWheelTypes.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Opcionais (multi-seleção) */}
+                  <div className="p-4 border rounded-lg space-y-3 bg-card">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-base font-semibold">Opcionais</Label>
+                      <span className="text-xs text-muted-foreground">
+                        {formData.car_optionals.length} selecionado(s)
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {carOptionals.map(opt => {
+                        const checked = formData.car_optionals.includes(opt.value);
+                        return (
+                          <label
+                            key={opt.value}
+                            className={`flex items-center gap-2 p-2 rounded-md border cursor-pointer transition-colors ${
+                              checked ? "border-accent bg-accent/10" : "border-border hover:bg-muted/40"
+                            }`}
+                          >
+                            <Checkbox
+                              checked={checked}
+                              onCheckedChange={(c) => {
+                                const next = c
+                                  ? [...formData.car_optionals, opt.value]
+                                  : formData.car_optionals.filter((v: string) => v !== opt.value);
+                                setFormData(p => ({ ...p, car_optionals: next }));
+                              }}
+                            />
+                            <span className="text-sm text-foreground">{opt.label}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
 

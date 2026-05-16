@@ -528,3 +528,78 @@ export const busOptionals = [
   { value: "retarder", label: "Retarder" },
   { value: "freio_motor", label: "Freio Motor" },
 ];
+
+// =====================================
+// Especificações detalhadas para CARROS
+// =====================================
+
+export const carSeatMaterials = [
+  { value: "couro", label: "Couro" },
+  { value: "tecido", label: "Tecido" },
+];
+
+export const carTractions = [
+  { value: "4x2_dianteira", label: "4x2 dianteira" },
+  { value: "4x2_traseira", label: "4x2 traseira" },
+  { value: "4x4_awd", label: "4x4 automático e permanente [AWD]" },
+  { value: "4x4_manual", label: "4x4 manual" },
+];
+
+export const carSteeringTypes = [
+  { value: "hidraulica", label: "Hidráulica" },
+  { value: "eletrohidraulica", label: "Eletrohidráulica" },
+  { value: "eletrica", label: "Elétrica" },
+  { value: "sem_direcao", label: "Sem direção" },
+];
+
+export const carWindowTypes = [
+  { value: "eletrico", label: "Elétrico" },
+  { value: "so_frente", label: "Só na frente" },
+  { value: "frente_traseira", label: "Frente e traseira" },
+  { value: "manual", label: "Manual" },
+];
+
+export const carWheelTypes = [
+  { value: "ferro", label: "Ferro" },
+  { value: "liga_leve", label: "Liga Leve" },
+];
+
+export const carOptionals = [
+  { value: "airbag", label: "Airbag" },
+  { value: "alarme", label: "Alarme" },
+  { value: "ar_condicionado", label: "Ar condicionado" },
+  { value: "ar_quente", label: "Ar quente" },
+  { value: "banco_regulagem_altura", label: "Banco com regulagem de altura" },
+  { value: "bancos_dianteiros_aquecimento", label: "Bancos dianteiros com aquecimento" },
+  { value: "bancos_couro", label: "Bancos em couro" },
+  { value: "cd_player", label: "CD Player" },
+  { value: "cd_player_mp3", label: "CD Player e MP3" },
+  { value: "capota_maritima", label: "Capota Marítima" },
+  { value: "computador_bordo", label: "Computador de bordo" },
+  { value: "controle_velocidade", label: "Controle Automático de Velocidade" },
+  { value: "controle_tracao", label: "Controle de tração" },
+  { value: "dvd_player", label: "DVD Player" },
+  { value: "desembacador_traseiro", label: "Desembaçador traseiro" },
+  { value: "disqueteira", label: "Disqueteira" },
+  { value: "encosto_cabeca_traseiro", label: "Encosto de cabeça traseiro" },
+  { value: "farol_xenonio", label: "Farol de Xenônio" },
+  { value: "freios_abs", label: "Freios ABS" },
+  { value: "gps", label: "GPS" },
+  { value: "limpador_traseiro", label: "Limpador traseiro" },
+  { value: "protetor_cacamba", label: "Protetor de caçamba" },
+  { value: "retrovisor_fotocromico", label: "Retrovisor fotocrômico" },
+  { value: "retrovisores_eletricos", label: "Retrovisores elétricos" },
+  { value: "sensor_chuva", label: "Sensor de chuva" },
+  { value: "sensor_estacionamento", label: "Sensor de estacionamento" },
+  { value: "teto_solar", label: "Teto Solar" },
+  { value: "travas_eletricas", label: "Travas Elétricas" },
+  { value: "tracao_4x4", label: "Tração 4x4" },
+  { value: "vidros_eletricos", label: "Vidros elétricos" },
+  { value: "volante_regulagem_altura", label: "Volante com regulagem de altura" },
+  { value: "banco_eletrico", label: "Banco elétrico" },
+  { value: "ar_digital_1_zona", label: "Ar digital de 1 zona" },
+  { value: "ar_digital_2_zonas", label: "Ar digital de 2 zonas" },
+  { value: "ar_digital_3_zonas", label: "Ar digital de 3 zonas" },
+  { value: "ar_digital_4_zonas", label: "Ar digital de 4 zonas" },
+  { value: "sensor_ponto_cego", label: "Sensor de ponto cego" },
+];

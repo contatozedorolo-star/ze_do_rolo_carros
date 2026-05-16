@@ -11,6 +11,12 @@ import {
   ratingRanges,
   engineLiters,
   doorOptions,
+  carSeatMaterials,
+  carTractions,
+  carSteeringTypes,
+  carWindowTypes,
+  carWheelTypes,
+  carOptionals,
 } from "./FilterData";
 
 interface CarFiltersProps {
@@ -251,6 +257,114 @@ const CarFilters = ({ filters, onFilterChange }: CarFiltersProps) => {
             >
               {color}
             </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Bancos */}
+      <FilterSection title="Bancos" defaultOpen={false}>
+        <div className="flex flex-wrap gap-2">
+          {carSeatMaterials.map((o) => (
+            <button
+              key={o.value}
+              onClick={() => toggleArrayFilter("seat_material", o.value)}
+              className={`px-3 py-1.5 rounded-full border transition-all text-xs font-medium ${
+                (filters.seat_material || []).includes(o.value)
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Tração */}
+      <FilterSection title="Tração" defaultOpen={false}>
+        <div className="space-y-2">
+          {carTractions.map((o) => (
+            <div key={o.value} className="flex items-center space-x-2">
+              <Checkbox
+                id={`car-traction-${o.value}`}
+                checked={(filters.car_traction || []).includes(o.value)}
+                onCheckedChange={() => toggleArrayFilter("car_traction", o.value)}
+              />
+              <Label htmlFor={`car-traction-${o.value}`} className="text-sm cursor-pointer">{o.label}</Label>
+            </div>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Direção */}
+      <FilterSection title="Direção" defaultOpen={false}>
+        <div className="flex flex-wrap gap-2">
+          {carSteeringTypes.map((o) => (
+            <button
+              key={o.value}
+              onClick={() => toggleArrayFilter("car_steering", o.value)}
+              className={`px-3 py-1.5 rounded-full border transition-all text-xs font-medium ${
+                (filters.car_steering || []).includes(o.value)
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Vidros */}
+      <FilterSection title="Vidros" defaultOpen={false}>
+        <div className="flex flex-wrap gap-2">
+          {carWindowTypes.map((o) => (
+            <button
+              key={o.value}
+              onClick={() => toggleArrayFilter("car_windows", o.value)}
+              className={`px-3 py-1.5 rounded-full border transition-all text-xs font-medium ${
+                (filters.car_windows || []).includes(o.value)
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Rodas */}
+      <FilterSection title="Rodas" defaultOpen={false}>
+        <div className="flex flex-wrap gap-2">
+          {carWheelTypes.map((o) => (
+            <button
+              key={o.value}
+              onClick={() => toggleArrayFilter("wheel_type", o.value)}
+              className={`px-3 py-1.5 rounded-full border transition-all text-xs font-medium ${
+                (filters.wheel_type || []).includes(o.value)
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Opcionais */}
+      <FilterSection title="Opcionais" defaultOpen={false}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+          {carOptionals.map((o) => (
+            <div key={o.value} className="flex items-center space-x-2">
+              <Checkbox
+                id={`car-opt-${o.value}`}
+                checked={(filters.optionals || []).includes(o.value)}
+                onCheckedChange={() => toggleArrayFilter("optionals", o.value)}
+              />
+              <Label htmlFor={`car-opt-${o.value}`} className="text-sm cursor-pointer">{o.label}</Label>
+            </div>
           ))}
         </div>
       </FilterSection>

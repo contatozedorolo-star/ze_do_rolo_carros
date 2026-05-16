@@ -478,20 +478,15 @@ const KYCVerificationForm = () => {
           </div>
         </div>
 
-        {/* Selfie */}
+        {/* Selfie do rosto */}
         <div className="space-y-2">
           <Label className="flex items-center gap-2">
             <Camera className="h-4 w-4" />
-            Selfie com o Documento *
+            Selfie do Rosto *
           </Label>
           <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              id="selfie"
-              onChange={(e) => setSelfie(e.target.files?.[0] || null)}
-            />
+            <input type="file" accept="image/*" className="hidden" id="selfie"
+              onChange={(e) => setSelfie(e.target.files?.[0] || null)} />
             <label htmlFor="selfie" className="cursor-pointer">
               {selfie ? (
                 <div className="flex items-center justify-center gap-2 text-accent">
@@ -501,14 +496,62 @@ const KYCVerificationForm = () => {
               ) : (
                 <div className="space-y-2">
                   <Camera className="h-8 w-8 mx-auto text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Foto nítida apenas do seu rosto</p>
+                </div>
+              )}
+            </label>
+          </div>
+        </div>
+
+        {/* Selfie segurando o documento */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2">
+            <Camera className="h-4 w-4" />
+            Selfie Segurando o Documento *
+          </Label>
+          <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
+            <input type="file" accept="image/*" className="hidden" id="selfie-doc"
+              onChange={(e) => setSelfieWithDocument(e.target.files?.[0] || null)} />
+            <label htmlFor="selfie-doc" className="cursor-pointer">
+              {selfieWithDocument ? (
+                <div className="flex items-center justify-center gap-2 text-accent">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-medium">{selfieWithDocument.name}</span>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Camera className="h-8 w-8 mx-auto text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">Tire uma selfie segurando o documento ao lado do rosto</p>
                 </div>
               )}
             </label>
           </div>
-          <p className="text-xs text-muted-foreground">
-            A foto deve mostrar claramente seu rosto e o documento na mesma imagem.
-          </p>
+          <p className="text-xs text-muted-foreground">A foto deve mostrar rosto e documento na mesma imagem.</p>
+        </div>
+
+        {/* Comprovante de Residência */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2">
+            <FileCheck className="h-4 w-4" />
+            Comprovante de Residência *
+          </Label>
+          <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
+            <input type="file" accept="image/*,application/pdf" className="hidden" id="residence"
+              onChange={(e) => setResidenceProof(e.target.files?.[0] || null)} />
+            <label htmlFor="residence" className="cursor-pointer">
+              {residenceProof ? (
+                <div className="flex items-center justify-center gap-2 text-accent">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-medium">{residenceProof.name}</span>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Conta de luz, água, internet ou contrato (últimos 3 meses)</p>
+                </div>
+              )}
+            </label>
+          </div>
         </div>
 
         {/* Submit Button */}
@@ -516,7 +559,7 @@ const KYCVerificationForm = () => {
           variant="cta" 
           className="w-full" 
           onClick={handleSubmit}
-          disabled={uploading || !cpfCnpj || !documentType || !documentNumber || !documentFront || !selfie}
+          disabled={uploading || !cpfCnpj || !documentType || !documentNumber || !documentFront || !selfie || !selfieWithDocument || !residenceProof}
         >
           {uploading ? (
             <>

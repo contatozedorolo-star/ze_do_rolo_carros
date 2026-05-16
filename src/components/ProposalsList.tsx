@@ -150,9 +150,9 @@ const ProposalsList = () => {
     }
 
     toast({
-      title: newStatus === "accepted" ? "Proposta aceita!" : "Proposta recusada",
-      description: newStatus === "accepted" 
-        ? "Entre em contato com o comprador para finalizar a negociação."
+      title: newStatus === "accepted" ? "Match registrado! 💛" : "Proposta recusada",
+      description: newStatus === "accepted"
+        ? "Vocês têm interesse mútuo. Conclua a verificação de identidade para liberar o contato direto."
         : "A proposta foi recusada.",
     });
 

@@ -50,23 +50,16 @@ const ProposalDialog = ({
   const [tradePlusAmount, setTradePlusAmount] = useState("");
 
   const handleTriggerClick = (e: React.MouseEvent) => {
-    // Prevent the default dialog trigger behavior
     e.preventDefault();
     e.stopPropagation();
 
-    // Check if user is logged in
+    // Cadastro inicial é suficiente para enviar proposta.
+    // O KYC só será exigido quando houver Match (vendedor aceitar).
     if (!user) {
       navigate("/auth", { state: { from: window.location.pathname } });
       return;
     }
 
-    // Check if KYC is approved
-    if (!isVerified) {
-      setShowKYCModal(true);
-      return;
-    }
-
-    // All checks passed, open the dialog
     setOpen(true);
   };
 

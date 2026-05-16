@@ -70,6 +70,8 @@ const KYCVerificationForm = () => {
   const [documentFront, setDocumentFront] = useState<File | null>(null);
   const [documentBack, setDocumentBack] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
+  const [selfieWithDocument, setSelfieWithDocument] = useState<File | null>(null);
+  const [residenceProof, setResidenceProof] = useState<File | null>(null);
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -151,10 +153,10 @@ const KYCVerificationForm = () => {
     }
     setCpfCnpjError("");
 
-    if (!user || !documentType || !documentNumber || !documentFront || !selfie) {
+    if (!user || !documentType || !documentNumber || !documentFront || !selfie || !selfieWithDocument || !residenceProof) {
       toast({
         title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos e faça upload dos arquivos necessários.",
+        description: "Envie selfie, foto do documento, selfie com documento e comprovante de residência.",
         variant: "destructive",
       });
       return;
@@ -165,13 +167,14 @@ const KYCVerificationForm = () => {
     try {
       const timestamp = Date.now();
       const cleanValue = cpfCnpj.replace(/\D/g, '');
-      
-      // Upload files
+
       const frontPath = await uploadFile(documentFront, `${user.id}/doc_front_${timestamp}.${documentFront.name.split('.').pop()}`);
       const backPath = documentBack ? await uploadFile(documentBack, `${user.id}/doc_back_${timestamp}.${documentBack.name.split('.').pop()}`) : null;
       const selfiePath = await uploadFile(selfie, `${user.id}/selfie_${timestamp}.${selfie.name.split('.').pop()}`);
+      const selfieDocPath = await uploadFile(selfieWithDocument, `${user.id}/selfie_doc_${timestamp}.${selfieWithDocument.name.split('.').pop()}`);
+      const residencePath = await uploadFile(residenceProof, `${user.id}/residence_${timestamp}.${residenceProof.name.split('.').pop()}`);
 
-      if (!frontPath || !selfiePath) {
+      if (!frontPath || !selfiePath || !selfieDocPath || !residencePath) {
         throw new Error("Erro ao fazer upload dos arquivos");
       }
 
@@ -206,6 +209,8 @@ const KYCVerificationForm = () => {
             document_front_url: frontPath,
             document_back_url: backPath,
             selfie_url: selfiePath,
+            selfie_with_document_url: selfieDocPath,
+            residence_proof_url: residencePath,
             status: 'under_review',
             rejection_reason: null,
           })
@@ -222,6 +227,8 @@ const KYCVerificationForm = () => {
             document_front_url: frontPath,
             document_back_url: backPath,
             selfie_url: selfiePath,
+            selfie_with_document_url: selfieDocPath,
+            residence_proof_url: residencePath,
             status: 'under_review',
           });
 
@@ -233,15 +240,15 @@ const KYCVerificationForm = () => {
         description: "Sua solicitação de verificação foi enviada e será analisada em breve.",
       });
 
-      // Refresh data
       setShowForm(false);
       await fetchKYCVerification();
       refreshProfile();
-      
-      // Clear form
+
       setDocumentFront(null);
       setDocumentBack(null);
       setSelfie(null);
+      setSelfieWithDocument(null);
+      setResidenceProof(null);
     } catch (error: any) {
       toast({
         title: "Erro ao enviar",
@@ -471,20 +478,15 @@ const KYCVerificationForm = () => {
           </div>
         </div>
 
-        {/* Selfie */}
+        {/* Selfie do rosto */}
         <div className="space-y-2">
           <Label className="flex items-center gap-2">
             <Camera className="h-4 w-4" />
-            Selfie com o Documento *
+            Selfie do Rosto *
           </Label>
           <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              id="selfie"
-              onChange={(e) => setSelfie(e.target.files?.[0] || null)}
-            />
+            <input type="file" accept="image/*" className="hidden" id="selfie"
+              onChange={(e) => setSelfie(e.target.files?.[0] || null)} />
             <label htmlFor="selfie" className="cursor-pointer">
               {selfie ? (
                 <div className="flex items-center justify-center gap-2 text-accent">
@@ -494,14 +496,62 @@ const KYCVerificationForm = () => {
               ) : (
                 <div className="space-y-2">
                   <Camera className="h-8 w-8 mx-auto text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Foto nítida apenas do seu rosto</p>
+                </div>
+              )}
+            </label>
+          </div>
+        </div>
+
+        {/* Selfie segurando o documento */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2">
+            <Camera className="h-4 w-4" />
+            Selfie Segurando o Documento *
+          </Label>
+          <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
+            <input type="file" accept="image/*" className="hidden" id="selfie-doc"
+              onChange={(e) => setSelfieWithDocument(e.target.files?.[0] || null)} />
+            <label htmlFor="selfie-doc" className="cursor-pointer">
+              {selfieWithDocument ? (
+                <div className="flex items-center justify-center gap-2 text-accent">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-medium">{selfieWithDocument.name}</span>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Camera className="h-8 w-8 mx-auto text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">Tire uma selfie segurando o documento ao lado do rosto</p>
                 </div>
               )}
             </label>
           </div>
-          <p className="text-xs text-muted-foreground">
-            A foto deve mostrar claramente seu rosto e o documento na mesma imagem.
-          </p>
+          <p className="text-xs text-muted-foreground">A foto deve mostrar rosto e documento na mesma imagem.</p>
+        </div>
+
+        {/* Comprovante de Residência */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2">
+            <FileCheck className="h-4 w-4" />
+            Comprovante de Residência *
+          </Label>
+          <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
+            <input type="file" accept="image/*,application/pdf" className="hidden" id="residence"
+              onChange={(e) => setResidenceProof(e.target.files?.[0] || null)} />
+            <label htmlFor="residence" className="cursor-pointer">
+              {residenceProof ? (
+                <div className="flex items-center justify-center gap-2 text-accent">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-medium">{residenceProof.name}</span>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Conta de luz, água, internet ou contrato (últimos 3 meses)</p>
+                </div>
+              )}
+            </label>
+          </div>
         </div>
 
         {/* Submit Button */}
@@ -509,7 +559,7 @@ const KYCVerificationForm = () => {
           variant="cta" 
           className="w-full" 
           onClick={handleSubmit}
-          disabled={uploading || !cpfCnpj || !documentType || !documentNumber || !documentFront || !selfie}
+          disabled={uploading || !cpfCnpj || !documentType || !documentNumber || !documentFront || !selfie || !selfieWithDocument || !residenceProof}
         >
           {uploading ? (
             <>

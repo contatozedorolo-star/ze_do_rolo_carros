@@ -9,7 +9,7 @@ import { Eye, EyeOff, Shield, CheckCircle, ArrowLeft, Car, Lock, Sparkles } from
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
-import { isValidPhone } from "@/lib/validators";
+import { isValidPhone, isValidCPF, formatCPF } from "@/lib/validators";
 
 
 const signUpSchema = z.object({
@@ -18,9 +18,22 @@ const signUpSchema = z.object({
   phone: z.string()
     .min(10, "Telefone inválido")
     .max(15, "Telefone inválido")
-    .refine((val) => isValidPhone(val), {
-      message: "Telefone inválido. Use o formato (XX) XXXXX-XXXX"
-    }),
+    .refine((val) => isValidPhone(val), { message: "Telefone inválido. Use o formato (XX) XXXXX-XXXX" }),
+  cpf: z.string().refine((val) => isValidCPF(val), { message: "CPF inválido" }),
+  birth_date: z.string().refine((val) => {
+    if (!val) return false;
+    const d = new Date(val);
+    if (isNaN(d.getTime())) return false;
+    const age = (Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000);
+    return age >= 18 && age <= 120;
+  }, { message: "Você precisa ter pelo menos 18 anos" }),
+  cep: z.string().refine((v) => v.replace(/\D/g, "").length === 8, { message: "CEP inválido" }),
+  address_street: z.string().min(2, "Informe a rua"),
+  address_number: z.string().min(1, "Informe o número"),
+  address_complement: z.string().optional(),
+  address_neighborhood: z.string().min(2, "Informe o bairro"),
+  city: z.string().min(2, "Informe a cidade"),
+  state: z.string().length(2, "UF deve ter 2 letras"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   confirmPassword: z.string(),
   acceptedTerms: z.literal(true, {
@@ -62,6 +75,15 @@ const Auth = () => {
     full_name: "",
     email: "",
     phone: "",
+    cpf: "",
+    birth_date: "",
+    cep: "",
+    address_street: "",
+    address_number: "",
+    address_complement: "",
+    address_neighborhood: "",
+    city: "",
+    state: "",
     password: "",
     confirmPassword: "",
     acceptedTerms: false,
@@ -217,6 +239,15 @@ const Auth = () => {
         const { error } = await signUp(formData.email, formData.password, {
           full_name: formData.full_name,
           phone: formData.phone.replace(/\D/g, ''),
+          cpf: formData.cpf.replace(/\D/g, ''),
+          birth_date: formData.birth_date,
+          cep: formData.cep.replace(/\D/g, ''),
+          address_street: formData.address_street,
+          address_number: formData.address_number,
+          address_complement: formData.address_complement || '',
+          address_neighborhood: formData.address_neighborhood,
+          city: formData.city,
+          state: formData.state.toUpperCase(),
         });
 
         if (error) {
@@ -480,6 +511,153 @@ const Auth = () => {
                     className={errors.phone ? "border-destructive" : ""}
                   />
                   {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="cpf">CPF</Label>
+                    <Input
+                      id="cpf"
+                      name="cpf"
+                      placeholder="000.000.000-00"
+                      value={formData.cpf}
+                      onChange={(e) => {
+                        e.target.value = formatCPF(e.target.value);
+                        handleChange(e);
+                      }}
+                      maxLength={14}
+                      className={errors.cpf ? "border-destructive" : ""}
+                    />
+                    {errors.cpf && <p className="text-xs text-destructive">{errors.cpf}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="birth_date">Data de Nascimento</Label>
+                    <Input
+                      id="birth_date"
+                      name="birth_date"
+                      type="date"
+                      value={formData.birth_date}
+                      onChange={handleChange}
+                      className={errors.birth_date ? "border-destructive" : ""}
+                    />
+                    {errors.birth_date && <p className="text-xs text-destructive">{errors.birth_date}</p>}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="cep">CEP</Label>
+                  <Input
+                    id="cep"
+                    name="cep"
+                    placeholder="00000-000"
+                    value={formData.cep}
+                    onChange={async (e) => {
+                      const raw = e.target.value.replace(/\D/g, "").slice(0, 8);
+                      const formatted = raw.length > 5 ? `${raw.slice(0,5)}-${raw.slice(5)}` : raw;
+                      setFormData(prev => ({ ...prev, cep: formatted }));
+                      if (errors.cep) setErrors(prev => ({ ...prev, cep: "" }));
+                      if (raw.length === 8) {
+                        try {
+                          const resp = await fetch(`https://viacep.com.br/ws/${raw}/json/`);
+                          const data = await resp.json();
+                          if (!data.erro) {
+                            setFormData(prev => ({
+                              ...prev,
+                              address_street: data.logradouro || prev.address_street,
+                              address_neighborhood: data.bairro || prev.address_neighborhood,
+                              city: data.localidade || prev.city,
+                              state: data.uf || prev.state,
+                            }));
+                          }
+                        } catch { /* noop */ }
+                      }
+                    }}
+                    maxLength={9}
+                    className={errors.cep ? "border-destructive" : ""}
+                  />
+                  {errors.cep && <p className="text-xs text-destructive">{errors.cep}</p>}
+                </div>
+
+                <div className="grid grid-cols-[1fr_120px] gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="address_street">Rua / Logradouro</Label>
+                    <Input
+                      id="address_street"
+                      name="address_street"
+                      placeholder="Rua das Flores"
+                      value={formData.address_street}
+                      onChange={handleChange}
+                      className={errors.address_street ? "border-destructive" : ""}
+                    />
+                    {errors.address_street && <p className="text-xs text-destructive">{errors.address_street}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="address_number">Número</Label>
+                    <Input
+                      id="address_number"
+                      name="address_number"
+                      placeholder="123"
+                      value={formData.address_number}
+                      onChange={handleChange}
+                      className={errors.address_number ? "border-destructive" : ""}
+                    />
+                    {errors.address_number && <p className="text-xs text-destructive">{errors.address_number}</p>}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address_complement">Complemento (opcional)</Label>
+                  <Input
+                    id="address_complement"
+                    name="address_complement"
+                    placeholder="Apto, bloco, referência…"
+                    value={formData.address_complement}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address_neighborhood">Bairro</Label>
+                  <Input
+                    id="address_neighborhood"
+                    name="address_neighborhood"
+                    placeholder="Centro"
+                    value={formData.address_neighborhood}
+                    onChange={handleChange}
+                    className={errors.address_neighborhood ? "border-destructive" : ""}
+                  />
+                  {errors.address_neighborhood && <p className="text-xs text-destructive">{errors.address_neighborhood}</p>}
+                </div>
+
+                <div className="grid grid-cols-[1fr_100px] gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="city">Cidade</Label>
+                    <Input
+                      id="city"
+                      name="city"
+                      placeholder="São Paulo"
+                      value={formData.city}
+                      onChange={handleChange}
+                      className={errors.city ? "border-destructive" : ""}
+                    />
+                    {errors.city && <p className="text-xs text-destructive">{errors.city}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">UF</Label>
+                    <Input
+                      id="state"
+                      name="state"
+                      placeholder="SP"
+                      value={formData.state}
+                      onChange={(e) => {
+                        e.target.value = e.target.value.toUpperCase().slice(0, 2);
+                        handleChange(e);
+                      }}
+                      maxLength={2}
+                      className={errors.state ? "border-destructive" : ""}
+                    />
+                    {errors.state && <p className="text-xs text-destructive">{errors.state}</p>}
+                  </div>
                 </div>
 
               </>

@@ -239,6 +239,15 @@ const Auth = () => {
         const { error } = await signUp(formData.email, formData.password, {
           full_name: formData.full_name,
           phone: formData.phone.replace(/\D/g, ''),
+          cpf: formData.cpf.replace(/\D/g, ''),
+          birth_date: formData.birth_date,
+          cep: formData.cep.replace(/\D/g, ''),
+          address_street: formData.address_street,
+          address_number: formData.address_number,
+          address_complement: formData.address_complement || '',
+          address_neighborhood: formData.address_neighborhood,
+          city: formData.city,
+          state: formData.state.toUpperCase(),
         });
 
         if (error) {

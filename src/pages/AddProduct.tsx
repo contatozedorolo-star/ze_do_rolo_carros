@@ -37,6 +37,7 @@ import VanTypeSelector from "@/components/add-product/VanTypeSelector";
 import VanPhotoUploadGrid, { vanPhotoCategories } from "@/components/add-product/VanPhotoUploadGrid";
 import BusTypeSelector from "@/components/add-product/BusTypeSelector";
 import BusPhotoUploadGrid, { busPhotoCategories } from "@/components/add-product/BusPhotoUploadGrid";
+import PhotoTipsCard from "@/components/add-product/PhotoTipsCard";
 import ExitIntentAssistant from "@/components/ExitIntentAssistant";
 import TratorTypeSelector from "@/components/add-product/TratorTypeSelector";
 import ImplementoTypeSelector from "@/components/add-product/ImplementoTypeSelector";
@@ -479,13 +480,12 @@ const AddProduct = () => {
   const handleSubmit = async () => {
     if (!user) return;
     
-    const requiredPhotos = getRequiredPhotos();
-    const missingPhotos = requiredPhotos.filter(p => !images[p.id]);
-    if (missingPhotos.length > 0) {
-      toast({ 
-        title: "Fotos obrigatórias faltando", 
-        description: `Adicione: ${missingPhotos.slice(0, 3).map(p => p.label).join(", ")}${missingPhotos.length > 3 ? ` e mais ${missingPhotos.length - 3}` : ""}`, 
-        variant: "destructive" 
+    const totalImages = Object.keys(images).length;
+    if (totalImages === 0) {
+      toast({
+        title: "Envie ao menos uma foto",
+        description: "Anúncios com fotos têm muito mais chances de fechar negócio. Capriche e envie quantas puder!",
+        variant: "destructive"
       });
       return;
     }
@@ -1682,6 +1682,8 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
               </div>
 
+              <PhotoTipsCard />
+
               <TruckPhotoUploadGrid
                 images={images}
                 previews={imagePreviews}
@@ -1990,6 +1992,8 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
               </div>
 
+              <PhotoTipsCard />
+
               <BusPhotoUploadGrid images={images} previews={imagePreviews} onUpload={handleImageUpload} onRemove={handleRemoveImage} />
 
               <div>
@@ -2006,6 +2010,8 @@ const AddProduct = () => {
                 <h2 className="text-2xl font-bold text-foreground">Galeria 360° - Vans</h2>
                 <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
               </div>
+
+              <PhotoTipsCard />
 
               <VanPhotoUploadGrid
                 images={images}
@@ -2382,6 +2388,8 @@ const AddProduct = () => {
                 <h2 className="text-2xl font-bold text-foreground">Galeria de Fotos</h2>
                 <p className="text-muted-foreground mt-1">Adicione fotos de todos os ângulos do veículo</p>
               </div>
+
+              <PhotoTipsCard />
 
               {formData.vehicle_type === "moto" ? (
                 <MotoPhotoUploadGrid

@@ -27,7 +27,7 @@ const HeroSection = () => {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/30 animate-fade-in">
             <Shield className="h-4 w-4 text-accent" />
             <span className="text-sm font-semibold text-accent">
-              🛡️ 100% SEGURO E VERIFICADO
+              🛡️ SITE SEGURO E VERIFICADO
             </span>
           </div>
 

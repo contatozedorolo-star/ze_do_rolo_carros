@@ -238,10 +238,12 @@ const AddProduct = () => {
     diagnostic_notes: "", ownership_time: "",
     
     // Etapa 5 - Negócio Ideal
-    trade_priority: "dinheiro",
+    trade_priority: "apenas_venda",
     min_cash_return: "", max_cash_return: "",
     trade_restrictions: [] as string[],
     ideal_trade_description: "",
+    trade_vehicle_preference: "",
+    trade_unaccepted_description: "",
     
     // Etapa 6 - Fotos
     description: "",

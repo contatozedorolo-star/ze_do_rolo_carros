@@ -60,11 +60,13 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 
 const ProposalsList = () => {
   const { user } = useAuth();
+  const { isVerified: isUserKYCApproved } = useKYCStatus();
   const { toast } = useToast();
-  
+
   const [receivedProposals, setReceivedProposals] = useState<Proposal[]>([]);
   const [sentProposals, setSentProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [contacts, setContacts] = useState<Record<string, { name: string; phone: string | null }>>({});
 
   const fetchProposals = async () => {
     if (!user) return;
@@ -93,6 +95,17 @@ const ProposalsList = () => {
 
     if (received) setReceivedProposals(received as unknown as Proposal[]);
     if (sent) setSentProposals(sent as unknown as Proposal[]);
+
+    const matched = [...(received || []), ...(sent || [])].filter(
+      (p: any) => p.status === "accepted" && p.buyer_kyc_completed && p.seller_kyc_completed
+    );
+    const next: Record<string, { name: string; phone: string | null }> = {};
+    await Promise.all(matched.map(async (p: any) => {
+      const { data } = await supabase.rpc("get_proposal_contact", { _proposal_id: p.id });
+      const row = Array.isArray(data) ? data[0] : null;
+      if (row) next[p.id] = { name: row.other_name, phone: row.other_phone };
+    }));
+    setContacts(next);
 
     setLoading(false);
   };
@@ -137,9 +150,9 @@ const ProposalsList = () => {
     }
 
     toast({
-      title: newStatus === "accepted" ? "Proposta aceita!" : "Proposta recusada",
-      description: newStatus === "accepted" 
-        ? "Entre em contato com o comprador para finalizar a negociação."
+      title: newStatus === "accepted" ? "Match registrado! 💛" : "Proposta recusada",
+      description: newStatus === "accepted"
+        ? "Vocês têm interesse mútuo. Conclua a verificação de identidade para liberar o contato direto."
         : "A proposta foi recusada.",
     });
 
@@ -247,8 +260,8 @@ const ProposalsList = () => {
                     className="flex-1 bg-accent hover:bg-accent/90"
                     onClick={() => updateProposalStatus(proposal.id, "accepted")}
                   >
-                    <Check className="h-4 w-4 mr-1" />
-                    Aceitar
+                    <Heart className="h-4 w-4 mr-1" />
+                    Tenho Interesse
                   </Button>
                   <Button
                     variant="outline"
@@ -271,6 +284,59 @@ const ProposalsList = () => {
               )}
             </div>
           )}
+
+          {/* Match: KYC gating + contact reveal */}
+          {proposal.status === "accepted" && (() => {
+            const otherCompleted = type === "received" ? proposal.buyer_kyc_completed : proposal.seller_kyc_completed;
+            const bothDone = proposal.buyer_kyc_completed && proposal.seller_kyc_completed;
+            const contact = contacts[proposal.id];
+            if (bothDone && contact) {
+              return (
+                <div className="mt-3 p-3 rounded-lg bg-accent/10 border border-accent/30 space-y-2">
+                  <div className="flex items-center gap-2 text-accent font-medium text-sm">
+                    <ShieldCheck className="h-4 w-4" />
+                    Identidades verificadas — contato liberado
+                  </div>
+                  <div className="text-sm">
+                    <p className="text-foreground font-medium">{contact.name}</p>
+                    {contact.phone && (
+                      <a
+                        href={`https://wa.me/55${contact.phone.replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-primary hover:underline"
+                      >
+                        <Phone className="h-3 w-3" />
+                        {contact.phone}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <div className="mt-3 p-3 rounded-lg bg-secondary/10 border border-secondary/30 space-y-2">
+                <div className="flex items-center gap-2 text-secondary font-medium text-sm">
+                  <ShieldAlert className="h-4 w-4" />
+                  Aguardando verificação de identidade
+                </div>
+                {!isUserKYCApproved ? (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      Para liberar o contato direto com a outra parte, envie seus documentos.
+                    </p>
+                    <Button asChild size="sm" variant="default" className="bg-secondary hover:bg-secondary/90">
+                      <Link to="/profile?tab=verificacao">Verificar minha identidade</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Sua verificação está aprovada. Aguardando a outra parte enviar os documentos para liberar o contato.
+                  </p>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Chat Section */}
           <Collapsible className="mt-3">

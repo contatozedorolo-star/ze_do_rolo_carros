@@ -433,9 +433,11 @@ export type Database = {
           moto_style: string | null
           motor_type: string | null
           need_type: string[] | null
+          negative_filters_description: string | null
           optionals: string[] | null
           origin_preference: string | null
           ownership_time: string | null
+          perfect_deal_description: string | null
           photo_checklist: Json | null
           plate: string | null
           plate_end: string | null
@@ -537,9 +539,11 @@ export type Database = {
           moto_style?: string | null
           motor_type?: string | null
           need_type?: string[] | null
+          negative_filters_description?: string | null
           optionals?: string[] | null
           origin_preference?: string | null
           ownership_time?: string | null
+          perfect_deal_description?: string | null
           photo_checklist?: Json | null
           plate?: string | null
           plate_end?: string | null
@@ -641,9 +645,11 @@ export type Database = {
           moto_style?: string | null
           motor_type?: string | null
           need_type?: string[] | null
+          negative_filters_description?: string | null
           optionals?: string[] | null
           origin_preference?: string | null
           ownership_time?: string | null
+          perfect_deal_description?: string | null
           photo_checklist?: Json | null
           plate?: string | null
           plate_end?: string | null

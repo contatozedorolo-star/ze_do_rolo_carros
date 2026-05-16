@@ -28,7 +28,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-2 text-sm text-accent">
               <Shield className="h-4 w-4" />
-              <span>100% Seguro e Verificado</span>
+              <span>Site Seguro e Verificado</span>
             </div>
           </div>
 

@@ -26,14 +26,24 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/tabela-fipe</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://zedorolo.com/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/auth</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/add-product</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/assistente-ia</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/volkswagen-constellation-2011-17250-8e0949fa-cb49-4955-ab4d-bf4497781fe9</loc>

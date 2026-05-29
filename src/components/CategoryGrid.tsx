@@ -48,7 +48,7 @@ const CategoryCard = memo(({ category, index }: { category: typeof vehicleCatego
       )}
       <img
         src={category.image}
-        alt={category.name}
+        alt={`Categoria ${category.name} - veículos à venda`}
         loading={index < 4 ? "eager" : "lazy"}
         decoding="async"
         onLoad={() => setImageLoaded(true)}

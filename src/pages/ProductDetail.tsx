@@ -343,7 +343,7 @@ const ProductDetail = () => {
         const canonical = `https://zedorolo.com/veiculo/${slugFull}`;
         const priceFmt = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(vehicle.price);
         const locStr = vehicle.city && vehicle.state ? ` em ${vehicle.city}/${vehicle.state}` : "";
-        const seoTitle = `${vehicle.brand} ${vehicle.model} ${vehicle.year_model}${locStr} - ${priceFmt} | Zé do Rolo`.slice(0, 70);
+        const seoTitle = `${vehicle.brand} ${vehicle.model} ${vehicle.year_model} - ${priceFmt}`.slice(0, 60);
         const seoDesc = (vehicle.description?.replace(/\s+/g, " ").trim().slice(0, 155)) ||
           `${vehicle.brand} ${vehicle.model} ${vehicle.year_model}, ${vehicle.km.toLocaleString("pt-BR")} km, ${vehicle.fuel}, ${vehicle.transmission}${locStr}. Compre por ${priceFmt} no Zé do Rolo.`.slice(0, 155);
         const seoImage = images[0]?.image_url || "https://zedorolo.com/logo-zedorolo.png";

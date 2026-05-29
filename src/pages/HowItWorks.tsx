@@ -120,7 +120,7 @@ const HowItWorks = () => {
                     <benefit.icon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-foreground">{benefit.title}</h3>
+                    <h2 className="font-bold text-foreground">{benefit.title}</h2>
                     <p className="text-sm text-muted-foreground">{benefit.description}</p>
                   </div>
                 </div>

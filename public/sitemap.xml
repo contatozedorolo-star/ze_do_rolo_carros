@@ -46,6 +46,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://zedorolo.com/veiculo/fiat-strada-2018-hard-working-59e3a5e6-eeb5-4031-ae57-d380c6380354</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://zedorolo.com/veiculo/toyota-corolla-2010-xei-8457664c-8c9e-4ec1-bbf2-b9280742690b</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -57,6 +62,16 @@
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/chevrolet-onix-2019-lt-d52b67b8-f77a-48c8-8295-e8a9cf2cae8d</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/fiat-uno-2019-way-4d76b81f-3bf9-4c89-a99f-b7cec1cb4482</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/fiat-uno-2020-attractive-0346519c-8636-44ca-8fd6-70159bdb4df1</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -76,12 +91,27 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://zedorolo.com/veiculo/yamaha-fazer-2008-250-6c0019e5-b8ce-4ed2-ba82-8a81e8b131e7</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/ford-ka-2020-se-plus-bdb9386b-bab8-494e-9c09-57d265eba6f1</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://zedorolo.com/veiculo/renault-sandero-2012-authentique-354e0ab1-6fe1-42d0-be05-5a5ef5fe9bcb</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/volvo-vm-2012-330-3796a7cb-284a-444b-8577-a4aecb46fa4d</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/fiat-strada-2020-hard-working-9824de56-eef2-4644-a2c6-85d65410e0a9</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>

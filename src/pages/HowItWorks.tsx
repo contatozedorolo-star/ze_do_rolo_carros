@@ -81,6 +81,10 @@ const HowItWorks = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Como Funciona | Zé do Rolo"
+        description="Veja em 4 passos como o Zé do Rolo torna a compra, venda e troca de veículos segura: verificação, diagnóstico, curadoria e negócio fechado."
+      />
       <Header />
       
       <main>

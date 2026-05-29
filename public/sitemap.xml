@@ -26,14 +26,24 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/tabela-fipe</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://zedorolo.com/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/auth</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/add-product</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/assistente-ia</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/volkswagen-constellation-2011-17250-8e0949fa-cb49-4955-ab4d-bf4497781fe9</loc>
@@ -42,6 +52,11 @@
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/toyota-hilux-sw4-2007-srv-43337f55-baf5-4f6b-b113-426c69c8a4e5</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/fiat-strada-2018-hard-working-59e3a5e6-eeb5-4031-ae57-d380c6380354</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -61,6 +76,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://zedorolo.com/veiculo/fiat-uno-2019-way-4d76b81f-3bf9-4c89-a99f-b7cec1cb4482</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/fiat-uno-2020-attractive-0346519c-8636-44ca-8fd6-70159bdb4df1</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://zedorolo.com/veiculo/honda-cg-2010-fan-es-78cc0d33-e0c7-41bd-b13e-07e1a8b255cf</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -76,12 +101,27 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://zedorolo.com/veiculo/yamaha-fazer-2008-250-6c0019e5-b8ce-4ed2-ba82-8a81e8b131e7</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/ford-ka-2020-se-plus-bdb9386b-bab8-494e-9c09-57d265eba6f1</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://zedorolo.com/veiculo/renault-sandero-2012-authentique-354e0ab1-6fe1-42d0-be05-5a5ef5fe9bcb</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/volvo-vm-2012-330-3796a7cb-284a-444b-8577-a4aecb46fa4d</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/fiat-strada-2020-hard-working-9824de56-eef2-4644-a2c6-85d65410e0a9</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>

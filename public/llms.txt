@@ -1,0 +1,23 @@
+# Zé do Rolo
+
+> Plataforma brasileira de compra, venda e troca de veículos (carros, motos, caminhões, vans, ônibus, tratores e implementos) com verificação de identidade, curadoria de propostas e suporte na documentação.
+
+O Zé do Rolo conecta compradores e vendedores verificados, com diagnóstico transparente dos veículos (escala 0–10), filtragem inteligente de propostas de troca e acompanhamento humano da negociação até a transferência.
+
+## Pages
+
+- [Home](/): visão geral, destaques e categorias de veículos.
+- [Veículos](/veiculos): catálogo completo de veículos à venda com filtros avançados.
+- [Busca](/busca): busca livre por marca, modelo, ano e localização.
+- [Como Funciona](/como-funciona): fluxo em 4 passos — cadastro, diagnóstico, curadoria e fechamento.
+- [Perguntas Frequentes](/faq): dúvidas sobre segurança, anúncios, trocas, pagamentos e documentação.
+- [Blog](/blog): conteúdo sobre veículos, dicas de compra/venda e mercado.
+- [Assistente IA (Zé IA)](/assistente-ia): assistente conversacional para encontrar o veículo ideal.
+- [Anunciar Veículo](/add-product): cadastro de anúncio (requer login).
+- [Entrar / Cadastrar](/auth): login e criação de conta.
+
+## Optional
+
+- [Termos de Uso](/termos-de-uso)
+- [Política de Privacidade](/politica-de-privacidade)
+- [Política de Cookies](/politica-de-cookies)

@@ -55,8 +55,10 @@ async function generate() {
     { url: '/veiculos', changefreq: 'weekly', priority: 0.8 },
     { url: '/como-funciona', changefreq: 'monthly', priority: 0.5 },
     { url: '/faq', changefreq: 'monthly', priority: 0.5 },
-    { url: '/tabela-fipe', changefreq: 'monthly', priority: 0.5 },
     { url: '/blog', changefreq: 'weekly', priority: 0.6 },
+    { url: '/auth', changefreq: 'monthly', priority: 0.4 },
+    { url: '/add-product', changefreq: 'monthly', priority: 0.4 },
+    { url: '/assistente-ia', changefreq: 'monthly', priority: 0.5 },
   ];
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>

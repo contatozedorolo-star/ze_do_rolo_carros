@@ -12,6 +12,10 @@ const HeroSection = () => {
         src={heroBackground}
         alt=""
         aria-hidden="true"
+        width={1920}
+        height={1080}
+        fetchPriority="high"
+        decoding="async"
         className="absolute inset-0 w-full h-full object-cover"
       />
       {/* Overlay Gradiente: preto transparente → preto semi-sólido */}

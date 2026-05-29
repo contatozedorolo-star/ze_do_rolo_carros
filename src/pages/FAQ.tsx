@@ -2,6 +2,8 @@ import { useState } from "react";
 import { HelpCircle, ChevronDown, Shield, Car, ArrowRightLeft, CreditCard, FileText, Users, Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { SEO } from "@/components/SEO";
+import { Helmet } from "react-helmet-async";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -170,9 +172,27 @@ const FAQ = () => {
 
   const displayCategories = searchTerm ? filteredCategories : faqCategories;
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqCategories.flatMap(c => c.questions).map(q => ({
+      "@type": "Question",
+      name: q.q,
+      acceptedAnswer: { "@type": "Answer", text: q.a },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Perguntas Frequentes | Zé do Rolo"
+        description="Tire suas dúvidas sobre segurança, anúncios, trocas, pagamentos e documentação no Zé do Rolo. Central de ajuda completa."
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+      </Helmet>
       <Header />
+      
       
       <main>
         {/* Hero Section */}

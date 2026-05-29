@@ -234,6 +234,7 @@ const SearchResults = () => {
                   <button
                     type="button"
                     onClick={() => setLocalSearchQuery("")}
+                    aria-label="Limpar busca"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     <X className="h-4 w-4" />

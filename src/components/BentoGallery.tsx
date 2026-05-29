@@ -127,6 +127,7 @@ const BentoGallery = ({ images, title }: BentoGalleryProps) => {
             {/* Close Button */}
             <button 
               onClick={() => setLightboxOpen(false)}
+              aria-label="Fechar galeria"
               className="absolute top-4 right-4 text-white/70 hover:text-white p-2 z-50"
             >
               <X size={32} />
@@ -135,7 +136,8 @@ const BentoGallery = ({ images, title }: BentoGalleryProps) => {
             {/* Navigation Left */}
             <button 
               onClick={(e) => { e.stopPropagation(); prevImage(); }}
-              className="absolute left-4 text-white/50 hover:text-white p-2 hidden md:block"
+              aria-label="Imagem anterior"
+              className="absolute left-4 text-white/80 hover:text-white p-2 hidden md:block"
             >
               <ChevronLeft size={48} />
             </button>
@@ -161,7 +163,8 @@ const BentoGallery = ({ images, title }: BentoGalleryProps) => {
             {/* Navigation Right */}
             <button 
               onClick={(e) => { e.stopPropagation(); nextImage(); }}
-              className="absolute right-4 text-white/50 hover:text-white p-2 hidden md:block"
+              aria-label="Próxima imagem"
+              className="absolute right-4 text-white/80 hover:text-white p-2 hidden md:block"
             >
               <ChevronRight size={48} />
             </button>

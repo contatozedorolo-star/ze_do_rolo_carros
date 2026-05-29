@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 
 const HowItWorks = () => {
   const steps = [
@@ -80,6 +81,10 @@ const HowItWorks = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Como Funciona | Zé do Rolo"
+        description="Veja em 4 passos como o Zé do Rolo torna a compra, venda e troca de veículos segura: verificação, diagnóstico, curadoria e negócio fechado."
+      />
       <Header />
       
       <main>
@@ -120,7 +125,7 @@ const HowItWorks = () => {
                     <benefit.icon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-foreground">{benefit.title}</h3>
+                    <h2 className="font-bold text-foreground">{benefit.title}</h2>
                     <p className="text-sm text-muted-foreground">{benefit.description}</p>
                   </div>
                 </div>

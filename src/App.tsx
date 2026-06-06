@@ -78,7 +78,6 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
             <GTMTracker />
-            <FloatingAssistantButton />
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>

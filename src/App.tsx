@@ -29,7 +29,7 @@ import AssistenteIA from "./pages/AssistenteIA";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
-import FloatingAssistantButton from "./components/FloatingAssistantButton";
+
 import useGTMPageView from "./hooks/useGTMPageView";
 
 const queryClient = new QueryClient();

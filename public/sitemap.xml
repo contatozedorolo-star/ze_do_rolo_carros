@@ -151,11 +151,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/veiculo/volvo-vm-330-2012-330-f51f4d21-7178-4d9d-9b8d-77040e13e302</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://zedorolo.com/veiculo/ford-ranger-2025-v6-limited-plus-9da7652e-57d9-4c6a-90c5-4a3c2176e970</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -167,6 +162,11 @@
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/ford-ranger-2015-limited-29e0896e-7c26-483b-84a5-c6b9b283ff48</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/renault-duster-2025-iconic-plus-780ccdcf-fa1f-4bc1-baad-8836e2f407f1</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>

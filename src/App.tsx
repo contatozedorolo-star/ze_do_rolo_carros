@@ -31,6 +31,7 @@ import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 
 import useGTMPageView from "./hooks/useGTMPageView";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 

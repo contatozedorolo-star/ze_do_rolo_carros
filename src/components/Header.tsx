@@ -87,8 +87,8 @@ const Header = () => {
 
         {/* Mobile brand text - centered between logo and hamburger */}
         <div className="md:hidden flex-1 flex flex-col items-center justify-center leading-tight select-none">
-          <span className="text-lg font-bold tracking-[0.18em] text-primary">ZÉ DO ROLO</span>
-          <span className="text-[13px] italic text-accent/90 mt-0.5">Em busca do rolo perfeito!</span>
+          <span className="text-xl font-bold tracking-[0.18em] text-primary">ZÉ DO ROLO</span>
+          <span className="text-[15px] italic text-accent/90 mt-0.5">Em busca do rolo perfeito!</span>
         </div>
 
         {/* Search Bar - Desktop */}

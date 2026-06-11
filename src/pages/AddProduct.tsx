@@ -599,8 +599,9 @@ const AddProduct = () => {
         
       if (vehicleError) throw vehicleError;
 
-      // Upload images
-      const uploadPromises = Object.entries(images).map(async ([photoId, file]) => {
+      // Upload images (a primeira é a capa)
+      const imageEntries = Object.entries(images).filter(([, f]) => !!f);
+      const uploadPromises = imageEntries.map(async ([photoId, file], index) => {
         if (!file) return;
         const fileName = `${user.id}/${vehicle.id}/${photoId}.${file.name.split('.').pop()}`;
         const { error: uploadError } = await supabase.storage.from("vehicle-images").upload(fileName, file);
@@ -610,7 +611,8 @@ const AddProduct = () => {
             vehicle_id: vehicle.id, 
             image_url: publicUrl, 
             image_type: photoId, 
-            is_primary: photoId === "frente" 
+            is_primary: index === 0,
+            display_order: index,
           });
         }
       });

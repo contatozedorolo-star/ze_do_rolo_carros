@@ -37,7 +37,7 @@ import VanTypeSelector from "@/components/add-product/VanTypeSelector";
 import VanPhotoUploadGrid, { vanPhotoCategories } from "@/components/add-product/VanPhotoUploadGrid";
 import BusTypeSelector from "@/components/add-product/BusTypeSelector";
 import BusPhotoUploadGrid, { busPhotoCategories } from "@/components/add-product/BusPhotoUploadGrid";
-import PhotoTipsCard from "@/components/add-product/PhotoTipsCard";
+import SimplePhotoUpload from "@/components/add-product/SimplePhotoUpload";
 import ExitIntentAssistant from "@/components/ExitIntentAssistant";
 import TratorTypeSelector from "@/components/add-product/TratorTypeSelector";
 import ImplementoTypeSelector from "@/components/add-product/ImplementoTypeSelector";
@@ -599,8 +599,9 @@ const AddProduct = () => {
         
       if (vehicleError) throw vehicleError;
 
-      // Upload images
-      const uploadPromises = Object.entries(images).map(async ([photoId, file]) => {
+      // Upload images (a primeira é a capa)
+      const imageEntries = Object.entries(images).filter(([, f]) => !!f);
+      const uploadPromises = imageEntries.map(async ([photoId, file], index) => {
         if (!file) return;
         const fileName = `${user.id}/${vehicle.id}/${photoId}.${file.name.split('.').pop()}`;
         const { error: uploadError } = await supabase.storage.from("vehicle-images").upload(fileName, file);
@@ -610,7 +611,7 @@ const AddProduct = () => {
             vehicle_id: vehicle.id, 
             image_url: publicUrl, 
             image_type: photoId, 
-            is_primary: photoId === "frente" 
+            is_primary: index === 0,
           });
         }
       });
@@ -1682,9 +1683,7 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
               </div>
 
-              <PhotoTipsCard />
-
-              <TruckPhotoUploadGrid
+              <SimplePhotoUpload
                 images={images}
                 previews={imagePreviews}
                 onUpload={handleImageUpload}
@@ -1992,9 +1991,7 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
               </div>
 
-              <PhotoTipsCard />
-
-              <BusPhotoUploadGrid images={images} previews={imagePreviews} onUpload={handleImageUpload} onRemove={handleRemoveImage} />
+              <SimplePhotoUpload images={images} previews={imagePreviews} onUpload={handleImageUpload} onRemove={handleRemoveImage} />
 
               <div>
                 <Label className="text-base font-semibold">Descrição do Anúncio</Label>
@@ -2011,9 +2008,7 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
               </div>
 
-              <PhotoTipsCard />
-
-              <VanPhotoUploadGrid
+              <SimplePhotoUpload
                 images={images}
                 previews={imagePreviews}
                 onUpload={handleImageUpload}
@@ -2389,23 +2384,12 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Adicione fotos de todos os ângulos do veículo</p>
               </div>
 
-              <PhotoTipsCard />
-
-              {formData.vehicle_type === "moto" ? (
-                <MotoPhotoUploadGrid
-                  images={images}
-                  previews={imagePreviews}
-                  onUpload={handleImageUpload}
-                  onRemove={handleRemoveImage}
-                />
-              ) : (
-                <PhotoUploadGrid
-                  images={images}
-                  previews={imagePreviews}
-                  onUpload={handleImageUpload}
-                  onRemove={handleRemoveImage}
-                />
-              )}
+              <SimplePhotoUpload
+                images={images}
+                previews={imagePreviews}
+                onUpload={handleImageUpload}
+                onRemove={handleRemoveImage}
+              />
 
               {/* Descrição adicional */}
               <div>

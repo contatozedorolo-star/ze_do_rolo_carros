@@ -1991,9 +1991,7 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
               </div>
 
-              <PhotoTipsCard />
-
-              <BusPhotoUploadGrid images={images} previews={imagePreviews} onUpload={handleImageUpload} onRemove={handleRemoveImage} />
+              <SimplePhotoUpload images={images} previews={imagePreviews} onUpload={handleImageUpload} onRemove={handleRemoveImage} />
 
               <div>
                 <Label className="text-base font-semibold">Descrição do Anúncio</Label>

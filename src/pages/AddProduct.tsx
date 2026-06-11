@@ -612,7 +612,6 @@ const AddProduct = () => {
             image_url: publicUrl, 
             image_type: photoId, 
             is_primary: index === 0,
-            display_order: index,
           });
         }
       });

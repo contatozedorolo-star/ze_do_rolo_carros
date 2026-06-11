@@ -2384,23 +2384,12 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Adicione fotos de todos os ângulos do veículo</p>
               </div>
 
-              <PhotoTipsCard />
-
-              {formData.vehicle_type === "moto" ? (
-                <MotoPhotoUploadGrid
-                  images={images}
-                  previews={imagePreviews}
-                  onUpload={handleImageUpload}
-                  onRemove={handleRemoveImage}
-                />
-              ) : (
-                <PhotoUploadGrid
-                  images={images}
-                  previews={imagePreviews}
-                  onUpload={handleImageUpload}
-                  onRemove={handleRemoveImage}
-                />
-              )}
+              <SimplePhotoUpload
+                images={images}
+                previews={imagePreviews}
+                onUpload={handleImageUpload}
+                onRemove={handleRemoveImage}
+              />
 
               {/* Descrição adicional */}
               <div>

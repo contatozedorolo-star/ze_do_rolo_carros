@@ -2008,9 +2008,7 @@ const AddProduct = () => {
                 <p className="text-muted-foreground mt-1">Fotografe todos os ângulos do veículo</p>
               </div>
 
-              <PhotoTipsCard />
-
-              <VanPhotoUploadGrid
+              <SimplePhotoUpload
                 images={images}
                 previews={imagePreviews}
                 onUpload={handleImageUpload}

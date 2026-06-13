@@ -91,11 +91,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/veiculo/mitsubishi-pajero-full-2008-hpe-38-v6-b14a674b-2196-403a-867e-a2b4dcaf9981</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://zedorolo.com/veiculo/troller-troller-2011-t4-7ed78f24-16a2-4c19-8f13-00c9dc4d048d</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -136,11 +131,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/veiculo/chevrolet-vectra-2006-elegance-20-flex-1b2351fc-0299-4d68-ba6d-bc24bab2878f</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://zedorolo.com/veiculo/jeep-renegade-2016-longitude-05833f7a-a0c0-4016-bb46-f90e02933adb</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -172,6 +162,16 @@
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/nissan-versa-2021-v-drive-12c38a57-6459-422c-810a-aa87a1fd5f55</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/chevrolet-onix-sedan-2023-lt-aa0f8553-2b38-4a1f-9155-a5328d883f93</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/mitsubishi-pajero-2009-tr4-db52d7f3-586b-4b67-a4e6-0774810921e3</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>

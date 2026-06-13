@@ -40,7 +40,7 @@ import {
   Package
 } from "lucide-react";
 
-import TechRadar from "@/components/TechRadar";
+
 import MobileActionDock from "@/components/MobileActionDock";
 import BentoGallery from "@/components/BentoGallery";
 import { DescriptionFormatter } from "@/components/DescriptionFormatter";
@@ -490,40 +490,32 @@ const ProductDetail = () => {
                       </div>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-8 items-center">
-                      {/* Left: Radar Chart */}
-                      <div className="flex justify-center py-4 order-2 md:order-1">
-                        <TechRadar 
-                          data={ratings.map(r => ({ label: r.label, value: r.value || 0 }))} 
-                          width={320} 
-                          height={300} 
-                        />
-                      </div>
-
-                      {/* Right: Legend & Highlights */}
-                      <div className="order-1 md:order-2 space-y-4">
-                         <div className="bg-white/10 rounded-xl p-4 border border-white/10">
-                            <h3 className="font-semibold mb-3 flex items-center gap-2">
-                              <Zap className="h-4 w-4 text-[#FF8C36]" />
-                              Destaques
-                            </h3>
-                            <div className="space-y-2">
-                              {ratings
-                                .sort((a, b) => (b.value || 0) - (a.value || 0))
-                                .slice(0, 3)
-                                .map((item) => (
-                                  <div key={item.label} className="flex justify-between items-center text-sm">
-                                    <span className="text-white/80">{item.label}</span>
-                                    <span className="text-[#29B765] font-bold">{item.value}/10</span>
-                                  </div>
-                                ))}
+                    <div className="space-y-4">
+                      {ratings.map((item) => {
+                        const getBarColor = (val: number) => {
+                          if (val >= 9) return "bg-[#29B765]";
+                          if (val >= 7) return "bg-[#8BC34A]";
+                          if (val >= 5) return "bg-[#FF8C36]";
+                          if (val >= 3) return "bg-[#FFB74D]";
+                          return "bg-red-400";
+                        };
+                        return (
+                          <div key={item.label} className="flex items-center gap-4">
+                            <span className="text-sm font-medium text-white w-32 shrink-0">
+                              {item.label}
+                            </span>
+                            <div className="flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${getBarColor(item.value || 0)}`}
+                                style={{ width: `${((item.value || 0) / 10) * 100}%` }}
+                              />
                             </div>
-                        </div>
-                        
-                        <div className="p-3 rounded-lg bg-[#FF8C36]/10 border border-[#FF8C36]/20 text-xs text-[#FF8C36]">
-                           Passe o mouse sobre os pontos do gráfico para ver a nota de cada item.
-                        </div>
-                      </div>
+                            <span className="text-sm font-bold text-white w-12 text-right shrink-0">
+                              Nota {item.value}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
 
                     {vehicle.diagnostic_notes && (
@@ -537,7 +529,7 @@ const ProductDetail = () => {
                     <div className="mt-6 p-4 bg-[#29B765]/20 rounded-xl border border-[#29B765]/30 flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-[#29B765] shrink-0 mt-0.5" />
                       <p className="text-sm text-white/90">
-                        O Zé do Rolo realiza a conferência desses itens no ato da vistoria cautelar, 
+                        O Zé do Rolo realiza a conferência desses itens no ato da vistoria cautelar,
                         garantindo transparência e segurança para sua compra.
                       </p>
                     </div>

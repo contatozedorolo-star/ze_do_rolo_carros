@@ -40,7 +40,7 @@ import {
   Package
 } from "lucide-react";
 
-import TechRadar from "@/components/TechRadar";
+
 import MobileActionDock from "@/components/MobileActionDock";
 import BentoGallery from "@/components/BentoGallery";
 import { DescriptionFormatter } from "@/components/DescriptionFormatter";

@@ -175,4 +175,14 @@
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/toyota-corolla-2010-xei-4ed55ff6-5e4e-44c4-96b7-05b01f625bd3</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zedorolo.com/veiculo/bmw-x1-2011-18i-e76e332f-4e45-494c-b574-c41eb9d0b972</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

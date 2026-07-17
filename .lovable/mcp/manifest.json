@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "sdk_version": "0.23.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "ze-do-rolo-mcp",
+      "version": "0.1.0",
+      "title": "Zé do Rolo"
+    },
+    "tools": [
+      {
+        "name": "search_vehicles",
+        "title": "Buscar veículos",
+        "description": "Busca anúncios de veículos aprovados no Zé do Rolo. Filtre por texto livre, categoria, cidade/UF e faixa de preço. Retorna até 20 resultados com id, título, marca, modelo, ano, preço, cidade e UF.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Texto livre (marca, modelo, palavras-chave)."
+            },
+            "category": {
+              "type": "string",
+              "description": "Categoria: carros, motos, caminhoes, onibus, vans, tratores, implementos."
+            },
+            "city": {
+              "type": "string",
+              "description": "Cidade."
+            },
+            "state": {
+              "type": "string",
+              "description": "Sigla do estado (UF), ex: SP, PR."
+            },
+            "min_price": {
+              "type": "number",
+              "description": "Preço mínimo em BRL."
+            },
+            "max_price": {
+              "type": "number",
+              "description": "Preço máximo em BRL."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "description": "Quantidade de resultados (padrão 10, máx 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_vehicle",
+        "title": "Detalhes do veículo",
+        "description": "Retorna todos os detalhes de um anúncio de veículo aprovado pelo id.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID (UUID) do veículo."
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

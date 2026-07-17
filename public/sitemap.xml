@@ -51,11 +51,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zedorolo.com/veiculo/toyota-hilux-sw4-2007-srv-43337f55-baf5-4f6b-b113-426c69c8a4e5</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://zedorolo.com/veiculo/fiat-strada-2018-hard-working-59e3a5e6-eeb5-4031-ae57-d380c6380354</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -67,11 +62,6 @@
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/mercedes-benz-sprinter-2013-415-056fbf15-2097-4240-b4a9-07f75a3eaba8</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://zedorolo.com/veiculo/chevrolet-onix-2019-lt-d52b67b8-f77a-48c8-8295-e8a9cf2cae8d</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -137,11 +127,6 @@
   </url>
   <url>
     <loc>https://zedorolo.com/veiculo/honda-bros-2023-esdd-aa40abe9-181c-473c-8c1a-b124af6a05fe</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://zedorolo.com/veiculo/ford-ranger-2025-v6-limited-plus-9da7652e-57d9-4c6a-90c5-4a3c2176e970</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>

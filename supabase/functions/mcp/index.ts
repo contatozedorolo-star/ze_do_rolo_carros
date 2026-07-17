@@ -6,9 +6,11 @@
 import { defineMcp } from "npm:@lovable.dev/mcp-js@0.23.0";
 
 // src/lib/mcp/tools/search-vehicles.ts
-import { createClient } from "npm:@supabase/supabase-js@^2.95.3";
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.23.0";
 import { z } from "npm:zod@^3.25.76";
+
+// src/lib/mcp/supabase.ts
+import { createClient } from "npm:@supabase/supabase-js@^2.95.3";
 function supabaseForUser(ctx) {
   return createClient(
     process.env.SUPABASE_URL,
@@ -19,6 +21,8 @@ function supabaseForUser(ctx) {
     }
   );
 }
+
+// src/lib/mcp/tools/search-vehicles.ts
 var search_vehicles_default = defineTool({
   name: "search_vehicles",
   title: "Buscar ve\xEDculos",
@@ -55,19 +59,8 @@ var search_vehicles_default = defineTool({
 });
 
 // src/lib/mcp/tools/get-vehicle.ts
-import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.95.3";
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.23.0";
 import { z as z2 } from "npm:zod@^3.25.76";
-function supabaseForUser2(ctx) {
-  return createClient2(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY,
-    {
-      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-      auth: { persistSession: false, autoRefreshToken: false }
-    }
-  );
-}
 var get_vehicle_default = defineTool2({
   name: "get_vehicle",
   title: "Detalhes do ve\xEDculo",
@@ -80,7 +73,7 @@ var get_vehicle_default = defineTool2({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "N\xE3o autenticado." }], isError: true };
     }
-    const { data, error } = await supabaseForUser2(ctx).from("vehicles").select("*").eq("id", id).maybeSingle();
+    const { data, error } = await supabaseForUser(ctx).from("vehicles").select("*").eq("id", id).maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     if (!data) return { content: [{ type: "text", text: "Ve\xEDculo n\xE3o encontrado." }], isError: true };
     return {
@@ -91,19 +84,8 @@ var get_vehicle_default = defineTool2({
 });
 
 // src/lib/mcp/tools/list-my-listings.ts
-import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.95.3";
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.23.0";
 import { z as z3 } from "npm:zod@^3.25.76";
-function supabaseForUser3(ctx) {
-  return createClient3(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY,
-    {
-      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-      auth: { persistSession: false, autoRefreshToken: false }
-    }
-  );
-}
 var list_my_listings_default = defineTool3({
   name: "list_my_listings",
   title: "Meus an\xFAncios",
@@ -117,7 +99,7 @@ var list_my_listings_default = defineTool3({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "N\xE3o autenticado." }], isError: true };
     }
-    let q = supabaseForUser3(ctx).from("vehicles").select("id, title, brand, model, year, price, status, created_at").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit ?? 20);
+    let q = supabaseForUser(ctx).from("vehicles").select("id, title, brand, model, year, price, status, created_at").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit ?? 20);
     if (status) q = q.eq("status", status);
     const { data, error } = await q;
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
@@ -129,23 +111,12 @@ var list_my_listings_default = defineTool3({
 });
 
 // src/lib/mcp/tools/list-my-proposals.ts
-import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.95.3";
 import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.23.0";
 import { z as z4 } from "npm:zod@^3.25.76";
-function supabaseForUser4(ctx) {
-  return createClient4(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY,
-    {
-      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-      auth: { persistSession: false, autoRefreshToken: false }
-    }
-  );
-}
 var list_my_proposals_default = defineTool4({
   name: "list_my_proposals",
   title: "Minhas propostas",
-  description: "Lista as propostas de negocia\xE7\xE3o enviadas ou recebidas pelo usu\xE1rio autenticado. Use role='sent' para propostas que voc\xEA enviou e 'received' para as recebidas em seus an\xFAncios.",
+  description: "Lista as propostas de negocia\xE7\xE3o enviadas ou recebidas pelo usu\xE1rio autenticado. Use role='sent' para propostas enviadas e 'received' para as recebidas em seus an\xFAncios.",
   inputSchema: {
     role: z4.enum(["sent", "received", "all"]).optional().describe("sent | received | all (padr\xE3o all)."),
     status: z4.string().optional().describe("Filtra por status da proposta."),
@@ -157,7 +128,7 @@ var list_my_proposals_default = defineTool4({
       return { content: [{ type: "text", text: "N\xE3o autenticado." }], isError: true };
     }
     const uid = ctx.getUserId();
-    let q = supabaseForUser4(ctx).from("proposals").select("*").order("created_at", { ascending: false }).limit(limit ?? 20);
+    let q = supabaseForUser(ctx).from("proposals").select("*").order("created_at", { ascending: false }).limit(limit ?? 20);
     if (role === "sent") q = q.eq("buyer_id", uid);
     else if (role === "received") q = q.eq("seller_id", uid);
     else q = q.or(`buyer_id.eq.${uid},seller_id.eq.${uid}`);

@@ -1,23 +1,12 @@
-import { createClient } from "@supabase/supabase-js";
-import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
+import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-
-function supabaseForUser(ctx: ToolContext) {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY!,
-    {
-      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-      auth: { persistSession: false, autoRefreshToken: false },
-    },
-  );
-}
+import { supabaseForUser } from "../supabase";
 
 export default defineTool({
   name: "list_my_proposals",
   title: "Minhas propostas",
   description:
-    "Lista as propostas de negociação enviadas ou recebidas pelo usuário autenticado. Use role='sent' para propostas que você enviou e 'received' para as recebidas em seus anúncios.",
+    "Lista as propostas de negociação enviadas ou recebidas pelo usuário autenticado. Use role='sent' para propostas enviadas e 'received' para as recebidas em seus anúncios.",
   inputSchema: {
     role: z.enum(["sent", "received", "all"]).optional().describe("sent | received | all (padrão all)."),
     status: z.string().optional().describe("Filtra por status da proposta."),

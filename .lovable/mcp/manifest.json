@@ -116,7 +116,7 @@
       {
         "name": "list_my_proposals",
         "title": "Minhas propostas",
-        "description": "Lista as propostas de negociação enviadas ou recebidas pelo usuário autenticado. Use role='sent' para propostas que você enviou e 'received' para as recebidas em seus anúncios.",
+        "description": "Lista as propostas de negociação enviadas ou recebidas pelo usuário autenticado. Use role='sent' para propostas enviadas e 'received' para as recebidas em seus anúncios.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

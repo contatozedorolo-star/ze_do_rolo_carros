@@ -11,14 +11,11 @@ import { z } from "npm:zod@^3.25.76";
 
 // src/lib/mcp/supabase.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.95.3";
-function supabaseForUser(ctx) {
+function supabaseAnon() {
   return createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY,
-    {
-      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-      auth: { persistSession: false, autoRefreshToken: false }
-    }
+    { auth: { persistSession: false, autoRefreshToken: false } }
   );
 }
 
@@ -37,12 +34,8 @@ var search_vehicles_default = defineTool({
     limit: z.number().int().min(1).max(20).optional().describe("Quantidade de resultados (padr\xE3o 10, m\xE1x 20).")
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "N\xE3o autenticado." }], isError: true };
-    }
-    const supabase = supabaseForUser(ctx);
-    let q = supabase.from("vehicles").select("id, title, brand, model, year, price, city, state, category, status").eq("status", "approved").limit(input.limit ?? 10);
+  handler: async (input) => {
+    let q = supabaseAnon().from("vehicles").select("id, title, brand, model, year, price, city, state, category, status").eq("status", "approved").limit(input.limit ?? 10);
     if (input.query) q = q.or(`title.ilike.%${input.query}%,brand.ilike.%${input.query}%,model.ilike.%${input.query}%`);
     if (input.category) q = q.eq("category", input.category);
     if (input.city) q = q.ilike("city", `%${input.city}%`);
@@ -64,16 +57,13 @@ import { z as z2 } from "npm:zod@^3.25.76";
 var get_vehicle_default = defineTool2({
   name: "get_vehicle",
   title: "Detalhes do ve\xEDculo",
-  description: "Retorna todos os detalhes de um an\xFAncio de ve\xEDculo pelo id.",
+  description: "Retorna todos os detalhes de um an\xFAncio de ve\xEDculo aprovado pelo id.",
   inputSchema: {
     id: z2.string().uuid().describe("ID (UUID) do ve\xEDculo.")
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ id }, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "N\xE3o autenticado." }], isError: true };
-    }
-    const { data, error } = await supabaseForUser(ctx).from("vehicles").select("*").eq("id", id).maybeSingle();
+  handler: async ({ id }) => {
+    const { data, error } = await supabaseAnon().from("vehicles").select("*").eq("id", id).eq("status", "approved").maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     if (!data) return { content: [{ type: "text", text: "Ve\xEDculo n\xE3o encontrado." }], isError: true };
     return {
@@ -83,72 +73,13 @@ var get_vehicle_default = defineTool2({
   }
 });
 
-// src/lib/mcp/tools/list-my-listings.ts
-import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.23.0";
-import { z as z3 } from "npm:zod@^3.25.76";
-var list_my_listings_default = defineTool3({
-  name: "list_my_listings",
-  title: "Meus an\xFAncios",
-  description: "Lista os an\xFAncios de ve\xEDculos do usu\xE1rio autenticado (todos os status: pending, approved, rejected).",
-  inputSchema: {
-    status: z3.string().optional().describe("Filtra por status: pending, approved, rejected."),
-    limit: z3.number().int().min(1).max(50).optional()
-  },
-  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ status, limit }, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "N\xE3o autenticado." }], isError: true };
-    }
-    let q = supabaseForUser(ctx).from("vehicles").select("id, title, brand, model, year, price, status, created_at").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit ?? 20);
-    if (status) q = q.eq("status", status);
-    const { data, error } = await q;
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    return {
-      content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { listings: data ?? [] }
-    };
-  }
-});
-
-// src/lib/mcp/tools/list-my-proposals.ts
-import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.23.0";
-import { z as z4 } from "npm:zod@^3.25.76";
-var list_my_proposals_default = defineTool4({
-  name: "list_my_proposals",
-  title: "Minhas propostas",
-  description: "Lista as propostas de negocia\xE7\xE3o enviadas ou recebidas pelo usu\xE1rio autenticado. Use role='sent' para propostas enviadas e 'received' para as recebidas em seus an\xFAncios.",
-  inputSchema: {
-    role: z4.enum(["sent", "received", "all"]).optional().describe("sent | received | all (padr\xE3o all)."),
-    status: z4.string().optional().describe("Filtra por status da proposta."),
-    limit: z4.number().int().min(1).max(50).optional()
-  },
-  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ role = "all", status, limit }, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "N\xE3o autenticado." }], isError: true };
-    }
-    const uid = ctx.getUserId();
-    let q = supabaseForUser(ctx).from("proposals").select("*").order("created_at", { ascending: false }).limit(limit ?? 20);
-    if (role === "sent") q = q.eq("buyer_id", uid);
-    else if (role === "received") q = q.eq("seller_id", uid);
-    else q = q.or(`buyer_id.eq.${uid},seller_id.eq.${uid}`);
-    if (status) q = q.eq("status", status);
-    const { data, error } = await q;
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    return {
-      content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { proposals: data ?? [] }
-    };
-  }
-});
-
 // src/lib/mcp/index.ts
 var mcp_default = defineMcp({
   name: "ze-do-rolo-mcp",
   title: "Z\xE9 do Rolo",
   version: "0.1.0",
-  instructions: "Ferramentas para acessar an\xFAncios do marketplace Z\xE9 do Rolo (ve\xEDculos, motos, caminh\xF5es, tratores, \xF4nibus, vans e implementos). Use search_vehicles e get_vehicle para navegar no cat\xE1logo p\xFAblico. list_my_listings e list_my_proposals exigem um token de usu\xE1rio autenticado.",
-  tools: [search_vehicles_default, get_vehicle_default, list_my_listings_default, list_my_proposals_default]
+  instructions: "Ferramentas para navegar no cat\xE1logo p\xFAblico do Z\xE9 do Rolo \u2014 marketplace brasileiro de ve\xEDculos (carros, motos, caminh\xF5es, tratores, \xF4nibus, vans, implementos). Use search_vehicles para descobrir an\xFAncios por marca/modelo/cidade/pre\xE7o e get_vehicle para detalhes completos.",
+  tools: [search_vehicles_default, get_vehicle_default]
 });
 
 // lovable-mcp-supabase-entry.ts

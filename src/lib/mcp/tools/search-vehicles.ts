@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { supabaseForUser } from "../supabase";
+import { supabaseAnon } from "../supabase";
 
 export default defineTool({
   name: "search_vehicles",
@@ -17,12 +17,8 @@ export default defineTool({
     limit: z.number().int().min(1).max(20).optional().describe("Quantidade de resultados (padrão 10, máx 20)."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Não autenticado." }], isError: true };
-    }
-    const supabase = supabaseForUser(ctx);
-    let q = supabase
+  handler: async (input) => {
+    let q = supabaseAnon()
       .from("vehicles")
       .select("id, title, brand, model, year, price, city, state, category, status")
       .eq("status", "approved")

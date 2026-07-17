@@ -63,7 +63,7 @@
       {
         "name": "get_vehicle",
         "title": "Detalhes do veículo",
-        "description": "Retorna todos os detalhes de um anúncio de veículo pelo id.",
+        "description": "Retorna todos os detalhes de um anúncio de veículo aprovado pelo id.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -81,69 +81,6 @@
           "required": [
             "id"
           ],
-          "additionalProperties": false,
-          "$schema": "http://json-schema.org/draft-07/schema#"
-        },
-        "outputSchema": null
-      },
-      {
-        "name": "list_my_listings",
-        "title": "Meus anúncios",
-        "description": "Lista os anúncios de veículos do usuário autenticado (todos os status: pending, approved, rejected).",
-        "annotations": {
-          "readOnlyHint": true,
-          "idempotentHint": true,
-          "openWorldHint": false
-        },
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "description": "Filtra por status: pending, approved, rejected."
-            },
-            "limit": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 50
-            }
-          },
-          "additionalProperties": false,
-          "$schema": "http://json-schema.org/draft-07/schema#"
-        },
-        "outputSchema": null
-      },
-      {
-        "name": "list_my_proposals",
-        "title": "Minhas propostas",
-        "description": "Lista as propostas de negociação enviadas ou recebidas pelo usuário autenticado. Use role='sent' para propostas enviadas e 'received' para as recebidas em seus anúncios.",
-        "annotations": {
-          "readOnlyHint": true,
-          "idempotentHint": true,
-          "openWorldHint": false
-        },
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "role": {
-              "type": "string",
-              "enum": [
-                "sent",
-                "received",
-                "all"
-              ],
-              "description": "sent | received | all (padrão all)."
-            },
-            "status": {
-              "type": "string",
-              "description": "Filtra por status da proposta."
-            },
-            "limit": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 50
-            }
-          },
           "additionalProperties": false,
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
